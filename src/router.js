@@ -78,7 +78,7 @@ let router = new Router({
       {
           path: "/offers",
           name: "offers",
-          component: () => import("@/components/adminView/Customers"),
+          component: () => import("@/components/adminView/Offers"),
           meta: {
               auth: true,
               title: "Offers | Smart Customer",

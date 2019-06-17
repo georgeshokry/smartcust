@@ -21,7 +21,7 @@
         </v-snackbar>
         <!--        the start of add new offer Dialog-->
         <v-layout row style="    justify-content: flex-end;">
-            <v-dialog v-model="newOfferDialog"  max-width="500px">
+            <v-dialog v-model="newOfferDialog"  max-width="500px" scrollable>
 
 
 
@@ -44,7 +44,7 @@
 
                 <v-card>
                     <v-card-title style="background-color: #dcdcdc; ">
-                        <span class="headline"><v-icon medium >star</v-icon> Create New Offer</span>
+                        <span class="headline"><v-icon medium >loyalty</v-icon> Create New Offer</span>
                     </v-card-title>
                     <v-divider></v-divider>
                     <v-card-text>
@@ -52,11 +52,21 @@
                             <v-layout wrap>
                                 <!--the name of offer-->
                                 <v-flex xs12>
-                                    <v-text-field outline color="black" label="Offer Title" v-model="offerTitle"></v-text-field>
+                                    <v-text-field
+                                            outline
+                                            color="black"
+                                            label="Offer Title"
+                                            v-model="offerTitle"
+                                    ></v-text-field>
                                 </v-flex>
                                 <!--the offer content to define the offer rules to customer-->
                                 <v-flex xs12>
-                                    <v-text-field outline color="black"  label="Offer Content" v-model="offerContent"></v-text-field>
+                                    <v-text-field
+                                            outline
+                                            color="black"
+                                            label="Offer Content"
+                                            v-model="offerContent"
+                                    ></v-text-field>
                                 </v-flex>
                                 <!--the points of offer to choose-->
                                 <v-flex>
@@ -73,10 +83,13 @@
                                                 type="number"
                                         ></v-text-field>
                                     </v-flex>
+                                    <v-divider></v-divider>
                                 </v-flex>
+
                                 <!--   How will the offer going to end-->
                                 <v-flex xs12>
                                     <v-subheader class="pl-0">Choose How The Offer Going To End:</v-subheader>
+
                                     <v-radio-group v-model="showDatePicker" :mandatory="false" >
                                         <v-radio color="black" label="By Date" value="byDate"></v-radio>
                                         <v-radio color="black"  label="By Number Of Customers" value="byNumOfCustomers"></v-radio>
@@ -127,6 +140,63 @@
                                                 type="number"
                                         ></v-text-field>
                                     </v-flex>
+                                    <v-divider></v-divider>
+<!--                                    the pic of offer appears as background for the user-->
+                                    <v-flex
+
+                                            xs12
+                                    >
+
+                                        <v-text-field
+                                                style="margin-top: 15px"
+                                                v-model="offerPic"
+                                                v-validate="'required:true'"
+                                                data-vv-rules="image|size:10000"
+                                                :error-messages="errors.collect('Offer Photo')"
+                                                data-vv-name="Offer Photo"
+                                                prepend-icon="add_photo_alternate"
+                                                label="Offer Photo"
+                                                color="black"
+                                                readonly
+
+                                                @click="startPicking"
+                                        >
+                                        </v-text-field>
+                                        <input
+                                                type="file"
+                                                style="display: none"
+                                                ref="image"
+                                                accept="image/*"
+                                                @input="setImage"
+                                        >
+                                        <v-layout row wrap style="justify-content: center;">
+                                            <v-hover>
+                                                <v-card
+                                                        slot-scope="{ hover }"
+                                                        class="mx-auto"
+                                                        color="grey lighten-4"
+                                                        max-width="100%"
+                                                >
+                                                    <img
+                                                    :src="imagePreview"
+                                                    height="100%"
+                                                    width="100%"
+                                                    v-if="imagePreview"/>
+                                                <v-expand-transition name="slide">
+
+                                                    <div
+                                                            v-if="hover"
+                                                         class="d-flex fade-transition black darken-2 v-card--reveal display-3 white--text"
+                                                         style="width: 100%; height: 100%"
+                                                    >
+
+                                                        <v-btn icon depressed style="font-size: small; max-width: 40px" color="white" @click="removePic"><v-icon>close</v-icon></v-btn>
+                                                    </div>
+                                                </v-expand-transition>
+                                                </v-card>
+                                            </v-hover>
+                                        </v-layout>
+                                    </v-flex>
                                 </v-flex>
                             </v-layout>
                         </v-container>
@@ -152,7 +222,10 @@
 
     export default {
         name: 'newOfferDialog',
-        components: {},
+        $_veeValidate: {
+            validator: 'new',
+
+        },
         data: () => ({
             offerTitle: "",
             offerContent: "",
@@ -162,6 +235,10 @@
             newOfferDialog: false,
             datePickerMenu: false,
             showDatePicker: "byDate",
+            offerPic: '',
+            imagePreview:'',
+            fileSelect: '',
+
             btnLoading: false,
             firebaseMsg: "",
             snackbarAlert: false,
@@ -194,6 +271,8 @@
                 this.offerExpDate= new Date().toISOString().substr(0, 10);
                 this.points=5;
                 this.numOfCustomers= 5;
+                this.offerPic='';
+                this.fileSelect = '';
             },
             firebaseErrorShow(error){
                 this.firebaseMsg = error;
@@ -205,31 +284,69 @@
             }
         },
         methods:{
+            startPicking(){
+                this.$refs.image.click()
+            },
+            setImage(e){
+                let set = e.target.files;
+                this.offerPic = e.target.files[0].name;
+
+///////////start grapping the photo and showing it to admin
+                const fr = new FileReader();
+                fr.readAsDataURL(set[0]);
+                fr.addEventListener('load', () => {
+                    this.imagePreview = fr.result;
+                    this.fileSelect = set[0];
+                })
+            },
+            removePic(){
+                this.imagePreview = '';
+                this.$refs.image.value = '';
+                this.offerPic = '';
+                this.fileSelect = '';
+
+            },
             startSaveOffer(){
-                this.btnLoading = true;
 
 
-                if(this.showDatePicker === "byDate"){
-                    this.$store.dispatch('addNewOffer', {
-                        offerTitle: this.offerTitle,
-                        offerContent: this.offerContent,
-                        offerPoints: this.points,
-                        offerExpDate: this.offerExpDate,
-                        offerExpNum: null
+                const results = Promise.all([
+                    this.$validator.validate('Offer Photo'),
 
-                    });
-                }else if(this.showDatePicker === "byNumOfCustomers"){
-                    this.$store.dispatch('addNewOffer', {
-                        offerTitle: this.offerTitle,
-                        offerContent: this.offerContent,
-                        offerPoints: this.points,
-                        offerExpDate: null,
-                        offerExpNum: this.numOfCustomers
+                ]);
 
-                    });
-                }
+                this.$validator.validateAll(results).then(() => {
+                    if (!this.errors.any()) {
+                        this.btnLoading = true;
+                        console.log(this.fileSelect);
 
 
+                        if (this.showDatePicker === "byDate") {
+                            this.$store.dispatch('addNewOffer', {
+                                offerTitle: this.offerTitle,
+                                offerContent: this.offerContent,
+                                offerPoints: this.points,
+                                offerExpDate: this.offerExpDate,
+                                offerExpNum: null,
+
+                                offerPic: this.fileSelect,
+                                picName: this.offerPic
+
+                            });
+                        } else if (this.showDatePicker === "byNumOfCustomers") {
+                            this.$store.dispatch('addNewOffer', {
+                                offerTitle: this.offerTitle,
+                                offerContent: this.offerContent,
+                                offerPoints: this.points,
+                                offerExpDate: null,
+                                offerExpNum: this.numOfCustomers,
+
+                                offerPic: this.fileSelect,
+                                picName: this.offerPic
+
+                            });
+                        }
+                    }
+                });
             },
             cancelOffer(){
                 ///reseting all inputs
@@ -238,6 +355,8 @@
                 this.offerExpDate= new Date().toISOString().substr(0, 10);
                 this.points=5;
                 this.numOfCustomers= 5;
+                this.offerPic='';
+                this.fileSelect = '';
 
                 this.newOfferDialog=false;
                 this.btnLoading = false;
@@ -249,4 +368,23 @@
 
 <style>
 
+    .v-card--reveal {
+        align-items: center;
+        bottom: 0;
+        text-align: center;
+        justify-content: center;
+        opacity: .5;
+        position: absolute;
+        width: 100%;
+    }
+    .slide-fade-enter-active {
+        transition: all .3s ease;
+    }
+    .slide-fade-leave-active {
+        transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+    }
+    .slide-fade-enter, .slide-fade-leave-to{
+    transform: translateX(10px);
+    opacity: 0;
+    }
 </style>

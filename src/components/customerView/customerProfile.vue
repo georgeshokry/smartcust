@@ -53,6 +53,8 @@
                                 <span >You're offline!</span>
                             </v-tooltip>
                             </div>
+                            <v-spacer></v-spacer>
+                            <v-icon >notifications_none</v-icon>
 
                             <v-menu bottom left>
                                 <template v-slot:activator="{ on }">
@@ -81,7 +83,10 @@
                         <v-card-text style="height: 100%; padding: 0px">
                             <v-parallax  src="https://firebasestorage.googleapis.com/v0/b/smartcustomer-d9202.appspot.com/o/logo-teaser-photos%2Fback4.png?alt=media&token=0cce690b-982c-4b48-85dd-1b529ba2656e" height="1000" jumbotron  style="height: 100%;  background-color: black;">
 
-                            <v-layout row wrap style="justify-content: center;     margin-top: 65px;">
+                            <v-layout row wrap style="justify-content: center; min-width: 50%">
+                                <v-flex d-flex xs12 style="margin-bottom: 10px">
+                                    <newofferscard style="margin: 10px; "></newofferscard>
+                                </v-flex>
 
                                 <div style=" height: 100%; margin: 5px">
                                     <div transition="fade-transition">
@@ -91,16 +96,15 @@
                                 </div>
 
 
-                                <div style=" height: 100%; width: 50%; margin: 5px;text-align: -webkit-center; ">
+                                <div style=" height: 100%; margin: 5px;text-align: -webkit-center; ">
+
                                     <v-flex d-flex xs12>
                                         <v-layout row wrap style="    justify-content: center;">
                                         <pointscard style="margin: 10px"></pointscard>
                                         <ordersprofile style="margin: 10px"></ordersprofile>
                                         </v-layout>
                                     </v-flex>
-                                    <v-flex d-flex xs12>
-                                    <newofferscard style="margin: 10px; "></newofferscard>
-                                    </v-flex>
+
                                 </div>
 
                             </v-layout>
@@ -259,7 +263,6 @@
 
             this.$store.dispatch('getCustProfileInfo');
 
-            this.watchScrolling();
 
         },
         methods: {

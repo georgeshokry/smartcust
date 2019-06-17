@@ -28,6 +28,7 @@ export const store = new Vuex.Store({
 
 ////to stop any listener during the app after the user logged out
         stopProfileListener: null,
+        stopOffersListener: null,
     },
     mutations:{
         setError(state, payload){
@@ -74,8 +75,13 @@ export const store = new Vuex.Store({
         setProfileInfoDb(state, payload){
             state.profileInfoDb = payload;
         },
+
+
         setProfileListener(state, paylaod){
             state.stopProfileListener = paylaod;
+        },
+        setOffersListener(state, payload){
+            state.stopOffersListener = payload;
         },
 
 
@@ -83,6 +89,9 @@ export const store = new Vuex.Store({
 ////to stop any listener during the app after the user logged out
         stopPeofileListener(state){
             state.stopProfileListener();
+        },
+        stopOffersListener(state){
+            state.stopOffersListener();
         }
     },
     actions:{
@@ -362,6 +371,7 @@ export const store = new Vuex.Store({
         logoutUser({commit}){
             firebase.auth().signOut().then((user) => {
                 commit('stopPeofileListener');
+                commit('stopOffersListener');
 
                 commit('setUserStat', null);
                 ////encrypt the un id of user before set in localstorage for future login
@@ -405,6 +415,7 @@ export const store = new Vuex.Store({
         ////add new offer by offer, title, content, expiration type, offer points
         addNewOffer({commit}, payload){
             const db = firebase.firestore();
+            const storage = firebase.storage();
 
             let offerCreatedTimestamp = new Date();
             commit('setError', null);
@@ -438,13 +449,18 @@ export const store = new Vuex.Store({
 
                 }];
             }
-            db.collection("offers").add(dataWithExpType[0]).then(function (docRef) {
-                db.collection("offers").doc(docRef.id).update({idOfOffer: docRef.id});
-                console.log(docRef.id);
-                commit('setFirebaseSuccess', "Offer Published Successfully, Prepare to get a lot of Orders Now!");
-
-            }).catch(function(error) {
-                commit('setError', "Problem in Saving Offer, Try Again!");
+            storage.ref().child("offersPic/" + payload.picName).put(payload.offerPic).then(function (snapshot) {
+                    snapshot.ref.getDownloadURL().then(function(downloadURL) {
+                        console.log(downloadURL);
+                        db.collection("offers").add(dataWithExpType[0]).then(function (docRef) {
+                            db.collection("offers").doc(docRef.id).update({idOfOffer: docRef.id, offerPic: downloadURL});
+                            commit('setFirebaseSuccess', "Offer Published Successfully, Prepare to get Orders Now!");
+                        }).catch(function(error) {
+                            commit('setError', "Problem in Saving Offer, Try Again!");
+                        });
+                    });
+            }).catch(function (err) {
+                commit('setError', "Problem in Saving Photo, Try Again!");
             });
         },
 
@@ -455,7 +471,7 @@ export const store = new Vuex.Store({
             const db = firebase.firestore();
             let offers = [];
             let numOfOffers= 0;
-            db.collection('offers').onSnapshot(function (querySnapshot) {
+            let stopOffersListener = db.collection('offers').onSnapshot(function (querySnapshot) {
 
                 querySnapshot.forEach(function (doc) {
                     offers.push(doc.data());
@@ -464,9 +480,10 @@ export const store = new Vuex.Store({
 
 
                 commit("setAllOffers", {"offers": offers, "numOfOffers": numOfOffers});
+
                 offers = [];
             });
-
+            commit("setOffersListener", stopOffersListener);
 
             // db.collection('offers').get().then(onSnapshot =>{
             //         onSnapshot.docs.forEach(doc => {
