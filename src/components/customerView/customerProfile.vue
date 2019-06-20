@@ -1,5 +1,13 @@
 <template>
     <v-app>
+
+<!--        <v-layout row justify-center align-center v-if="dataLoading" style="min-height: 263px" transition="scale-transition">-->
+<!--            <v-progress-circular-->
+<!--                    indeterminate-->
+<!--                    color="black"-->
+<!--            ></v-progress-circular>-->
+<!--        </v-layout>-->
+
         <v-card flat >
             <v-toolbar
 
@@ -26,35 +34,63 @@
 
             <v-layout row pb-2 style="height: 100vh; z-index: 1">
                 <v-flex xs10 offset-xs1>
-                    <v-card class="card--flex-toolbar" elevation="0">
+                    <v-card class="card--flex-toolbar" elevation="0" style="background-color: black;">
 
-                        <v-toolbar   prominent  absolute fixed style="position: sticky;">
-                            <span class="breaking-news">Breaking News</span>
-                            <v-toolbar-title class="body-2 grey--text">
+                        <v-toolbar   prominent  absolute fixed style="position: sticky; border-radius: 0px 0px 20px 20px;">
 
+                            <v-layout row justify-center align-center  v-if="dataLoading" style="max-height: 263px;max-width: 100px;" transition="scale-transition">
+                                <v-progress-circular
+                                        indeterminate
+                                        color="black"
+                                ></v-progress-circular>
+                            </v-layout>
 
-                                <div >
-                                            <transition name="slide-fade" tag="div" mode="out-in">
-                                                <a class="news" href="#" v-if="news[0]" key="0">SOON</a>
-                                                <a class="news" href="#" v-if="news[1]" key="1">Will see photographer News Here</a>
-                                            </transition>
-                                </div>
-                            </v-toolbar-title>
+                            <div  style="z-index: 2" v-show="dataLoaded">
+                                <v-layout row wrap style="align-items: center; justify-content: center">
+                                <v-avatar
+                                        :tile="false"
+                                        size="40px"
+                                        color="grey lighten-4"
+
+                                >
+                                    <img :src="iconType" alt="avatar">
+                                </v-avatar>
+                                    <v-divider vertical inset class=" ma-2"></v-divider>
+                                    <div style="font-size: 1em;">
+                                    <v-scroll-y-transition name="slide-fade" tag="div" mode="out-in">
+                                        <div style="font-weight: 700;text-transform: capitalize;" class="news header-text"  v-if="news[0]" key="0"></div>
+                                        <div style="font-weight: 700;text-transform: capitalize;" class="news header-text"  v-if="news[1]" key="1">Hi, {{dataGetted.userFirstName}}!</div>
+                                        <div style="font-weight: 700;text-transform: capitalize;" class="news header-text"  v-if="news[2]" key="2">Check Out the latest Offers!</div>
+                                        <div style="font-weight: 700;text-transform: capitalize;" class="news header-text"  v-if="news[3]" key="3" @click="">{{dataGetted.userFirstName}}</div>
+
+                                    </v-scroll-y-transition>
+                                    </div>
+
+                                </v-layout>
+                            </div>
 
                             <v-spacer></v-spacer>
 
+
+                            <v-icon >notifications_none</v-icon>
+
+
+                            <v-divider vertical inset dark class="mx-2"></v-divider>
+<!--                            the indicator for internet -->
                             <div style="z-index: 999; cursor: default;">
-                            <v-tooltip lazy left color="red" >
-                                <template v-slot:activator="{ on }">
-                                    <v-expand-x-transition>
-                                    <v-icon v-show="noInternetIcon" v-on="on">cloud_off</v-icon>
-                                    </v-expand-x-transition>
-                                </template>
-                                <span >You're offline!</span>
-                            </v-tooltip>
+                                <v-tooltip lazy bottom color="red" >
+                                    <template v-slot:activator="{ on }">
+                                        <v-expand-x-transition>
+                                            <v-icon v-show="noInternetIcon" v-on="on" color="red">cloud_off</v-icon>
+                                        </v-expand-x-transition>
+                                    </template>
+                                    <span >You're offline!</span>
+                                </v-tooltip>
                             </div>
 
-                            <v-menu bottom left>
+                            <v-divider vertical inset  class="mx-3"></v-divider>
+
+                            <v-menu bottom left offset-y>
                                 <template v-slot:activator="{ on }">
                                     <v-btn
                                             icon
@@ -81,7 +117,10 @@
                         <v-card-text style="height: 100%; padding: 0px">
                             <v-parallax  src="https://firebasestorage.googleapis.com/v0/b/smartcustomer-d9202.appspot.com/o/logo-teaser-photos%2Fback4.png?alt=media&token=0cce690b-982c-4b48-85dd-1b529ba2656e" height="1000" jumbotron  style="height: 100%;  background-color: black;">
 
-                            <v-layout row wrap style="justify-content: center;     margin-top: 65px;">
+                            <v-layout row wrap style="justify-content: center; min-width: 50%">
+                                <v-flex d-flex xs12 style="margin-bottom: 10px">
+                                    <newofferscard style="margin: 10px; "></newofferscard>
+                                </v-flex>
 
                                 <div style=" height: 100%; margin: 5px">
                                     <div transition="fade-transition">
@@ -91,16 +130,15 @@
                                 </div>
 
 
-                                <div style=" height: 100%; width: 50%; margin: 5px;text-align: -webkit-center; ">
+                                <div style=" height: 100%; margin: 5px;text-align: -webkit-center; ">
+
                                     <v-flex d-flex xs12>
                                         <v-layout row wrap style="    justify-content: center;">
                                         <pointscard style="margin: 10px"></pointscard>
                                         <ordersprofile style="margin: 10px"></ordersprofile>
                                         </v-layout>
                                     </v-flex>
-                                    <v-flex d-flex xs12>
-                                    <newofferscard style="margin: 10px; "></newofferscard>
-                                    </v-flex>
+
                                 </div>
 
                             </v-layout>
@@ -160,20 +198,25 @@
     import Newofferscard from "./newOffersCard";
     import Appfooter from "../appFooter";
     import Pointsplancard from "./pointsPlanCard";
-    import SimpleCrypto from "simple-crypto-js";
 
+    import SimpleCrypto from "simple-crypto-js";
+    import avatarMixin from "./mixins/userInfoMixin"
     export default {
         name: 'customerprofile',
         components: {Pointsplancard, Appfooter, Newofferscard, Pointscard, Ordersprofile, Profilecard},
+        mixins: [avatarMixin],
         data: () => {
 
             return{
+                dataLoading: true,
+                dataLoaded: false,
                 // the snackbar of whole customer app for firebase msg and alerts
                 firebaseAlerts:false,
                 firebaseMsg: "",
                 msgColor: "",
                 msgTimeoutInterval: 4000,
                 snackbarIcon: "",
+                counetr:0,
 
                 noInternetIcon: false,
                 connection: false,
@@ -184,6 +227,8 @@
                 news: [
                     true,
                     false,
+                    false,
+                    false
                 ]
             }
         },
@@ -200,15 +245,26 @@
             },
             getFirebaseErrors() {
                 return this.$store.getters.firebaseError;
+            },
+            checkDatabaseLoaded(){
+                return this.dataGetted;
             }
         },
         watch:{
+            checkDatabaseLoaded(data){
+                if(data) {
+                    this.dataLoading = false;
+                    this.dataLoaded = true;
+                    setInterval(this.updateTicker, 3000);
+                }
+            },
 
             watchUserLogger(state){
                 console.log("LOGGER NOW", state);
                 if(state === null){
                     this.$router.replace('/customerlogin');
                 }
+
             },
             connectionChecker(con){
                 if(con === true){
@@ -255,17 +311,20 @@
                 this.$router.replace('/customerlogin');
             }
             this.$store.dispatch('checkConnetion');
-            setInterval(this.updateTicker, 3000);
+
+
 
             this.$store.dispatch('getCustProfileInfo');
 
-            this.watchScrolling();
 
         },
         methods: {
             updateTicker: function() {
-                let removed = this.news.pop();
-                this.news.unshift(removed);
+                if(this.counetr < 3) {
+                    let removed = this.news.pop();
+                    this.news.unshift(removed);
+                }
+                this.counetr +=1;
             },
             logoutCust(){
                 this.$store.dispatch('logoutUser');
@@ -337,6 +396,14 @@
     @keyframes blink {
         50% {
             opacity: 0;
+        }
+    }
+
+    @media screen and (max-width: 375px) {
+        div.header-text {
+            font-size: 10px;
+            word-break: break-word;
+            max-width: 50px;
         }
     }
 </style>
