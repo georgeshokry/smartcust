@@ -26,7 +26,7 @@
                                         <v-icon>create</v-icon>
                                     </v-btn>
                                 </template>
-                                <span >Edit Profile Info</span>
+                                <span >Edit Profile</span>
                             </v-tooltip>
                         </div>
 
@@ -48,7 +48,7 @@
                                 id="card-title"
                         >
                             <div>
-                                <span class="headline mb-0">{{ greetings }}, {{userName}}!</span>
+                                <span class="headline mb-0">{{ greetings }}, <span style="text-transform: capitalize;">{{userName}}</span>!</span>
                                 <v-divider class="profile-divider"></v-divider>
                             </div>
                         </v-card-title>
@@ -78,17 +78,14 @@
 
                             <v-card>
 
-                                <v-card-title
-                                        class="headline grey lighten-2"
-                                        primary-title
-                                >
-                                    Edit Profile
+                                <v-card-title style="background-color: #dcdcdc; ">
+                                    <span class="headline"><v-icon medium >create </v-icon> Edit Profile</span>
                                 </v-card-title>
 
                                 <v-card-text>
                                     <v-text-field
                                             v-model="editEmail"
-                                            label="Email"
+                                            label="Email (Can't Edit this field)"
                                             color="black"
                                             readonly
                                             disabled
@@ -165,9 +162,11 @@
 </template>
 <script>
 
+    import avatarMixin from "./mixins/userInfoMixin"
     export default {
         name: 'profilecard',
         components: {},
+        mixins: [avatarMixin],
         data: () => {
             return{
                 //the loading views show until all data loaded from database
@@ -192,19 +191,17 @@
             }
         },
         computed:{
-            getUserInfo(){
-                return this.$store.getters.getProfileInfoDb;
+            getData(){
+                return this.dataGetted;
             }
         },
         watch:{
-            getUserInfo(userData){
+            getData(userData){
 
                 if(userData){
-                    if(userData.userGender === "Male"){
-                        this.avatarIcon = require("@/assets/male-avatar.png");
-                    }else if(userData.userGender === "Female"){
-                        this.avatarIcon = require("@/assets/female-avatar.png");
-                    }
+
+                    console.log(this.iconType);
+                    this.avatarIcon = this.iconType;
                     this.userName = userData.userFirstName;
                     this.userEmail = userData.userEmail;
                     this.userPhone = userData.userPhone;
@@ -298,6 +295,7 @@
         margin-left: 208px;
         text-align: right;
         padding-bottom: 7px;
+        padding-left: 7px;
 
     }
 

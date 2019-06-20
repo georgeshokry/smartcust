@@ -1,5 +1,6 @@
 <template>
-  <div id="app" style="min-height: 100vh">
+
+  <div id="app" style="min-height: 100vh"  >
 
 <!--      <div v-if="showAppLoader">-->
 <!--      <v-progress-circular-->
@@ -24,10 +25,12 @@ import Navbar from "@/components/adminView/Navbar";
       name: "app",
       data() {
         return {
-            showAppLoader: true,
-          showNav: true,
+
         }
-      }
+      },
+        created() {
+
+        }
         // computed: {
         //     user(){
         //         return this.$store.getters.userStatus;

@@ -24,8 +24,8 @@
 
                         </v-flex>
                     </v-card-title>
-                    <v-card-actions style="justify-content: center; padding: 30px;">
-                        <v-btn outline  color="white" to="/home">Back To Profile</v-btn>
+                    <v-card-actions style="justify-content: center; padding: 0px 30px 30px;">
+                        <v-btn outline  color="white" :to="distPath">Back To {{dist}}</v-btn>
 
                     </v-card-actions>
 
@@ -38,15 +38,42 @@
 <script>
 
 
-
+    import SimpleCrypto from "simple-crypto-js";
     export default {
         components: { },
         name: 'http404',
         data () {
             return {
-
+                dist: "",
+                distPath: ""
             }
         },
+        computed:{
+            user(){
+                return this.$store.getters.userStatus;
+            },
+        },
+        watch: {
+
+        },
+        created() {
+
+
+                    let localSession = localStorage.getItem('appData');
+                    let _secretKey = "set-NuN-Chernobyl-WhoDidIt";
+                    let simpleCrypto = new SimpleCrypto(_secretKey);
+                    let decipherUser = simpleCrypto.decrypt(localSession);
+
+                    if (decipherUser === "X0P3ELO7GISMdClcAXAj9jaPE4u1") {
+                        this.dist = "Dashboard";
+                        this.distPath = "/dashboard";
+                    }else{
+                        this.dist = "Profile";
+                        this.distPath = "/home";
+                    }
+
+
+        }
 
     }
 </script>

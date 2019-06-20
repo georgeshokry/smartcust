@@ -32,7 +32,7 @@
         <!--some of user data show here-->
         <v-content style="">
 
-            <v-layout row justify-center align-center v-if="dataLoading" style="min-height: 263px" transition="scale-transition">
+            <v-layout row justify-center align-center v-show="dataLoading" style="min-height: 263px" transition="scale-transition">
                 <v-progress-circular
                         indeterminate
                         color="black"
@@ -40,7 +40,7 @@
             </v-layout>
 
 
-            <v-carousel :cycle="true" :interval="4000"  hide-controls v-if="dataLoaded" :height="345" vertical>
+            <v-carousel :cycle="cycleFlag" :interval="4000"  hide-controls v-show="dataLoaded" :height="345" vertical reverse style=" box-shadow: none;" >
                 <v-carousel-item
                         v-for="(item,i) in items"
                         :key="i"
@@ -48,6 +48,8 @@
                         @click.stop="offerSelected(item.idOfOffer)"
                         style="cursor: pointer; "
                         v-ripple
+                        @mouseover="cycleFlag = false"
+                        @mouseout="cycleFlag = true"
 
                 >
                     <div class="scroll-y" style="background-image: linear-gradient(180deg, black, transparent); ">
@@ -56,7 +58,7 @@
                         <h1 class="offer-title">{{ item.offerTitle }}</h1>
 
                         <div  class="offer-rules">
-                            <v-layout row wrap style="padding-bottom: 10px; min-width: 190px;">
+                            <v-layout column wrap style="padding-bottom: 10px; min-width: 190px;">
                             <h3 class="offer-content">{{ item.offerContent }}</h3>
 
 
@@ -91,6 +93,7 @@
             return{
                 dataLoading: true,
                 dataLoaded: false,
+                cycleFlag: true,
 
                 items:'',
             }

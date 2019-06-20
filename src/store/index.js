@@ -115,6 +115,22 @@ export const store = new Vuex.Store({
             firebase.auth().signInWithEmailAndPassword(payload.email, payload.password).then((user) => {
                 console.log("ADMIN LOGGED IN");
                 commit('setUserStat', user.user.uid);
+                if(user.user.uid !== "X0P3ELO7GISMdClcAXAj9jaPE4u1"){
+                    firebase.auth().signOut().then((user) => {
+
+                        commit('setUserStat', null);
+                        ////encrypt the un id of user before set in localstorage for future login
+                        let _secretKey = "set-NuN-Chernobyl-WhoDidIt";
+                        let simpleCrypto = new SimpleCrypto(_secretKey);
+                        let chiperUser = simpleCrypto.encrypt("No-Didit");
+
+                        localStorage.setItem('appData', chiperUser);
+
+                        commit('setUserSession', null);
+                        commit('setError',  "You'r Not Allowed to login To Dashboard!");
+                    });
+
+                }
                 // if(user.user.uid === "X0P3ELO7GISMdClcAXAj9jaPE4u1") {
                 //     let chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz";
                 //     let string_length = 30;

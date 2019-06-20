@@ -50,6 +50,7 @@
                                 box
                                 clearable
                                 prepend-inner-icon="account_box"
+                                v-on:keyup.enter="loginNow"
                                 autofocus
                         ></v-text-field>
                         <v-text-field
@@ -104,7 +105,7 @@
                 max-width="700px"
         >
 
-            <v-stepper v-model="creatingStepper" >
+            <v-stepper v-model="creatingStepper"  >
                 <v-btn icon @click="cancelCreatingDialog" style="margin-left: 88%; padding: 1%;"><v-icon  >close</v-icon></v-btn>
                 <v-stepper-header>
                     <v-stepper-step color="black" :complete="creatingStepper > 1" step="1">Account Info</v-stepper-step>
@@ -115,7 +116,7 @@
 
                     <v-divider></v-divider>
 
-                    <v-stepper-step color="black" :complete="creatingStepper > 3" step="3">Points Code <small>Optional</small></v-stepper-step>
+                    <v-stepper-step color="black" :complete="creatingStepper > 3" step="3">Points Code <small>(Optional)</small></v-stepper-step>
 
                     <v-divider></v-divider>
 
@@ -544,13 +545,14 @@
         },
         methods:{
             cancelCreatingDialog(){
+                this.$validator.reset();
                 this.signupDialog = false;
                 this.creatingStepper = 1;
             },
 
             getAccountInfo(){
 
-                this.signupLoading= true;
+
                 this.signupAlert= false;
                 this.signupErrorMsg= "";
 
@@ -562,6 +564,7 @@
 
                 this.$validator.validateAll(results).then(() => {
                     if (!this.errors.any()) {
+                        this.signupLoading= true;
                         this.$store.dispatch('signupUser', {email: this.createEmail, password: this.createRePassword});
                         this.creatingStepper = 2;
                         this.signupLoading =  false;
@@ -570,7 +573,7 @@
                 });
             },
             getUserInfo(){
-                this.profileLoading= true;
+
                 this.profileAlert= false;
                 this.profileErrorMsg= "";
 
@@ -582,6 +585,7 @@
                 ]);
                 this.$validator.validateAll(results).then(() => {
                     if (!this.errors.any()) {
+                        this.profileLoading= true;
                         this.$store.dispatch('setupUserProfile', {
                             userFirstName: this.createFirstName,
                             userLastName: this.createLastName,
@@ -598,13 +602,14 @@
             startRedeem(){
 
                 this.promoMsg = "";
-                this.promoLoading = true;
+
                 this.promoAlert = false;
                 const results = Promise.all([
                     this.$validator.validate('Promo Code'),
                 ]);
                 this.$validator.validateAll(results).then(() => {
                     if (!this.errors.any()) {
+                        this.promoLoading = true;
                         this.$store.dispatch('redeemPromoCode', {promoId: this.createPromoCode});
                     }
                 });

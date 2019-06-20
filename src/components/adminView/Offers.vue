@@ -177,7 +177,7 @@
 
     },
 
-    created () {
+    mounted () {
         this.allOffersNow();
     },
 

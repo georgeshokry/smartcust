@@ -22,39 +22,87 @@
         >
             <div>
                 <v-icon size="50px" color="black">stars</v-icon>
-                <h3>Your Points</h3>
+                <h3>Points</h3>
 
             </div>
         </v-card-title>
 
         <v-content class="points">
             <div>
-                <span style="font-family: cursive;">{{ userPoints }}</span>
+
+
+                <v-badge right  color="white" style="margin-top: 10px;" >
+
+                    <template  v-slot:badge >
+                        <span style="color: black"><v-btn icon size="5px" color="white" @click="pointsRules= true"><v-icon size="20px" style="font-weight:bold;">help_outline</v-icon></v-btn></span>
+                    </template>
+                    <span style="font-family: cursive;">
+                        <animated-number
+                                :value="userPoints"
+                                :round="1"
+                                :duration="1000"
+                                style="font-size: -webkit-xxx-large;"
+                        />
+                    </span>
+                </v-badge>
+
                 <v-card-text style="font-size: medium;padding: 0px;">Smart Code: {{ userCode }}</v-card-text>
             </div>
             <v-divider style="margin-left: 15px; margin-right: 15px"></v-divider>
             <div style="padding: 15px">
 
 
-                <v-card-text style="font-size: small;padding: 0px;">
-                    *Share your Smart Code<br>to get more Points,<br>
-                    Every new customer use you're code<br>
-                    you will get <span>(20)</span> Points
-                </v-card-text>
+
             </div>
         </v-content>
         </div>
+
+        <v-dialog
+                v-model="pointsRules"
+                width="400"
+                style="z-index: 55"
+                scrollable
+        >
+
+            <v-card>
+                <v-card-title style="background-color: #dcdcdc; ">
+                <span class="headline"><v-icon medium >help </v-icon> Points Rules*</span>
+                </v-card-title>
+
+                <v-card-text>
+                    *Share your Smart Code to get more Points,<br>
+                    Every new customer create new account with using your Smart Code
+                    you will get <span style="font-weight: bold">(20)</span> points in return.
+                </v-card-text>
+
+                <v-divider></v-divider>
+
+                <v-card-actions style="align-self: center;">
+                    <v-spacer></v-spacer>
+                    <v-btn
+                            dark
+                            color="black"
+                            flat
+                            @click="pointsRules = false"
+                    >
+                       OK
+                    </v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
+
     </v-card>
 </template>
 <script>
-
+    import AnimatedNumber from "animated-number-vue";
     export default {
         name: 'pointscard',
-        components: {},
+        components: {AnimatedNumber},
         data: () => {
             return{
                 dataLoading: true,
                 dataLoaded: false,
+                pointsRules: false,
 
                 userPoints: '',
                 userCode: ''
@@ -96,7 +144,7 @@
 
     }
     #points-title{
-        padding-top: 40px;
+        padding-top: 45px;
         padding-bottom: 5px;
         justify-content: center;
     }
