@@ -32,9 +32,9 @@
 
             </v-toolbar>
 
-            <v-layout row pb-2 style="height: 100vh; z-index: 1">
-                <v-flex xs10 offset-xs1>
-                    <v-card class="card--flex-toolbar" elevation="0" style="background-color: black;">
+            <v-layout row pb-2 style="height: 100vh; z-index: 1" >
+                <v-flex xs10 offset-xs1 >
+                    <v-card class="card--flex-toolbar" elevation="0" style="background-color: black;" >
 
                         <v-toolbar   prominent  absolute fixed style="position: sticky; border-radius: 0px 0px 20px 20px;">
 
@@ -57,13 +57,13 @@
                                 </v-avatar>
                                     <v-divider vertical inset class=" ma-2"></v-divider>
                                     <div style="font-size: 1em;">
-                                    <v-scroll-y-transition name="slide-fade" tag="div" mode="out-in">
+                                    <v-scroll-x-transition name="slide-fade" tag="div" mode="out-in">
                                         <div style="font-weight: 700;text-transform: capitalize;" class="news header-text"  v-if="news[0]" key="0"></div>
                                         <div style="font-weight: 700;text-transform: capitalize;" class="news header-text"  v-if="news[1]" key="1">Hi, {{dataGetted.userFirstName}}!</div>
-                                        <div style="font-weight: 700;text-transform: capitalize;" class="news header-text"  v-if="news[2]" key="2">Check Out the latest Offers!</div>
+                                        <div style="font-weight: 700;text-transform: capitalize;" class="news header-text"  v-if="news[2]" key="2">{{randomHints}}</div>
                                         <div style="font-weight: 700;text-transform: capitalize;" class="news header-text"  v-if="news[3]" key="3" @click="">{{dataGetted.userFirstName}}</div>
 
-                                    </v-scroll-y-transition>
+                                    </v-scroll-x-transition>
                                     </div>
 
                                 </v-layout>
@@ -72,23 +72,24 @@
                             <v-spacer></v-spacer>
 
 
+                            <v-layout row wrap justify-end>
                             <v-icon >notifications_none</v-icon>
 
 
-                            <v-divider vertical inset dark class="mx-2"></v-divider>
+                            <v-divider vertical inset dark class="mx-2 ma-2" ></v-divider>
 <!--                            the indicator for internet -->
-                            <div style="z-index: 999; cursor: default;">
-                                <v-tooltip lazy bottom color="red" >
+
+                                <v-tooltip lazy bottom nudge-bottom="-15" color="red" >
                                     <template v-slot:activator="{ on }">
                                         <v-expand-x-transition>
-                                            <v-icon v-show="noInternetIcon" v-on="on" color="red">cloud_off</v-icon>
+                                            <v-icon v-show="noInternetIcon" v-on="on" color="red" style="cursor: default">cloud_off</v-icon>
                                         </v-expand-x-transition>
                                     </template>
                                     <span >You're offline!</span>
                                 </v-tooltip>
-                            </div>
 
-                            <v-divider vertical inset  class="mx-3"></v-divider>
+
+                            <v-divider vertical inset  class="mx-3 ma-2"></v-divider>
 
                             <v-menu bottom left offset-y>
                                 <template v-slot:activator="{ on }">
@@ -109,37 +110,45 @@
                                     </v-list-tile>
                                 </v-list>
                             </v-menu>
+                            </v-layout>
 
                         </v-toolbar>
 
                         <v-divider></v-divider>
 
-                        <v-card-text style="height: 100%; padding: 0px">
+                        <v-card-text style="height: 100%; padding: 0px" >
                             <v-parallax  src="https://firebasestorage.googleapis.com/v0/b/smartcustomer-d9202.appspot.com/o/logo-teaser-photos%2Fback4.png?alt=media&token=0cce690b-982c-4b48-85dd-1b529ba2656e" height="1000" jumbotron  style="height: 100%;  background-color: black;">
 
-                            <v-layout row wrap style="justify-content: center; min-width: 50%">
-                                <v-flex d-flex xs12 style="margin-bottom: 10px">
-                                    <newofferscard style="margin: 10px; "></newofferscard>
-                                </v-flex>
+                            <v-layout row wrap  justify-center style="" >
 
-                                <div style=" height: 100%; margin: 5px">
-                                    <div transition="fade-transition">
-                                    <profilecard  style="margin: 10px"></profilecard>
-                                    </div>
-                                    <pointsplancard style="margin: 10px"></pointsplancard>
-                                </div>
+                                <v-layout column wrap style="align-content: center; max-height: fit-content; max-width: fit-content">
+                                <profilecard  style="margin: 10px; min-width: 250px; "></profilecard>
+                                <ordersprofile style="margin: 10px"></ordersprofile>
+                                </v-layout>
+                                <v-layout row wrap>
+                                <div style=" margin: 5px; width: 100%">
 
-
-                                <div style=" height: 100%; margin: 5px;text-align: -webkit-center; ">
-
-                                    <v-flex d-flex xs12>
-                                        <v-layout row wrap style="    justify-content: center;">
-                                        <pointscard style="margin: 10px"></pointscard>
-                                        <ordersprofile style="margin: 10px"></ordersprofile>
-                                        </v-layout>
+                                    <v-flex d-flex xs12 justify-center style="margin-bottom: 10px; height: fit-content; min-width: fit-content">
+                                        <newofferscard style="margin: 10px; "></newofferscard>
                                     </v-flex>
 
                                 </div>
+                                </v-layout>
+
+                                <v-layout column wrap style="align-content: center; max-width: fit-content;">
+                                    <pointscard style="margin: 10px;height: fit-content; max-width: fit-content"></pointscard>
+                                    <pointsplancard style="margin: 10px"></pointsplancard>
+                                </v-layout>
+<!--                                <div style=" height: 100%; margin: 5px;text-align: -webkit-center; ">-->
+
+<!--                                    <v-flex d-flex xs12>-->
+<!--                                        <v-layout row wrap style="    justify-content: center;">-->
+<!--                                        -->
+<!--                                        <ordersprofile style="margin: 10px"></ordersprofile>-->
+<!--                                        </v-layout>-->
+<!--                                    </v-flex>-->
+
+<!--                                </div>-->
 
                             </v-layout>
 
@@ -200,11 +209,17 @@
     import Pointsplancard from "./pointsPlanCard";
 
     import SimpleCrypto from "simple-crypto-js";
-    import avatarMixin from "./mixins/userInfoMixin"
+    import userInfoMixin from "./mixins/userInfoMixin";
+
+    const hints = [
+        "Check Out the latest Offers!",
+        "Don't forget to share your SmartCode!",
+        "Have a nice day!",
+    ];
     export default {
         name: 'customerprofile',
         components: {Pointsplancard, Appfooter, Newofferscard, Pointscard, Ordersprofile, Profilecard},
-        mixins: [avatarMixin],
+        mixins: [userInfoMixin],
         data: () => {
 
             return{
@@ -217,6 +232,8 @@
                 msgTimeoutInterval: 4000,
                 snackbarIcon: "",
                 counetr:0,
+
+                randomHints: hints[Math.floor(Math.random() * hints.length)],
 
                 noInternetIcon: false,
                 connection: false,
@@ -401,9 +418,10 @@
 
     @media screen and (max-width: 375px) {
         div.header-text {
-            font-size: 10px;
+            font-size: 8px;
             word-break: break-word;
-            max-width: 50px;
+            max-width: 60px;
+            max-height: 30px;
         }
     }
 </style>

@@ -3,8 +3,8 @@
             :tile="true"
             :elevation="10"
             max-width="100%"
-            min-height="100%"
-
+            min-width="250px"
+            height="460px"
             id="rounded-card"
 
     >
@@ -30,7 +30,7 @@
 
 
         <!--some of user data show here-->
-        <v-content style="">
+
 
             <v-layout row justify-center align-center v-show="dataLoading" style="min-height: 263px" transition="scale-transition">
                 <v-progress-circular
@@ -40,25 +40,26 @@
             </v-layout>
 
 
-            <v-carousel :cycle="cycleFlag" :interval="4000"  hide-controls v-show="dataLoaded" :height="345" vertical reverse style=" box-shadow: none;" >
+            <v-carousel :cycle="cycleFlag" :interval="4000"  hide-controls v-show="dataLoaded" :height="345" vertical reverse style=" box-shadow: none; border-radius: 0;" >
                 <v-carousel-item
                         v-for="(item,i) in items"
                         :key="i"
                         :src="item.offerPic"
                         @click.stop="offerSelected(item.idOfOffer)"
-                        style="cursor: pointer; "
+                        style="cursor: pointer;  "
                         v-ripple
                         @mouseover="cycleFlag = false"
                         @mouseout="cycleFlag = true"
+                        lazy
 
                 >
-                    <div class="scroll-y" style="background-image: linear-gradient(180deg, black, transparent); ">
+                    <div class="scroll-y" style="background-image: linear-gradient(120deg, black, transparent);     height: -webkit-fill-available;">
 
                         <div style="text-align: left; margin-top: 5px">
                         <h1 class="offer-title">{{ item.offerTitle }}</h1>
 
                         <div  class="offer-rules">
-                            <v-layout column wrap style="padding-bottom: 10px; min-width: 190px;">
+                            <v-layout column wrap style="padding-bottom: 10px; min-width: 210px;">
                             <h3 class="offer-content">{{ item.offerContent }}</h3>
 
 
@@ -81,7 +82,7 @@
 
                 </v-carousel-item>
             </v-carousel>
-        </v-content>
+
     </v-card>
 </template>
 <script>
