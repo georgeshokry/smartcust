@@ -25,6 +25,7 @@ export const store = new Vuex.Store({
         promoCodeMsg: null,
         promoSuccess: false,
         profileInfoDb: null,
+        usersMaxPoints: null,
 
 ////to stop any listener during the app after the user logged out
         stopProfileListener: null,
@@ -74,6 +75,9 @@ export const store = new Vuex.Store({
         },
         setProfileInfoDb(state, payload){
             state.profileInfoDb = payload;
+        },
+        setUsersMaxPoints(state, payload){
+            state.usersMaxPoints = payload;
         },
 
 
@@ -299,6 +303,7 @@ export const store = new Vuex.Store({
         },
         /////redeem promo code and add its points to user profile
         redeemPromoCode({commit}, payload){
+            commit('setPromoCodeSuccess', false);
             commit('setPromoCodeMsg', null);
             const db = firebase.firestore();
             // firebase.auth().currentUser.uid;
@@ -318,14 +323,19 @@ export const store = new Vuex.Store({
                             /////check if the code expired or not
                             if(promoExpdb >= dateNow){
 
-                                pointsRef.update("points", firebase.firestore.FieldValue.increment(doc.data().pointsToAdd));
-                                usersRedemsId.push(signedupUserId);
-                                db.collection("promoCodes").doc(payload.promoId).update({
-                                    usersRedeem: usersRedemsId
-                                }).then(function (){
-                                    commit('setPromoCodeSuccess', true);
-                                    commit('setPromoCodeMsg', "Congratulations! You won " + doc.data().pointsToAdd + " Points");
-                                })
+                                console.log(doc.data().pointsToAdd);
+                                pointsRef.update("userPoints", firebase.firestore.FieldValue.increment(doc.data().pointsToAdd)).then(function () {
+                                    usersRedemsId.push(signedupUserId);
+                                    db.collection("promoCodes").doc(payload.promoId).update({
+                                        usersRedeem: usersRedemsId
+                                    }).then(function (){
+                                        commit('setPromoCodeSuccess', true);
+                                        commit('setPromoCodeMsg', "Congratulations! You won " + doc.data().pointsToAdd + " Points");
+                                    });
+                                }).catch(function (error) {
+                                    commit('setPromoCodeMsg', "Problem in redeeming code!");
+                                });
+
                             }else if(promoExpdb < dateNow){
                                 ///here the code expired
 
@@ -544,6 +554,13 @@ export const store = new Vuex.Store({
             }).catch(function (error) {
                 commit('setError', "Problem in Editing Profile, Try Again! :");
             });
+        },
+        getMaxPointsUsersCode({commit}){
+            commit("setUsersMaxPoints", null);
+            const db = firebase.firestore();
+            db.collection("usersPromo").doc("maxPointsLevel").get().then(function(level) {
+                commit("setUsersMaxPoints", level.data().maxOwnerToAdd);
+            });
         }
 
     },
@@ -580,6 +597,9 @@ export const store = new Vuex.Store({
         },
         getProfileInfoDb(state){
             return state.profileInfoDb;
+        },
+        getUsersMaxPoints(state){
+            return state.usersMaxPoints;
         }
 
 
