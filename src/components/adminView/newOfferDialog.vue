@@ -1,7 +1,6 @@
 <template>
     <v-container
-            fluid grid-list-md
-            style=""
+
     >
 
 
@@ -25,19 +24,19 @@
 
 
 
-                <template v-slot:activator="{ on }">
-                    <v-btn  dark
-                            fixed
-                            bottom
-                            right
-                            fab
-                            style="margin-bottom: 35px"
-                            v-on="on"
+<!--                <template v-slot:activator="{ on }">-->
+<!--                    <v-btn  dark-->
+<!--                            fixed-->
+<!--                            bottom-->
+<!--                            right-->
+<!--                            fab-->
+<!--                            style="margin-bottom: 35px"-->
+<!--                            v-on="on"-->
 
-                    >
-                        <v-icon>add</v-icon>
-                    </v-btn>
-                </template>
+<!--                    >-->
+<!--                        <v-icon>add</v-icon>-->
+<!--                    </v-btn>-->
+<!--                </template>-->
 
 
 
@@ -54,6 +53,11 @@
                                 <v-flex xs12>
                                     <v-text-field
                                             outline
+
+                                            v-validate="'required:true'"
+                                            :error-messages="errors.collect('Offer Title')"
+                                            data-vv-name="Offer Title"
+
                                             color="black"
                                             label="Offer Title"
                                             v-model="offerTitle"
@@ -63,6 +67,11 @@
                                 <v-flex xs12>
                                     <v-text-field
                                             outline
+
+                                            v-validate="'required:true'"
+                                            :error-messages="errors.collect('Offer Content')"
+                                            data-vv-name="Offer Content"
+
                                             color="black"
                                             label="Offer Content"
                                             v-model="offerContent"
@@ -77,6 +86,11 @@
                                     >
                                         <v-text-field
                                                 v-model="points"
+
+                                                v-validate="'required:true'"
+                                                :error-messages="errors.collect('Offer Points')"
+                                                data-vv-name="Offer Points"
+
                                                 prepend-icon="import_export"
                                                 label="Offer Points"
                                                 color="black"
@@ -134,6 +148,11 @@
                                     >
                                         <v-text-field
                                                 v-model="numOfCustomers"
+
+                                                v-validate="'required:true'"
+                                                :error-messages="errors.collect('Number Of Customers')"
+                                                data-vv-name="Number Of Customers"
+
                                                 prepend-icon="people"
                                                 label="Number Of Customers"
                                                 color="black"
@@ -146,16 +165,16 @@
 
                                             xs12
                                     >
-
+                                        <v-subheader class="pl-0">Choose a photo for the offer:</v-subheader>
                                         <v-text-field
-                                                style="margin-top: 15px"
+                                                style=""
                                                 v-model="offerPic"
                                                 v-validate="'required:true'"
                                                 data-vv-rules="image|size:10000"
                                                 :error-messages="errors.collect('Offer Photo')"
                                                 data-vv-name="Offer Photo"
                                                 prepend-icon="add_photo_alternate"
-                                                label="Offer Photo"
+                                                label="Browse Offer Photo"
                                                 color="black"
                                                 readonly
 
@@ -186,11 +205,18 @@
 
                                                     <div
                                                             v-if="hover"
-                                                         class="d-flex fade-transition black darken-2 v-card--reveal display-3 white--text"
-                                                         style="width: 100%; height: 100%"
+                                                         class="d-flex fade-transition black darken-2 v-card--reveal display-3 white--text hover-remove-pic"
+
                                                     >
 
-                                                        <v-btn icon depressed style="font-size: small; max-width: 40px" color="white" @click="removePic"><v-icon>close</v-icon></v-btn>
+<!--                                                        <div class="remove-btn">-->
+<!--                                                        <v-btn icon depressed  style="max-width: 40px;" color="white" @click="removePic"><v-icon>close</v-icon></v-btn>-->
+<!--                                                            <h3 style="font-size: large;">Remove</h3>-->
+<!--                                                        </div>-->
+                                                    <div class="remove-btn">
+                                                        <v-btn icon depressed  style="max-width: 40px;" color="white" @click="startPicking"><v-icon>edit</v-icon></v-btn>
+                                                        <h3 style="font-size: large;">Change</h3>
+                                                    </div>
                                                     </div>
                                                 </v-expand-transition>
                                                 </v-card>
@@ -232,7 +258,7 @@
             offerExpDate: new Date().toISOString().substr(0, 10),
             points:5,
             numOfCustomers: 5,
-            newOfferDialog: false,
+
             datePickerMenu: false,
             showDatePicker: "byDate",
             offerPic: '',
@@ -244,7 +270,18 @@
             snackbarAlert: false,
             snackbarColor: ''
         }),
+        props: {
+            value: Boolean
+        },
         computed:{
+            newOfferDialog: {
+                get () {
+                    return this.value
+                },
+                set (value) {
+                    this.$emit('input', value)
+                }
+            },
             user(){
                 return this.$store.getters.userStatus;
             },
@@ -273,6 +310,7 @@
                 this.numOfCustomers= 5;
                 this.offerPic='';
                 this.fileSelect = '';
+                this.imagePreview="";
             },
             firebaseErrorShow(error){
                 this.firebaseMsg = error;
@@ -283,11 +321,11 @@
 
             }
         },
-        methods:{
-            startPicking(){
+        methods: {
+            startPicking() {
                 this.$refs.image.click()
             },
-            setImage(e){
+            setImage(e) {
                 let set = e.target.files;
                 this.offerPic = e.target.files[0].name;
 
@@ -299,28 +337,31 @@
                     this.fileSelect = set[0];
                 })
             },
-            removePic(){
+            removePic() {
                 this.imagePreview = '';
                 this.$refs.image.value = '';
                 this.offerPic = '';
                 this.fileSelect = '';
 
             },
-            startSaveOffer(){
+            startSaveOffer() {
 
 
-                const results = Promise.all([
-                    this.$validator.validate('Offer Photo'),
-
-                ]);
-
-                this.$validator.validateAll(results).then(() => {
-                    if (!this.errors.any()) {
-                        this.btnLoading = true;
-                        console.log(this.fileSelect);
+                if (this.showDatePicker === "byDate") {
+                    const results = Promise.all([
+                        this.$validator.validate('Offer Photo'),
+                        this.$validator.validate('Offer Title'),
+                        this.$validator.validate('Offer Content'),
+                        this.$validator.validate('Offer Points'),
 
 
-                        if (this.showDatePicker === "byDate") {
+                    ]);
+
+                    this.$validator.validateAll(results).then(() => {
+                        if (!this.errors.any()) {
+                            this.btnLoading = true;
+
+
                             this.$store.dispatch('addNewOffer', {
                                 offerTitle: this.offerTitle,
                                 offerContent: this.offerContent,
@@ -332,7 +373,25 @@
                                 picName: this.offerPic
 
                             });
-                        } else if (this.showDatePicker === "byNumOfCustomers") {
+
+
+                        }
+                    });
+                } else if (this.showDatePicker === "byNumOfCustomers") {
+                    const results = Promise.all([
+                        this.$validator.validate('Offer Photo'),
+                        this.$validator.validate('Offer Title'),
+                        this.$validator.validate('Offer Content'),
+                        this.$validator.validate('Offer Points'),
+                        this.$validator.validate('Number Of Customers'),
+
+                    ]);
+
+                    this.$validator.validateAll(results).then(() => {
+                        if (!this.errors.any()) {
+                            this.btnLoading = true;
+
+
                             this.$store.dispatch('addNewOffer', {
                                 offerTitle: this.offerTitle,
                                 offerContent: this.offerContent,
@@ -345,46 +404,45 @@
 
                             });
                         }
-                    }
-                });
-            },
-            cancelOffer(){
-                ///reseting all inputs
-                this.offerTitle= "";
-                this.offerContent= "";
-                this.offerExpDate= new Date().toISOString().substr(0, 10);
-                this.points=5;
-                this.numOfCustomers= 5;
-                this.offerPic='';
-                this.fileSelect = '';
+                    });
 
-                this.newOfferDialog=false;
+                }
+            },
+            cancelOffer() {
+                ///reseting all inputs
+                this.offerTitle = "";
+                this.offerContent = "";
+                this.offerExpDate = new Date().toISOString().substr(0, 10);
+                this.points = 5;
+                this.numOfCustomers = 5;
+                this.offerPic = '';
+                this.fileSelect = '';
+                this.imagePreview = '';
+
+                this.newOfferDialog = false;
                 this.btnLoading = false;
+                this.$validator.reset();
             }
         }
-
     }
 </script>
 
 <style>
 
-    .v-card--reveal {
-        align-items: center;
-        bottom: 0;
-        text-align: center;
-        justify-content: center;
-        opacity: .5;
-        position: absolute;
+    .hover-remove-pic{
         width: 100%;
+        height: 100%;
+        float: left;
+        position: absolute;
+        left: 0px;
+        top: 0px;
+        z-index: 1000;
+        filter: opacity(0.5);
     }
-    .slide-fade-enter-active {
-        transition: all .3s ease;
+    .remove-btn{
+        font-size: small;
+
+        margin: auto;
     }
-    .slide-fade-leave-active {
-        transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
-    }
-    .slide-fade-enter, .slide-fade-leave-to{
-    transform: translateX(10px);
-    opacity: 0;
-    }
+
 </style>

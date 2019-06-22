@@ -209,7 +209,8 @@
     import Pointsplancard from "./pointsPlanCard";
 
     import SimpleCrypto from "simple-crypto-js";
-    import userInfoMixin from "./mixins/userInfoMixin";
+    import userInfoMixin from "../mixins/userInfoMixin";
+    import checkConnectionMixin from "../mixins/checkConnectionMixin";
 
     const hints = [
         "Check Out the latest Offers!",
@@ -219,7 +220,7 @@
     export default {
         name: 'customerprofile',
         components: {Pointsplancard, Appfooter, Newofferscard, Pointscard, Ordersprofile, Profilecard},
-        mixins: [userInfoMixin],
+        mixins: [userInfoMixin, checkConnectionMixin],
         data: () => {
 
             return{
@@ -235,12 +236,12 @@
 
                 randomHints: hints[Math.floor(Math.random() * hints.length)],
 
-                noInternetIcon: false,
-                connection: false,
-                connectionError: "",
-                alertColor: "",
-                tickerLocation: 0,
-                timeoutInterval: 3000,
+                // noInternetIcon: false,
+                // connection: false,
+                // connectionError: "",
+                // alertColor: "",
+                // tickerLocation: 0,
+                // timeoutInterval: 3000,
                 news: [
                     true,
                     false,
@@ -253,10 +254,10 @@
             watchUserLogger(){
               return this.$store.getters.userStatus;
             },
-            connectionChecker(){
-
-                return this.$store.getters.getConnectionFlag;
-            },
+            // connectionChecker(){
+            //
+            //     return this.$store.getters.getConnectionFlag;
+            // },
             getFirebaseSuccess(){
                 return this.$store.getters.firebaseSuccesses;
             },
@@ -283,22 +284,22 @@
                 }
 
             },
-            connectionChecker(con){
-                if(con === true){
-                    this.timeoutInterval = 3000;
-                    this.connectionError = "You're back Online!";
-                    this.alertColor = "success";
-                    this.noInternetIcon = false;
-                    this.connection =  true;
-
-                }else if (con === false){
-                    this.timeoutInterval = 6000;
-                    this.connectionError = "You're Offline, Check your device connection!";
-                    this.alertColor = "error";
-                    this.noInternetIcon = true;
-                    this.connection =  true;
-                }
-            },
+            // connectionChecker(con) {
+            //     if (con === true) {
+            //         this.timeoutInterval = 3000;
+            //         this.connectionError = "You're back Online!";
+            //         this.alertColor = "success";
+            //         this.noInternetIcon = false;
+            //         this.connection = true;
+            //
+            //     } else if (con === false) {
+            //         this.timeoutInterval = 6000;
+            //         this.connectionError = "You're Offline, Check your device connection!";
+            //         this.alertColor = "error";
+            //         this.noInternetIcon = true;
+            //         this.connection = true;
+            //     }
+            // },
             getFirebaseSuccess(alert){
                 if(alert !== null){
                     this.firebaseMsg=  alert;
@@ -319,7 +320,13 @@
                 }
             }
         },
+        beforeDestroy:function(){
+
+                this.$store.dispatch("changeLastLoginState", "offline");
+
+        },
         created: function() {
+
             let localSession = localStorage.getItem('appData');
             let _secretKey = "set-NuN-Chernobyl-WhoDidIt";
             let simpleCrypto = new SimpleCrypto(_secretKey);
@@ -333,7 +340,8 @@
 
             this.$store.dispatch('getCustProfileInfo');
 
-
+            this.$store.dispatch("changeLastLoginState");
+            this.$store.dispatch("changeUserToOffline")
         },
         methods: {
             updateTicker: function() {

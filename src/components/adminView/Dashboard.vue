@@ -4,19 +4,19 @@
     <v-container
             fluid grid-list-md
             style="
-            padding-top: 30px;
+            padding-top: 85px;
             padding-bottom: 50px;
             height: auto;"
     >
 
 <navbar></navbar>
-        <newOfferDialog></newOfferDialog>
+
 
         <v-layout row wrap justify-space-between child-flex>
 
 
                     <v-flex d-flex xs12 sm4 md3   v-for="(card, i) in cards" :key="i"  justify-center>
-                        <v-card  elevation="10" max-width="250">
+                        <v-card  elevation="10" max-width="250" class="round-card" v-bind:id="card.id">
                             <v-card-text>
                                 <v-icon color="black" x-large>{{card.icon }}</v-icon>
                                 <div class="headline">{{card.title}}</div>
@@ -37,31 +37,47 @@
 
 
         </v-layout>
+        <v-layout row wrap justify-space-between child-flex>
+        <v-flex d-flex xs12 sm4 md3 justify-center>
+            <v-card  elevation="5" max-width="300" class="round-card " >
 
-
+                <v-card-text>
+                    <h3>
+                        <div class="led-box">
+                            <div class="led-yellow-stoped" v-if="numOfUsersOnlineNow <= 0"></div>
+                            <div class="led-yellow" v-if="numOfUsersOnlineNow > 0"></div>
+                        </div>
+                        users online: {{numOfUsersOnlineNow}}
+                    </h3>
+                </v-card-text>
+            </v-card>
+        </v-flex>
+        </v-layout>
     </v-container>
 </template>
 
 <script>
     import Navbar from "./Navbar";
-    import NewOfferDialog from "./newOfferDialog";
+    import createSpeedDial from "./CreateSpeedDial";
     import AnimatedNumber from "animated-number-vue";
 
     export default {
         name: 'dashboard',
-        components: {Navbar, NewOfferDialog, AnimatedNumber},
+        components: {Navbar, createSpeedDial, AnimatedNumber},
         data:function () {
             return {
                 cards: [
-                    {title: "Customers", icon: "people", link: "/customers", data: 0, text: "view all"},
-                    {title: "Offers", icon: "loyalty", link: "/offers", data: this.$store.getters.getNumOfOffers, text: "Edit"},
-                    {title: "Orders", icon: "forum", link: "/orders", data: 0, text: "manage"},
-                    {title: "Points Level", icon: "import_export", link: "/pointslevel", data: 0, text: "change"}
+                    {title: "Customers", icon: "people", link: "/customers", data: 0, text: "view all", id: "customer-card"},
+                    {title: "Offers", icon: "loyalty", link: "/offers", data: this.$store.getters.getNumOfOffers, text: "Edit", id: "offer-card"},
+                    {title: "Orders", icon: "forum", link: "/orders", data: 0, text: "manage", id: "order-card"},
+                    {title: "Points Level", icon: "import_export", link: "/pointslevel", data: 0, text: "change", id: "point-card"}
                 ],
                 value: 0,
+                numOfUsersOnlineNow: 0,
             }
         },
         created() {
+            this.$store.dispatch("listenToOnlineUsers");
             this.$store.dispatch("getAllOffersDatabase");
         },
         computed: {
@@ -69,6 +85,9 @@
             getAllOffers(){
 
                 return this.$store.getters.getNumOfOffers;
+            },
+            getOnlineUsersNo(){
+                return this.$store.getters.getNumberOfusersOnline;
             }
         },
 
@@ -79,6 +98,12 @@
                     this.cards[objIndex].data = offersCount;
 
                 }
+            },
+            getOnlineUsersNo(no){
+                if(no !== null){
+                    this.numOfUsersOnlineNow = no;
+
+                }
             }
 
         },
@@ -87,3 +112,55 @@
         }
     }
 </script>
+<style>
+.round-card{
+    border-radius: 20px; 
+}
+
+#customer-card{
+    border-bottom: .25rem solid #00800c !important;
+}
+#offer-card{
+    border-bottom: .25rem solid #df322e !important;
+}
+#order-card{
+    border-bottom: .25rem solid #7c3a80 !important;
+}
+#point-card{
+    border-bottom: .25rem solid #4e73df!important;
+}
+
+
+
+.led-box {
+
+    float: left;
+}
+.led-yellow {
+
+    width: 25px;
+    height: 25px;
+    background-color: #09ff00;
+    border-radius: 50%;
+    box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #00800c 0 -1px 9px, #00ff13 0 2px 12px;
+    -webkit-animation: blinkYellow 1s infinite;
+    animation: blinkYellow 1s infinite;
+}
+
+
+@keyframes blinkYellow {
+    from { background-color: #09ff00; }
+    50% { background-color: #00aa2c; box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #00800c 0 -1px 9px, #00ff13 0 2px 0; }
+    to { background-color: #00ff1f; }
+}
+
+    .led-yellow-stoped{
+
+        width: 25px;
+        height: 25px;
+        background-color: #00800c;
+        border-radius: 50%;
+
+    }
+
+</style>

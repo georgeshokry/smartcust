@@ -8,7 +8,7 @@
     >
 
         <navbar></navbar>
-        <new-offer-dialog></new-offer-dialog>
+
 
         <div>
 
@@ -76,7 +76,7 @@
                     :items="allOffers"
                     :loading="dataTabelLoading"
                     :search="searchOfferByTitle"
-                    class="elevation-1"
+                    class="elevation-1  white--text"
                     color="black"
                     dark
                     no-data-text="Stay Tuned, This Might Take Some Time!"
@@ -91,12 +91,19 @@
                 <template v-slot:items="props">
                     <td class="text-xs-left">{{ props.item.offerTitle }}</td>
                     <td class="text-xs-left">{{ props.item.offerContent}}</td>
-                    <td class="text-xs-left">{{ props.item.offerExpDate }}</td>
-                    <td class="text-xs-left">{{ props.item.offerExpNum }}</td>
+                    <td class="text-xs-left">{{ props.item.offerExpDate ? props.item.offerExpDate : "*(By No of customers)"}}</td>
+                    <td class="text-xs-left">{{ props.item.offerExpNum ? props.item.offerExpNum : "*(By Date)" }}</td>
                     <td class="text-xs-left">{{ props.item.offerPoints }}</td>
+                    <td class="text-xs-left"><img style="max-width: 130px; max-height: 90px;" :src="props.item.offerPic"></td>
                     <td class="text-xs-left">{{ props.item.offerCreatedTimestamp }}</td>
-                    <td class="text-xs-left">{{ props.item.offerStatus }}<v-btn @click="deleteOffer(props.item.idOfOffer)">click</v-btn></td>
-                    <td class="text-xs-left">{{ props.item.userIdRedeem }}</td>
+                    <td class="text-xs-left">
+                        ({{ props.item.offerStatus }})
+                        <v-btn icon small @click="closeOffer(props.item.idOfOffer)">
+                        <v-icon v-if="props.item.offerStatus === 'opened'">cancel</v-icon>
+                            <v-icon v-if="props.item.offerStatus === 'closed'">check_circle</v-icon>
+                    </v-btn>
+                    </td>
+                    <td class="text-xs-left">{{ props.item.userIdRedeem ? props.item.userIdRedeem : "No one yet"}}</td>
 
 
 <!--                    <td class="justify-center layout px-0">-->
@@ -132,24 +139,25 @@
 </template>
 <script>
     import Navbar from "./Navbar";
-    import NewOfferDialog from "./newOfferDialog";
+
     export default {
         name: 'offers',
-        components: {Navbar, NewOfferDialog},
+        components: {Navbar},
         data: () => ({
             dataTabelLoading: true,
             searchOfferByTitle:'',
             viewNoData: false,
             idOfOffer: "",
             headers: [
-                {text: 'Offer Title', value: 'name'},
-                {text: 'Content', value: 'offerContent'},
-                {text: 'Expiration By Date', value: 'offerExpDate'},
-                {text: 'Expiration By Number Of Customer', value: 'offerExpNum'},
+                {text: 'Offer Title', value: 'offerTitle'},
+                {text: 'Content', value: 'offerContent', class: "offer-content"},
+                {text: 'Expiration *(By Date)', value: 'offerExpDate', class: "offer-exp-date"},
+                {text: 'Expiration *(By Number Of Customer)', value: 'offerExpNum'},
                 {text: 'Points', value: 'offerPoints'},
+                {text: 'Photo', value: 'offerPic'},
                 {text: 'Created On', value: 'offerCreatedTimestamp'},
                 {text: 'Status', value: 'offerStatus',},
-                {text: 'No. of users redeem', value: 'userIdRedeem',}
+                {text: 'No. of users redeem', value: 'userIdRedeem', class:"no-of-users"}
             ],
         allOffers: [],
 
@@ -185,8 +193,8 @@
             allOffersNow() {
                 this.$store.dispatch("getAllOffersDatabase");
             },
-        deleteOffer(item){
-                console.log(item);
+        closeOffer(item){
+            this.$store.dispatch("changeOfferStatus", {offerId: item});
         }
     }
 
@@ -194,5 +202,13 @@
 </script>
 
 <style>
-
+.offer-content{
+    min-width: 250px;
+}
+    .offer-exp-date{
+        max-width: 150px;
+    }
+    .no-of-users{
+        max-width: 160px;
+    }
 </style>

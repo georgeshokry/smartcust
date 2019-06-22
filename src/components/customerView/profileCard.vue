@@ -162,7 +162,7 @@
 </template>
 <script>
 
-    import avatarMixin from "./mixins/userInfoMixin"
+    import avatarMixin from "../mixins/userInfoMixin"
     export default {
         name: 'profilecard',
         components: {},
