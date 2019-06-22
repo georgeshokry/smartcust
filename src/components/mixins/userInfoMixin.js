@@ -15,7 +15,7 @@ export default {
     watch: {
         getUserInfo(userData) {
 
-            console.log("IAM IN MIXIXN ", userData);
+
             if (userData) {
                 this.dataGetted = userData;
                 if (userData.userGender === "Male") {

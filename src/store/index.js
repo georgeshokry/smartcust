@@ -26,6 +26,7 @@ export const store = new Vuex.Store({
         promoSuccess: false,
         profileInfoDb: null,
         usersMaxPoints: null,
+        numberOfUsersOnline:null,
 
 ////to stop any listener during the app after the user logged out
         stopProfileListener: null,
@@ -78,6 +79,9 @@ export const store = new Vuex.Store({
         },
         setUsersMaxPoints(state, payload){
             state.usersMaxPoints = payload;
+        },
+        setNoOfUsersOnline(state, payload){
+            state.numberOfUsersOnline = payload;
         },
 
 
@@ -186,9 +190,12 @@ export const store = new Vuex.Store({
 
         loginUser({commit}, payload){
             commit('clearError');
+            const db = firebase.firestore();
             firebase.auth().signInWithEmailAndPassword(payload.email, payload.password).then((user) => {
                 commit('setUserStat', user.user.uid);
-                console.log("USER LOGGED IN")
+                console.log("USER LOGGED IN");
+                let loginTimeStamp = new Date();
+                db.collection("users").doc(user.user.uid).update({userLastActive : loginTimeStamp});
                 // let chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz";
                 // let string_length = 30;
                 // let randomstring = '';
@@ -421,6 +428,34 @@ export const store = new Vuex.Store({
                 commit('setUserStat', user.uid);
             }
         },
+        /////change the user last login date every time the user logged in
+        changeLastLoginState({commit}){
+            const db = firebase.firestore();
+            let signedupUserId = firebase.auth().currentUser.uid;
+            let loginTimeStamp = new Date();
+            db.collection("users").doc(signedupUserId).update({
+                userLastActive : loginTimeStamp.toLocaleString(),
+            });
+            firebase.database().ref().child('usersessions').child(signedupUserId).update({userActiveState: "online"});
+
+        },
+        changeUserToOffline({commit}){
+            let signedupUserId = firebase.auth().currentUser.uid;
+            firebase.database().ref().child('usersessions').child(signedupUserId).onDisconnect().update({userActiveState: "offline"});
+        },
+        listenToOnlineUsers({commit}){
+            commit("setNoOfUsersOnline", null);
+            let database = firebase.database().ref().child('usersessions');
+            database.on('value', function (snapshot) {
+                    let noOfUsers = 0;
+                    snapshot.forEach(function (users) {
+                        if(users.child("userActiveState").val() === "online") {
+                            noOfUsers++;
+                        }
+                    });
+                    commit("setNoOfUsersOnline", noOfUsers);
+            });
+        },
         getUserSessionDatabase({commit}){
             firebase.auth().onAuthStateChanged(function(user) {
                 if (user) {
@@ -496,9 +531,9 @@ export const store = new Vuex.Store({
             commit('setError', null);
             const db = firebase.firestore();
             let offers = [];
-            let numOfOffers= 0;
-            let stopOffersListener = db.collection('offers').onSnapshot(function (querySnapshot) {
 
+            let stopOffersListener = db.collection('offers').onSnapshot(function (querySnapshot) {
+                let numOfOffers= 0;
                 querySnapshot.forEach(function (doc) {
                     offers.push(doc.data());
                     numOfOffers++;
@@ -520,6 +555,18 @@ export const store = new Vuex.Store({
             //     }).catch(function (error) {
             //     commit('setError', "Problem in reading Offers, Try refresh the page!");
             // });
+        },
+        /////start to close or open the offer (show to customer or not)
+        changeOfferStatus({commit}, payload){
+            const db = firebase.firestore();
+            db.collection("offers").doc(payload.offerId).get().then(function (status) {
+                let offerStatus = status.data().offerStatus;
+                if(offerStatus === "opened"){
+                    db.collection("offers").doc(payload.offerId).update({offerStatus: "closed"});
+                }else if(offerStatus === "closed"){
+                    db.collection("offers").doc(payload.offerId).update({offerStatus: "opened"});
+                }
+            });
         },
         getCustProfileInfo({commit}){
             commit('setProfileInfoDb', null);
@@ -600,6 +647,9 @@ export const store = new Vuex.Store({
         },
         getUsersMaxPoints(state){
             return state.usersMaxPoints;
+        },
+        getNumberOfusersOnline(state){
+            return state.numberOfUsersOnline;
         }
 
 

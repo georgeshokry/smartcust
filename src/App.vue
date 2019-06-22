@@ -19,9 +19,9 @@
 <script>
 
 import Home from '@/views/Home'
-import Navbar from "@/components/adminView/Navbar";
+
     export default {
-      components: {Navbar, Home},
+      components: {Home},
       name: "app",
       data() {
         return {

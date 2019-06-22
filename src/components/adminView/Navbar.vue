@@ -12,11 +12,29 @@
                 :clipped="true"
         >
 
+
             <v-toolbar-side-icon  @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-            <v-toolbar-title>Smart Customer</v-toolbar-title>
+
+
+
+            <v-toolbar-title style="margin-left: 0!important;"><div class="responsive-title">Smart Customer</div></v-toolbar-title>
             <v-spacer></v-spacer>
             <v-toolbar-items >
-                <v-btn flat @click="logout">Logout<v-icon right>exit_to_app</v-icon></v-btn>
+                <v-tooltip lazy bottom nudge-bottom="-15" color="red" >
+                    <template v-slot:activator="{ on }">
+                        <v-expand-x-transition>
+                            <v-icon v-show="noInternetIcon" v-on="on" color="red" style="cursor: default">cloud_off</v-icon>
+                        </v-expand-x-transition>
+                    </template>
+                    <span >You're offline!</span>
+                </v-tooltip>
+                <v-divider vertical inset  class="mx-2 ma-2"></v-divider>
+                <v-btn flat @click="logout" small style="font-size: small">Logout<v-icon right small>exit_to_app</v-icon></v-btn>
+
+
+
+
+
             </v-toolbar-items>
         </v-toolbar>
 
@@ -59,7 +77,6 @@
                 <v-list-tile
                         v-for="item in items"
                         :key="item.title"
-                        @click=""
                         :to="item.link"
                         :value="item.active"
                         active-class="default-class highlighted"
@@ -97,17 +114,42 @@
                 :fixed="true"
                 :clipped="true"
         >
+
+            <create-speed-dial></create-speed-dial>
             <v-spacer></v-spacer>
             <div>  Photographer | Smart Customer v1.0 - {{ new Date().getFullYear() }} &copy;</div>
         </v-footer>
+
+        <v-snackbar
+                v-model="connection"
+                :color="alertColor"
+                :timeout="timeoutInterval"
+                bottom
+        >
+            {{ connectionError }}
+            <v-btn
+
+                    icon
+                    @click="connection = false"
+            >
+                <v-icon>close</v-icon>
+            </v-btn>
+        </v-snackbar>
     </v-layout>
+
+
+
 
 </template>
 <script>
 
+    import createSpeedDial from "./CreateSpeedDial"
     import SimpleCrypto from "simple-crypto-js";
+    import checkConnectionMixin from "../mixins/checkConnectionMixin";
     export default {
         name: 'navbar',
+        components: {createSpeedDial},
+        mixins: [checkConnectionMixin],
         data () {
             return {
                 drawer: false,
@@ -146,6 +188,9 @@
                // this.$router.replace('/adminlogin');
                this.$store.dispatch('logoutUser');
            }
+        },
+        created() {
+            this.$store.dispatch('checkConnetion');
         }
     }
 </script>
@@ -153,5 +198,13 @@
     .highlighted{
         background-color: #ffffff78;
     }
-
+    @media screen and (max-width: 375px) {
+        div.responsive-title {
+            margin-left: 0;
+            font-size: 13px;
+            word-break: break-word;
+            max-width: 100px;
+            max-height: 30px;
+        }
+    }
 </style>
