@@ -78,7 +78,7 @@
 
 
                             <v-layout row wrap justify-end>
-                            <v-icon >notifications_none</v-icon>
+<!--                            <v-icon >notifications_none</v-icon>-->
 
 
                             <v-divider vertical inset dark class="mx-2 ma-2" ></v-divider>
@@ -426,10 +426,10 @@
 
     @media screen and (max-width: 375px) {
         div.header-text {
-            font-size: 8px;
+            font-size: 10px;
             word-break: break-word;
-            max-width: 60px;
-            max-height: 30px;
+            max-width: 80px;
+            max-height: 71px;
         }
     }
 </style>

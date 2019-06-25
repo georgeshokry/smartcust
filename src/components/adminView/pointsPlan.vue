@@ -88,11 +88,11 @@
                 </template>
 
                 <template v-slot:no-results>
-                    <v-layout row wrap>
-                    <v-alert :value="true" color="error" icon="warning">
+
+                    <v-alert :value="true" color="error" icon="warning" style="text-align: left">
                         No results for "{{ searchOccByType }}" .
                     </v-alert>
-                    </v-layout>
+
                 </template>
 
 

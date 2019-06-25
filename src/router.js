@@ -48,7 +48,7 @@ let router = new Router({
       },
 
       {
-          path: "/adminlogin",
+          path: "/dashboard/adminlogin",
           name: "adminlogin",
           component: () => import("@/views/AdminLogin"),
           meta:{
@@ -58,7 +58,7 @@ let router = new Router({
       },
     {
 
-      path: "/customers",
+      path: "/dashboard/customers",
       name: "customers",
         component: () => import("@/components/adminView/Customers"),
         meta: {
@@ -68,7 +68,7 @@ let router = new Router({
         }
     },
       {
-          path: "/offers",
+          path: "/dashboard/offers",
           name: "offers",
           component: () => import("@/components/adminView/Offers"),
           meta: {
@@ -78,7 +78,7 @@ let router = new Router({
           }
       },
       {
-          path: "/reservations",
+          path: "/dashboard/reservations",
           name: "reservations",
           component: () => import("@/components/adminView/reservations"),
           meta: {
@@ -88,7 +88,7 @@ let router = new Router({
           }
       },
       {
-          path: "/pointsplan",
+          path: "/dashboard/pointsplan",
           name: "pointsPlan",
           component: () => import("@/components/adminView/pointsPlan"),
           meta: {
@@ -98,13 +98,22 @@ let router = new Router({
           }
       },
       {
-          path: '*',
-          name: 'http404',
-          component: () => import("@/views/http404"),
-          meta:{
-              title: "404 | Smart Customer",
+          path: '/',
+          name: "landing",
+          component: () => import("@/views/landing"),
+          meta: {
+              auth: false,
+              title: "Smart Customer",
           }
       },
+      // {
+      //     path: '*',
+      //     name: 'http404',
+      //     component: () => import("@/views/http404"),
+      //     meta:{
+      //         title: "404 | Smart Customer",
+      //     }
+      // },
 
 
 
@@ -125,17 +134,17 @@ router.beforeEach((to, from, next) => {
 
     if(to.path === "/" ||
         to.path === "/dashboard" ||
-        to.path === "/adminlogin" ||
-        to.path === "/offers" ||
-        to.path === "/customers" ||
-        to.path === "/reservations" ||
-        to.path === "/pointsplan"
+        to.path === "/dashboard/adminlogin" ||
+        to.path === "/dashboard/offers" ||
+        to.path === "/dashboard/customers" ||
+        to.path === "/dashboard/reservations" ||
+        to.path === "/dashboard/pointsplan"
     ) {
         // "X0P3ELO7GISMdClcAXAj9jaPE4u1"
         if (to.meta.auth && decipherUser !== boss) {
                 document.title = to.meta.title;
                 next({
-                    path: '/adminlogin'
+                    path: '/dashboard/adminlogin'
                 });
         }else {
             document.title = to.meta.title;
@@ -151,7 +160,7 @@ router.beforeEach((to, from, next) => {
                 if (to.meta.auth && decipherUser === boss) {
                     document.title = to.meta.title;
                     next({
-                        path: '/adminlogin'
+                        path: '/dashboard/adminlogin'
                     });
                 }else {
                     document.title = to.meta.title;
@@ -163,6 +172,12 @@ router.beforeEach((to, from, next) => {
                 document.title = to.meta.title;
                 next();
 
+            }
+            if(to.meta.auth && decipherUser === boss){
+                document.title = to.meta.title;
+                next({
+                    path: '/dashboard'
+                });
             }
 
     }

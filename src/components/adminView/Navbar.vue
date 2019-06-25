@@ -117,7 +117,7 @@
 
             <create-speed-dial></create-speed-dial>
             <v-spacer></v-spacer>
-            <div class="footer">  Photographer | Smart Customer v1.0 - {{ new Date().getFullYear() }} &copy;</div>
+            <div class="footer">  Photographer | Smart Customer v1.0-beta - {{ new Date().getFullYear() }} &copy;</div>
         </v-footer>
 
         <v-snackbar
@@ -179,11 +179,11 @@
 
                 drawer: false,
                 items: [
-                    { title: 'Home', icon: 'dashboard', link: '/dashboard',  },
-                    { title: 'Customers', icon: 'people', link: '/customers' },
-                    { title: 'Offers', icon: 'star', link: '/offers' },
-                    { title: 'Reservations', icon: 'forum', link: '/reservations' },
-                    { title: 'Points Plan', icon: 'import_export', link: '/pointsplan' }
+                    { title: 'Home', icon: 'dashboard', link: 'dashboard',  },
+                    { title: 'Customers', icon: 'people', link: 'dashboard/customers' },
+                    { title: 'Offers', icon: 'star', link: 'dashboard/offers' },
+                    { title: 'Reservations', icon: 'forum', link: 'dashboard/reservations' },
+                    { title: 'Points Plan', icon: 'import_export', link: 'dashboard/pointsplan' }
                 ],
                 mini: false,
                 right: null
@@ -224,7 +224,7 @@
                 let decipherUser = simpleCrypto.decrypt(localSession);
 
                 if (decipherUser !== "X0P3ELO7GISMdClcAXAj9jaPE4u1") {
-                    this.$router.replace('/adminlogin');
+                    this.$router.replace('/dashboard/adminlogin');
                 }
             }
     }

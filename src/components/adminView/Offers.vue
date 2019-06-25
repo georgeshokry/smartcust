@@ -14,7 +14,7 @@
 
 <!--            starting of tool bar above the datatabel-->
             <v-toolbar flat  dark>
-                <v-toolbar-title><v-icon larg>star</v-icon> <v-spacer></v-spacer><div class="header-text">All Offers</div></v-toolbar-title>
+                <v-toolbar-title><v-icon larg>loyalty</v-icon> <v-spacer></v-spacer><div class="header-text">All Offers</div></v-toolbar-title>
                 <v-divider
                         class="mx-2"
                         inset
@@ -78,7 +78,7 @@
                 </template>
 
                 <template v-slot:no-results>
-                    <v-alert :value="true" color="error" icon="warning">
+                    <v-alert :value="true" color="error" icon="warning" style="text-align: left">
                         No results for "{{ searchOfferByTitle }}" .
                     </v-alert>
                 </template>

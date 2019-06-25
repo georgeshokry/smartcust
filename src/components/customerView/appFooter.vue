@@ -4,7 +4,7 @@
             dark
     >
 
-        <div>  Photographer | Smart Customer v1.0 - {{ new Date().getFullYear() }} &copy;</div>
+        <div>  Photographer | Smart Customer v1.0-beta - {{ new Date().getFullYear() }} &copy;</div>
     </v-footer>
 </template>
 <script>

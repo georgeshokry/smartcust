@@ -25,10 +25,16 @@
 
                     <v-card-text>
                         <div class="led-box">
-                            <v-layout row wrap justify-space-between>
+                            <v-layout row wrap justify-space-between style="justify-content: center">
+
+
+
                                 <div class="led-yellow-stoped" v-if="numOfUsersOnlineNow <= 0"></div>
                                 <div class="led-yellow" v-if="numOfUsersOnlineNow > 0"></div>
                                 <div class="headline " style=" margin-right: 15px;">Online Customers {{numOfUsersOnlineNow}}</div>
+
+
+
 
                             </v-layout>
                         </div>
@@ -78,10 +84,10 @@
         data:function () {
             return {
                 cards: [
-                    {title: "Customers", icon: "people", link: "/customers", data: 0, text: "view all", id: "customer-card"},
-                    {title: "Offers", icon: "loyalty", link: "/offers", data: this.$store.getters.getNumOfOffers, text: "Edit", id: "offer-card"},
-                    {title: "Reservations", icon: "forum", link: "/reservations", data: 0, text: "manage", id: "order-card"},
-                    {title: "Points Plan", icon: "import_export", link: "/pointsplan", data: 0, text: "change", id: "point-card"}
+                    {title: "Customers", icon: "people", link: "dashboard/customers", data: 0, text: "view all", id: "customer-card"},
+                    {title: "Offers", icon: "loyalty", link: "dashboard/offers", data: this.$store.getters.getNumOfOffers, text: "Edit", id: "offer-card"},
+                    {title: "Reservations", icon: "forum", link: "dashboard/reservations", data: 0, text: "manage", id: "order-card"},
+                    {title: "Points Plan", icon: "import_export", link: "dashboard/pointsplan", data: 0, text: "change", id: "point-card"}
                 ],
                 value: 0,
                 numOfUsersOnlineNow: this.$store.getters.getNumberOfusersOnline,
