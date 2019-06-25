@@ -154,7 +154,7 @@
             </v-btn>
         </v-snackbar>
 
-        <annoying-no-internet></annoying-no-internet>
+        <annoying-no-internet v-if="$route.path !== '/dashboard'"></annoying-no-internet>
     </v-layout>
 
 
