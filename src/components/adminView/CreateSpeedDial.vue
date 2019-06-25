@@ -8,7 +8,11 @@
       direction:top
 
       transition="slide-y-reverse-transition"
-      style="position: fixed;right: 8px;    bottom: 45px;"
+      style="
+      position: fixed;
+    right: -5px;
+    bottom: 35px;
+"
     >
       <template v-slot:activator>
         <v-btn

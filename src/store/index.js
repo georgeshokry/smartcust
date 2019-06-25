@@ -8,7 +8,7 @@ import SimpleCrypto from "simple-crypto-js";
 
 Vue.use(Vuex);
 
-
+const boss = "X0P3ELO7GISMdClcAXAj9jaPE4u1";
 export const store = new Vuex.Store({
 
     state:{
@@ -27,10 +27,13 @@ export const store = new Vuex.Store({
         profileInfoDb: null,
         usersMaxPoints: null,
         numberOfUsersOnline:null,
+        allOccasions:null,
 
 ////to stop any listener during the app after the user logged out
         stopProfileListener: null,
         stopOffersListener: null,
+        stopUsersOnlineListener: null,
+        stopOccasionsListener:null,
     },
     mutations:{
         setError(state, payload){
@@ -41,7 +44,6 @@ export const store = new Vuex.Store({
         },
         setUserStat(state, payload){
             state.userStat = payload;
-            console.log(state.userStat);
         },
         setUserSession(state, payload){
             state.userSession = payload
@@ -83,6 +85,9 @@ export const store = new Vuex.Store({
         setNoOfUsersOnline(state, payload){
             state.numberOfUsersOnline = payload;
         },
+        setAllOccasions(state, payload){
+            state.allOccasions = payload;
+        },
 
 
         setProfileListener(state, paylaod){
@@ -91,16 +96,37 @@ export const store = new Vuex.Store({
         setOffersListener(state, payload){
             state.stopOffersListener = payload;
         },
+        setUsersOnlineListener(state, payload){
+            state.stopUsersOnlineListener = payload;
+        },
+        setOccasionsListener(state, payload){
+            state.stopOccasionsListener = payload;
+        },
 
 
 
 ////to stop any listener during the app after the user logged out
         stopPeofileListener(state){
-            state.stopProfileListener();
+            if(state.stopProfileListener !== null) {
+                state.stopProfileListener();
+            }
         },
         stopOffersListener(state){
-            state.stopOffersListener();
+            if(state.stopOffersListener !== null) {
+                state.stopOffersListener();
+            }
+        },
+        stopUsersOnlineListener(state){
+            if(state.stopUsersOnlineListener !== null && typeof state.stopUsersOnlineListener === "function") {
+                state.stopUsersOnlineListener();
+            }
+        },
+        stopOccasionsListener(state){
+            if(state.stopOccasionsListener !== null) {
+                state.stopOccasionsListener();
+            }
         }
+
     },
     actions:{
         checkConnetion({commit}){
@@ -123,7 +149,7 @@ export const store = new Vuex.Store({
             firebase.auth().signInWithEmailAndPassword(payload.email, payload.password).then((user) => {
                 console.log("ADMIN LOGGED IN");
                 commit('setUserStat', user.user.uid);
-                if(user.user.uid !== "X0P3ELO7GISMdClcAXAj9jaPE4u1"){
+                if(user.user.uid !== boss){
                     firebase.auth().signOut().then((user) => {
 
                         commit('setUserStat', null);
@@ -139,42 +165,6 @@ export const store = new Vuex.Store({
                     });
 
                 }
-                // if(user.user.uid === "X0P3ELO7GISMdClcAXAj9jaPE4u1") {
-                //     let chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz";
-                //     let string_length = 30;
-                //     let randomstring = '';
-                //     for (var i = 0; i < string_length; i++) {
-                //         var rnum = Math.floor(Math.random() * chars.length);
-                //         randomstring += chars.substring(rnum, rnum + 1);
-                //     }
-                //     let loginTimeStamp = new Date();
-                //     let userId = user.user.uid;
-                //
-                //     let localStoreSession = {
-                //
-                //         "sessionid": randomstring,
-                //         "logintimestamp": loginTimeStamp.toLocaleString()
-                //
-                //     };
-                //
-                //     ///set the user session in database
-                //     firebase.database().ref().child('usersessions').child(userId).set(localStoreSession).then(function () {
-                //
-                //         commit('setUserStat', user.user.uid);
-                //         localStorage.setItem('appData', randomstring);
-                //         commit('setUserSession', randomstring);
-                //
-                //     }).catch(function (error) {
-                //         console.log(error);
-                //         commit('setError', "Problem in Login! " + error);
-                //     });
-                //
-                // }else {
-                //     firebase.auth().signOut().then(function () {
-                //         commit('setError', "You are not allowed to login!");
-                //     });
-                //
-                // }
 
             }).catch((error) => {
 
@@ -195,7 +185,9 @@ export const store = new Vuex.Store({
                 commit('setUserStat', user.user.uid);
                 console.log("USER LOGGED IN");
                 let loginTimeStamp = new Date();
-                db.collection("users").doc(user.user.uid).update({userLastActive : loginTimeStamp});
+                firebase.database().ref().child('usersessions').child(user.user.uid)
+                    .update({userActiveState: "online"});
+
                 // let chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz";
                 // let string_length = 30;
                 // let randomstring = '';
@@ -234,6 +226,8 @@ export const store = new Vuex.Store({
 
                 }else if(error.code === "auth/too-many-requests"){
                     commit('setError', "You have Attempted to login many times, Try again later!")
+                }else if(error.code === "auth/user-disabled"){
+                    commit('setError', "This account have been disabled")
                 }
             });
         },
@@ -243,7 +237,7 @@ export const store = new Vuex.Store({
             firebase.auth().createUserWithEmailAndPassword(payload.email, payload.password).then(function () {
                 let userNow = firebase.auth().currentUser.uid;
                 console.log(userNow);
-                commit('setSignupUserId', userNow);
+                // commit('setSignupUserId', userNow);
             }).catch(function(error) {
                     console.log(error);
 
@@ -371,21 +365,31 @@ export const store = new Vuex.Store({
                             if(codeData[enteredCode] !== signedupUserId) {
                                 // do something
                                 db.collection("usersPromo").doc("maxPointsLevel").get().then(function (points) {
-                                    db.collection('users').doc(signedupUserId).update(
-                                        "userPoints", firebase.firestore.FieldValue.increment(points.data().maxNewToAdd),
-                                        "userRedeemFirstCreate", true);
+                                    pointsRef.get().then(function (checkFirstRedeem) {
 
-                                    db.collection('users').doc(codeData[enteredCode])
-                                        .update("userPoints", firebase.firestore.FieldValue.increment(points.data().maxOwnerToAdd));
+                                    if(checkFirstRedeem.data().userRedeemFirstCreate !== true) {
 
-                                    commit('setPromoCodeSuccess', true);
-                                    commit('setPromoCodeMsg', "Congratulations! You won " + points.data().maxNewToAdd + " Points");
+                                        db.collection('users').doc(signedupUserId)
+                                            .update("userPoints", firebase.firestore.FieldValue.increment(points.data().maxNewToAdd),"userRedeemFirstCreate", true)
+                                            .then(function () {
+
+                                                db.collection('users').doc(codeData[enteredCode])
+                                                    .update("userPoints", firebase.firestore.FieldValue.increment(points.data().maxOwnerToAdd))
+                                                    .then(function () {
+                                                        commit('setPromoCodeSuccess', true);
+                                                        commit('setPromoCodeMsg', "Congratulations!"+"<br>"+"You won" +"<b>&nbsp(" + points.data().maxNewToAdd+ ")&nbsp</b>" + "Points");
+                                                    });
+                                        });
+                                    }else {
+                                        commit('setPromoCodeMsg', "You have used your first<b>&nbspSmart Code&nbsp</b>before!");
+                                    }
+                                    });
                                 });
                             }else {
-                                commit('setPromoCodeMsg', "Wrong or Expired Promo Code!");
+                                commit('setPromoCodeMsg', "<b>&nbspWrong&nbsp</b>or<b>&nbspExpired&nbsp</b>Promo Code!");
                             }
                         }else {
-                            commit('setPromoCodeMsg', "Wrong or Expired Promo Code!");
+                            commit('setPromoCodeMsg', "<b>&nbspWrong&nbsp</b>or<b>&nbspExpired&nbsp</b>Promo Code!");
                         }
                     });
                 }
@@ -402,23 +406,36 @@ export const store = new Vuex.Store({
 
         },
         logoutUser({commit}){
-            firebase.auth().signOut().then((user) => {
+
                 commit('stopPeofileListener');
                 commit('stopOffersListener');
+                commit('stopUsersOnlineListener');
+                commit('stopOccasionsListener');
+            let signedInUserId = firebase.auth().currentUser.uid;
+            firebase.database().ref().child('usersessions').child(signedInUserId).update({userActiveState: "offline"}).then(function () {
 
-                commit('setUserStat', null);
-                ////encrypt the un id of user before set in localstorage for future login
-                let _secretKey = "set-NuN-Chernobyl-WhoDidIt";
-                let simpleCrypto = new SimpleCrypto(_secretKey);
-                let chiperUser = simpleCrypto.encrypt("No-Didit");
 
-                localStorage.setItem('appData', chiperUser);
 
-                commit('setUserSession', null);
-            }).catch(function(error) {
+                firebase.auth().signOut().then((user) => {
 
-                commit('setError', error);
+
+                    commit('setUserStat', null);
+                    ////encrypt the un id of user before set in localstorage for future login
+                    let _secretKey = "set-NuN-Chernobyl-WhoDidIt";
+                    let simpleCrypto = new SimpleCrypto(_secretKey);
+                    let chiperUser = simpleCrypto.encrypt("No-Didit");
+
+                    localStorage.setItem('appData', chiperUser);
+
+                    commit('setUserSession', null);
+                }).catch(function(error) {
+
+                    commit('setError', error);
+                });
             });
+
+
+
 
         },
         userCheck({commit}) {
@@ -439,10 +456,14 @@ export const store = new Vuex.Store({
             firebase.database().ref().child('usersessions').child(signedupUserId).update({userActiveState: "online"});
 
         },
+
+
         changeUserToOffline({commit}){
             let signedupUserId = firebase.auth().currentUser.uid;
             firebase.database().ref().child('usersessions').child(signedupUserId).onDisconnect().update({userActiveState: "offline"});
         },
+
+        ////////////listen to numbers of users online now
         listenToOnlineUsers({commit}){
             commit("setNoOfUsersOnline", null);
             let database = firebase.database().ref().child('usersessions');
@@ -454,7 +475,9 @@ export const store = new Vuex.Store({
                         }
                     });
                     commit("setNoOfUsersOnline", noOfUsers);
+
             });
+            commit("setUsersOnlineListener", database);
         },
         getUserSessionDatabase({commit}){
             firebase.auth().onAuthStateChanged(function(user) {
@@ -530,31 +553,29 @@ export const store = new Vuex.Store({
 
             commit('setError', null);
             const db = firebase.firestore();
-            let offers = [];
 
-            let stopOffersListener = db.collection('offers').onSnapshot(function (querySnapshot) {
-                let numOfOffers= 0;
+            let offerCreatedTimestamp = new Date();
+
+            let stopOffersListener = db.collection('offers').orderBy('offerCreatedTimestamp', 'desc').onSnapshot(function (querySnapshot) {
+                let offers = [];
                 querySnapshot.forEach(function (doc) {
                     offers.push(doc.data());
-                    numOfOffers++;
                 });
 
-
-                commit("setAllOffers", {"offers": offers, "numOfOffers": numOfOffers});
+                commit("setAllOffers", {"offers": offers});
 
                 offers = [];
             });
             commit("setOffersListener", stopOffersListener);
 
-            // db.collection('offers').get().then(onSnapshot =>{
-            //         onSnapshot.docs.forEach(doc => {
-            //
-            //             offers.push(doc.data());
-            //
-            //         });
-            //     }).catch(function (error) {
-            //     commit('setError', "Problem in reading Offers, Try refresh the page!");
-            // });
+        },
+        listenNumberOfOffers({commit}){
+            const db = firebase.firestore();
+            let stopOffersListener = db.collection('offers').onSnapshot(function (querySnapshot) {
+               let offersNumbers = querySnapshot.size;
+                commit("setAllOffers", {"numOfOffers": offersNumbers});
+            });
+            commit("setOffersListener", stopOffersListener);
         },
         /////start to close or open the offer (show to customer or not)
         changeOfferStatus({commit}, payload){
@@ -608,6 +629,47 @@ export const store = new Vuex.Store({
             db.collection("usersPromo").doc("maxPointsLevel").get().then(function(level) {
                 commit("setUsersMaxPoints", level.data().maxOwnerToAdd);
             });
+        },
+        addNewOccasionType({commit}, payload){
+            const db = firebase.firestore();
+
+            let typeCreatedTimestamp = new Date();
+            commit('setError', null);
+            commit('setFirebaseSuccess', null);
+            db.collection('occasionTypes').add({
+                occasionName: payload.occasionName,
+                occasionPrice: payload.occasionPrice,
+                occasionPoints: payload.occasionPoints,
+                occasionCreatedTimeStamp: typeCreatedTimestamp.toLocaleString(),
+            }).then(function (docRef) {
+                db.collection("occasionTypes").doc(docRef.id).update({idOfOccasion: docRef.id}).then(function () {
+                    commit('setFirebaseSuccess', "Occasion Added Successfully!");
+                });
+            }).catch(function (error) {
+                commit('setError', "Problem in Saving Occasion, Try Again!");
+            });
+        },
+        listenOnAllOccasions({commit}){
+            const db = firebase.firestore();
+
+
+            let stopOccasionsListener = db.collection('occasionTypes')
+                .orderBy('occasionCreatedTimeStamp', 'desc')
+                .onSnapshot(function (querySnapshot) {
+                    let data = [];
+                querySnapshot.forEach(function (doc) {
+                    data.push(doc.data());
+                    console.log(data);
+                });
+
+
+                commit("setAllOccasions", data);
+
+                    data = [];
+            });
+            // commit("setOccasionsListener", stopOccasionsListener);
+
+
         }
 
     },
@@ -650,6 +712,9 @@ export const store = new Vuex.Store({
         },
         getNumberOfusersOnline(state){
             return state.numberOfUsersOnline;
+        },
+        getAllOccasions(state){
+            return state.allOccasions;
         }
 
 

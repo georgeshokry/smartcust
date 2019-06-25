@@ -7,7 +7,7 @@ import SimpleCrypto from "simple-crypto-js";
 
 
 Vue.use(Router);
-
+const boss = "X0P3ELO7GISMdClcAXAj9jaPE4u1";
 let router = new Router({
   mode: "history",
   base: process.env.BASE_URL,
@@ -43,11 +43,7 @@ let router = new Router({
           meta: {
               auth: true,
               title: "Admin Home | Smart Customer",
-              breadcrumb: [
-                  {
-                      name: "dashboard"
-                  }
-              ]
+
           }
       },
 
@@ -68,11 +64,7 @@ let router = new Router({
         meta: {
             auth: true,
             title: "Customers | Smart Customer",
-            breadcrumb: [
-                {
-                    name: "customers"
-                }
-            ]
+
         }
     },
       {
@@ -82,14 +74,29 @@ let router = new Router({
           meta: {
               auth: true,
               title: "Offers | Smart Customer",
-              breadcrumb: [
-                  {
-                      name: "offers"
-                  }
-              ]
+
           }
       },
+      {
+          path: "/reservations",
+          name: "reservations",
+          component: () => import("@/components/adminView/reservations"),
+          meta: {
+              auth: true,
+              title: "Reservations | Smart Customer",
 
+          }
+      },
+      {
+          path: "/pointsplan",
+          name: "pointsPlan",
+          component: () => import("@/components/adminView/pointsPlan"),
+          meta: {
+              auth: true,
+              title: "Points Plan | Smart Customer",
+
+          }
+      },
       {
           path: '*',
           name: 'http404',
@@ -98,7 +105,6 @@ let router = new Router({
               title: "404 | Smart Customer",
           }
       },
-
 
 
 
@@ -122,10 +128,11 @@ router.beforeEach((to, from, next) => {
         to.path === "/adminlogin" ||
         to.path === "/offers" ||
         to.path === "/customers" ||
-        to.path === "/orders"
+        to.path === "/reservations" ||
+        to.path === "/pointsplan"
     ) {
         // "X0P3ELO7GISMdClcAXAj9jaPE4u1"
-        if (to.meta.auth && decipherUser !== "X0P3ELO7GISMdClcAXAj9jaPE4u1") {
+        if (to.meta.auth && decipherUser !== boss) {
                 document.title = to.meta.title;
                 next({
                     path: '/adminlogin'
@@ -139,16 +146,25 @@ router.beforeEach((to, from, next) => {
 
     }
     if(to.path === "/" || to.path === "/home" || to.path === "/customerlogin"){
-        if (to.meta.auth && decipherUser === "No-Didit") {
-            document.title = to.meta.title;
-            next({
-                path: '/customerlogin'
-            });
-        }else {
-            document.title = to.meta.title;
-            next();
 
-        }
+            if (to.meta.auth && decipherUser === "No-Didit") {
+                if (to.meta.auth && decipherUser === boss) {
+                    document.title = to.meta.title;
+                    next({
+                        path: '/adminlogin'
+                    });
+                }else {
+                    document.title = to.meta.title;
+                    next({
+                        path: '/customerlogin'
+                    });
+                }
+            } else {
+                document.title = to.meta.title;
+                next();
+
+            }
+
     }
 });
 

@@ -40,17 +40,18 @@
             </v-layout>
 
 
+        <v-scroll-y-transition >
             <v-carousel :cycle="cycleFlag" :interval="4000"  hide-controls v-show="dataLoaded" :height="345" vertical reverse style=" box-shadow: none; border-radius: 0;" >
                 <v-carousel-item
                         v-for="(item,i) in items"
                         :key="i"
                         :src="item.offerPic"
+                        :lazy-src="item.offerPic"
                         @click.stop="offerSelected(item.idOfOffer)"
                         style="cursor: pointer;  "
                         v-ripple
                         @mouseover="cycleFlag = false"
                         @mouseout="cycleFlag = true"
-                        lazy
 
                 >
                     <div class="scroll-y" style="background-image: linear-gradient(120deg, black, transparent);     height: -webkit-fill-available;">
@@ -82,7 +83,7 @@
 
                 </v-carousel-item>
             </v-carousel>
-
+        </v-scroll-y-transition>
     </v-card>
 </template>
 <script>

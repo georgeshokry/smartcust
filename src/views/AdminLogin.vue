@@ -44,6 +44,7 @@
                        box
                        clearable
                        prepend-inner-icon="account_box"
+                       v-on:keyup.enter="startLogin"
                        color="black"
                ></v-text-field>
                <v-text-field
@@ -71,6 +72,7 @@
                        type="error"
                        color="red"
                        transition="scale-transition"
+                       class="custom-alert"
                >
                   {{ firebaseErrorShow }}
                </v-alert>
@@ -105,7 +107,7 @@
 </template>
 <script>
    import SimpleCrypto from "simple-crypto-js";
-
+const boss = "X0P3ELO7GISMdClcAXAj9jaPE4u1";
     export default {
         name: 'AdminLogin',
        $_veeValidate: {
@@ -128,13 +130,13 @@
        created(){
 
           let userStatNow = this.$store.getters.userStatus;
-             if(userStatNow === "X0P3ELO7GISMdClcAXAj9jaPE4u1"){
+             if(userStatNow === boss){
                 let localSession = localStorage.getItem('appData');
                 let _secretKey = "set-NuN-Chernobyl-WhoDidIt";
                 let simpleCrypto = new SimpleCrypto(_secretKey);
                 let decipherUser = simpleCrypto.decrypt(localSession);
 
-                if(decipherUser === "X0P3ELO7GISMdClcAXAj9jaPE4u1") {
+                if(decipherUser === boss) {
                    this.$router.replace('/dashboard');
                 }
              }
@@ -152,13 +154,13 @@
        watch:{
          user(value){
 
-            if(value === "X0P3ELO7GISMdClcAXAj9jaPE4u1"){
+            if(value === boss){
                let localSession = localStorage.getItem('appData');
                let _secretKey = "set-NuN-Chernobyl-WhoDidIt";
                let simpleCrypto = new SimpleCrypto(_secretKey);
                let decipherUser = simpleCrypto.decrypt(localSession);
 
-                if(decipherUser === "X0P3ELO7GISMdClcAXAj9jaPE4u1") {
+                if(decipherUser === boss) {
                     this.$router.replace('/dashboard');
                 }
             }
@@ -206,5 +208,8 @@
    }
    .enabled-Login {
       cursor: pointer;
+   }
+   .custom-alert i{
+      margin-right: 0;
    }
 </style>

@@ -9,7 +9,8 @@
             height: auto;"
         >
             <navbar></navbar>
-            <newOfferDialog></newOfferDialog>
+<page-path></page-path>
+
             <h1>CUSTOMERS COMPONENT</h1>
         </v-container>
 
@@ -19,10 +20,10 @@
 <script>
 
     import Navbar from "./Navbar";
-    import NewOfferDialog from "./newOfferDialog";
+    import pagePath from "./pagePath"
     export default {
         name: 'customers',
-        components: {Navbar, NewOfferDialog}
+        components: {Navbar, pagePath}
     }
 </script>
 
