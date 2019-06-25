@@ -10,13 +10,13 @@ Vue.use(Router);
 const boss = "X0P3ELO7GISMdClcAXAj9jaPE4u1";
 let router = new Router({
   mode: "history",
-  base: process.env.BASE_URL,
+  // base: process.env.BASE_URL,
   routes: [
 
 
 
       {
-          path: "/home",
+          path: "/",
           name: "customerprofile",
           component: () => import("@/components/customerView/customerProfile"),
           meta: {
@@ -97,23 +97,23 @@ let router = new Router({
 
           }
       },
-      {
-          path: '/',
-          name: "landing",
-          component: () => import("@/views/landing"),
-          meta: {
-              auth: false,
-              title: "Smart Customer",
-          }
-      },
       // {
-      //     path: '*',
-      //     name: 'http404',
-      //     component: () => import("@/views/http404"),
-      //     meta:{
-      //         title: "404 | Smart Customer",
+      //     path: '/',
+      //     name: "landing",
+      //     component: () => import("@/views/landing"),
+      //     meta: {
+      //         auth: false,
+      //         title: "Smart Customer",
       //     }
       // },
+      {
+          path: '*',
+          name: 'http404',
+          component: () => import("@/views/http404"),
+          meta:{
+              title: "404 | Smart Customer",
+          }
+      },
 
 
 
@@ -127,12 +127,11 @@ router.beforeEach((to, from, next) => {
     let _secretKey = "set-NuN-Chernobyl-WhoDidIt";
     let simpleCrypto = new SimpleCrypto(_secretKey);
     let decipherUser = simpleCrypto.decrypt(localSession);
-    console.log("DECREPTED  __" , decipherUser);
-
-    console.log("From >> " + to.path + " To >>>" + from.path);
 
 
-    if(to.path === "/" ||
+
+
+    if(
         to.path === "/dashboard" ||
         to.path === "/dashboard/adminlogin" ||
         to.path === "/dashboard/offers" ||
@@ -154,7 +153,7 @@ router.beforeEach((to, from, next) => {
 
 
     }
-    if(to.path === "/" || to.path === "/home" || to.path === "/customerlogin"){
+    if(to.path === "/" || to.path === "/customerlogin"){
 
             if (to.meta.auth && decipherUser === "No-Didit") {
                 if (to.meta.auth && decipherUser === boss) {
@@ -173,7 +172,7 @@ router.beforeEach((to, from, next) => {
                 next();
 
             }
-            if(to.meta.auth && decipherUser === boss){
+            if(to.meta.auth && decipherUser === boss) {
                 document.title = to.meta.title;
                 next({
                     path: '/dashboard'
@@ -182,6 +181,9 @@ router.beforeEach((to, from, next) => {
 
     }
 });
+
+
+
 
 // router.beforeEach((to, from, next) => {
 //

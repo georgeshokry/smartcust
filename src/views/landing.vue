@@ -59,6 +59,12 @@
             }
         },
         created() {
+            let readCodeUrl = this.$route.query.smartCode;
+            if(readCodeUrl !== undefined){
+                let newLink = "/home" + "?smartCode=" + readCodeUrl;
+                this.$router.replace(newLink);
+                // this.startRedeemCode();
+            }
             this.logoPicPath = require("@/assets/logo.png");
         },
         beforeMount() {
