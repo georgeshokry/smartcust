@@ -21,15 +21,20 @@
 
 
             >
-
                 <v-badge left color="white" style="margin-top: 70px;">
 
                     <template  v-slot:badge >
                         <span style="color: black">α</span>
                     </template>
-                    <v-toolbar-title ><div></div><img style=" max-width: 180px;max-height: 100px;" src="https://firebasestorage.googleapis.com/v0/b/smartcustomer-d9202.appspot.com/o/logo-teaser-photos%2Flogowhite.png?alt=media&token=b14daf87-4227-4a7c-a36c-3505a6dbb371"></v-toolbar-title>
-                </v-badge>
+                    <v-toolbar-title ><div></div>
 
+                        <img style=" max-width: 180px;max-height: 100px;"
+                                                      src="https://firebasestorage.googleapis.com/v0/b/smartcustomer-d9202.appspot.com/o/logo-teaser-photos%2Flogowhite.png?alt=media&token=b14daf87-4227-4a7c-a36c-3505a6dbb371"
+                    >
+
+                    </v-toolbar-title>
+
+                </v-badge>
             </v-toolbar>
 
             <v-layout row pb-2 style="height: 100vh; z-index: 1" >
@@ -123,7 +128,7 @@
 
                                 <v-layout column wrap style="align-content: center; max-height: fit-content; max-width: fit-content">
                                 <profilecard  style="margin: 10px; min-width: 250px; "></profilecard>
-                                <ordersprofile style="margin: 10px"></ordersprofile>
+                                <reservations-card style="margin: 10px"></reservations-card>
                                 </v-layout>
                                 <v-layout row wrap>
                                 <div style=" margin: 5px; width: 100%">
@@ -202,10 +207,10 @@
 <script>
 
     import Profilecard from "./profileCard";
-    import Ordersprofile from "./oredersProfile";
+    import reservationsCard from "./reservationsCard";
     import Pointscard from "./pointsCard";
     import Newofferscard from "./newOffersCard";
-    import Appfooter from "../appFooter";
+    import Appfooter from "./appFooter";
     import Pointsplancard from "./pointsPlanCard";
 
     import SimpleCrypto from "simple-crypto-js";
@@ -219,7 +224,7 @@
     ];
     export default {
         name: 'customerprofile',
-        components: {Pointsplancard, Appfooter, Newofferscard, Pointscard, Ordersprofile, Profilecard},
+        components: {Pointsplancard, Appfooter, Newofferscard, Pointscard, reservationsCard, Profilecard},
         mixins: [userInfoMixin, checkConnectionMixin],
         data: () => {
 
@@ -320,11 +325,6 @@
                 }
             }
         },
-        beforeDestroy:function(){
-
-                this.$store.dispatch("changeLastLoginState", "offline");
-
-        },
         created: function() {
 
             let localSession = localStorage.getItem('appData');
@@ -333,15 +333,15 @@
             let decipherUser = simpleCrypto.decrypt(localSession);
             if(decipherUser === "No-Didit"){
                 this.$router.replace('/customerlogin');
+            }else {
+                this.$store.dispatch('checkConnetion');
+
+
+                this.$store.dispatch('getCustProfileInfo');
+
+                this.$store.dispatch("changeLastLoginState");
+                this.$store.dispatch("changeUserToOffline");
             }
-            this.$store.dispatch('checkConnetion');
-
-
-
-            this.$store.dispatch('getCustProfileInfo');
-
-            this.$store.dispatch("changeLastLoginState");
-            this.$store.dispatch("changeUserToOffline")
         },
         methods: {
             updateTicker: function() {

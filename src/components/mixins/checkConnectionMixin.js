@@ -14,9 +14,7 @@ export default {
         }
     },
     computed: {
-        watchUserLogger() {
-            return this.$store.getters.userStatus;
-        },
+
         connectionChecker() {
 
             return this.$store.getters.getConnectionFlag;
@@ -24,6 +22,7 @@ export default {
     },
     watch: {
         connectionChecker(con) {
+            console.log("mixin connextion off");
             if (con === true) {
                 this.timeoutInterval = 3000;
                 this.connectionError = "You're back Online!";
@@ -32,6 +31,7 @@ export default {
                 this.connection = true;
 
             } else if (con === false) {
+                console.log("mixin connextion off")
                 this.timeoutInterval = 6000;
                 this.connectionError = "You're Offline, Check your device connection!";
                 this.alertColor = "error";

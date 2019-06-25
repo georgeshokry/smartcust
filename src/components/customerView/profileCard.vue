@@ -9,7 +9,7 @@
 
                     >
 
-                        <v-layout row justify-center align-center v-if="dataLoading" style="min-height: 263px" transition="scale-transition">
+                        <v-layout row justify-center align-center style="min-height: 263px" v-if="dataLoading" >
                             <v-progress-circular
                                     indeterminate
                                     color="black"
@@ -17,7 +17,8 @@
                         </v-layout>
 
 
-                        <div v-if="dataLoaded" >
+                        <v-scroll-y-transition >
+                            <div v-if="dataLoaded">
 <!--                        the edit profile icon with tooltip-->
                         <div class="btn-corner" style="z-index: 1">
                             <v-tooltip left color="black" >
@@ -48,11 +49,11 @@
                                 id="card-title"
                         >
                             <div>
-                                <span class="headline mb-0">{{ greetings }}, <span style="text-transform: capitalize;">{{userName}}</span>!</span>
-                                <v-divider class="profile-divider"></v-divider>
+                                <span class="headline mb-0">{{ greetings }},<br><span style="text-transform: capitalize;">{{userName}}</span>!</span>
+
                             </div>
                         </v-card-title>
-
+                                <v-divider class="profile-divider" style="margin-left: 15px; margin-right: 15px"></v-divider>
                         <!--some of user data show here-->
                         <v-content style="text-align: left; padding-left: 16px; padding-bottom: 16px">
 
@@ -155,7 +156,8 @@
                             </v-card>
 
                         </v-dialog>
-                        </div>
+                            </div>
+                        </v-scroll-y-transition>
 
                     </v-card>
 

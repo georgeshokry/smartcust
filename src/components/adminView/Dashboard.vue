@@ -4,19 +4,44 @@
     <v-container
             fluid grid-list-md
             style="
-            padding-top: 85px;
+            padding-top: 70px;
             padding-bottom: 50px;
             height: auto;"
     >
 
 <navbar></navbar>
 
+<!--        <div style="text-align: start;  margin-left: 15px; ">-->
+<!--            <h2 class="headline" style="text-transform: capitalize;">-->
+<!--                {{$route.path.substr(1, $route.path.length)}}-->
+<!--                <v-divider dark class="mx-2 ma-1"></v-divider>-->
+<!--            </h2>-->
+<!--        </div>-->
+        <page-path></page-path>
 
+        <v-layout row wrap justify-space-between child-flex>
+            <v-flex d-flex xs12 sm4 md3 justify-center>
+                <v-card  elevation="3" max-width="300" class="round-card " style="border-right: .25rem solid #00800c !important;">
+
+                    <v-card-text>
+                        <div class="led-box">
+                            <v-layout row wrap justify-space-between>
+                                <div class="led-yellow-stoped" v-if="numOfUsersOnlineNow <= 0"></div>
+                                <div class="led-yellow" v-if="numOfUsersOnlineNow > 0"></div>
+                                <div class="headline " style=" margin-right: 15px;">Online Customers {{numOfUsersOnlineNow}}</div>
+
+                            </v-layout>
+                        </div>
+                    </v-card-text>
+                </v-card>
+            </v-flex>
+        </v-layout>
+        <v-divider class="mx-2 ma-3"></v-divider>
         <v-layout row wrap justify-space-between child-flex>
 
 
                     <v-flex d-flex xs12 sm4 md3   v-for="(card, i) in cards" :key="i"  justify-center>
-                        <v-card  elevation="10" max-width="250" class="round-card" v-bind:id="card.id">
+                        <v-card  elevation="3" max-width="250" class="round-card" v-bind:id="card.id">
                             <v-card-text>
                                 <v-icon color="black" x-large>{{card.icon }}</v-icon>
                                 <div class="headline">{{card.title}}</div>
@@ -37,22 +62,7 @@
 
 
         </v-layout>
-        <v-layout row wrap justify-space-between child-flex>
-        <v-flex d-flex xs12 sm4 md3 justify-center>
-            <v-card  elevation="5" max-width="300" class="round-card " >
 
-                <v-card-text>
-                    <h3>
-                        <div class="led-box">
-                            <div class="led-yellow-stoped" v-if="numOfUsersOnlineNow <= 0"></div>
-                            <div class="led-yellow" v-if="numOfUsersOnlineNow > 0"></div>
-                        </div>
-                        users online: {{numOfUsersOnlineNow}}
-                    </h3>
-                </v-card-text>
-            </v-card>
-        </v-flex>
-        </v-layout>
     </v-container>
 </template>
 
@@ -60,25 +70,26 @@
     import Navbar from "./Navbar";
     import createSpeedDial from "./CreateSpeedDial";
     import AnimatedNumber from "animated-number-vue";
+    import pagePath from "./pagePath";
 
     export default {
         name: 'dashboard',
-        components: {Navbar, createSpeedDial, AnimatedNumber},
+        components: {Navbar, createSpeedDial, AnimatedNumber, pagePath},
         data:function () {
             return {
                 cards: [
                     {title: "Customers", icon: "people", link: "/customers", data: 0, text: "view all", id: "customer-card"},
                     {title: "Offers", icon: "loyalty", link: "/offers", data: this.$store.getters.getNumOfOffers, text: "Edit", id: "offer-card"},
-                    {title: "Orders", icon: "forum", link: "/orders", data: 0, text: "manage", id: "order-card"},
-                    {title: "Points Level", icon: "import_export", link: "/pointslevel", data: 0, text: "change", id: "point-card"}
+                    {title: "Reservations", icon: "forum", link: "/reservations", data: 0, text: "manage", id: "order-card"},
+                    {title: "Points Plan", icon: "import_export", link: "/pointsplan", data: 0, text: "change", id: "point-card"}
                 ],
                 value: 0,
-                numOfUsersOnlineNow: 0,
+                numOfUsersOnlineNow: this.$store.getters.getNumberOfusersOnline,
             }
         },
         created() {
             this.$store.dispatch("listenToOnlineUsers");
-            this.$store.dispatch("getAllOffersDatabase");
+            this.$store.dispatch("listenNumberOfOffers");
         },
         computed: {
 
@@ -134,10 +145,11 @@
 
 .led-box {
 
-    float: left;
+    /*margin-left: 45%;*/
+    /*float: left;*/
 }
 .led-yellow {
-
+    margin: 3px !important;
     width: 25px;
     height: 25px;
     background-color: #09ff00;
@@ -155,7 +167,7 @@
 }
 
     .led-yellow-stoped{
-
+        margin: 3px !important;
         width: 25px;
         height: 25px;
         background-color: #00800c;

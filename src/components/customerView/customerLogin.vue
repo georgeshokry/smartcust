@@ -78,6 +78,7 @@
                             type="error"
                             color="red"
                             transition="scale-transition"
+                            class="custom-alert"
                     >
                         {{ errMsg }}
                     </v-alert>
@@ -106,7 +107,7 @@
         >
 
             <v-stepper v-model="creatingStepper"  >
-                <v-btn icon @click="cancelCreatingDialog" style="margin-left: 88%; padding: 1%;"><v-icon  >close</v-icon></v-btn>
+                <v-btn icon v-if="creatingStepper <= 1" @click="cancelCreatingDialog" style="margin-left: 88%; padding: 1%;"><v-icon  >close</v-icon></v-btn>
                 <v-stepper-header>
                     <v-stepper-step color="black" :complete="creatingStepper > 1" step="1">Account Info</v-stepper-step>
 
@@ -170,7 +171,7 @@
                                     label="Re-Enter Password*"
                                     :type="createShowRePass ? 'text' : 'password'"
                             ></v-text-field>
-                            <h6>*required</h6>
+                            <h6 style="color: red;">*required</h6>
                             <v-alert
                                     :value="signupAlert"
                                     type="error"
@@ -396,7 +397,7 @@
                 </v-stepper-items>
             </v-stepper>
         </v-dialog>
-
+        <annoying-no-internet></annoying-no-internet>
 
     </v-container>
     </v-app>
@@ -404,14 +405,16 @@
 <script>
 
     import SimpleCrypto from "simple-crypto-js";
+    import checkConnectionMixin from "../mixins/checkConnectionMixin";
+    import annoyingNoInternet from  "../../views/annoyingNoInternet"
     export default {
         name: 'customerlogin',
         $_veeValidate: {
             validator: 'new',
 
         },
-
-        components: {},
+        mixins: [ checkConnectionMixin],
+        components: {annoyingNoInternet},
         data: () => {
             return{
                 creatingStepper: 0,
@@ -637,11 +640,12 @@
                  this.custEmail = this.createEmail;
                  this.custPassword = this.createRePassword;
                 this.signupDialog = false;
+                this.loginNow();
                 this.$router.replace('/home');
 
             }
         },
-        created(){
+        beforeCreate(){
             let localSession = localStorage.getItem('appData');
             let _secretKey = "set-NuN-Chernobyl-WhoDidIt";
             let simpleCrypto = new SimpleCrypto(_secretKey);
@@ -650,11 +654,13 @@
                 if(decipherUser !== "No-Didit"){
                     this.$router.replace('/home');
                 }
-
+            this.$store.dispatch('checkConnetion');
         }
     }
 </script>
 
 <style>
-
+    .custom-alert i{
+        margin-right: 0;
+    }
 </style>

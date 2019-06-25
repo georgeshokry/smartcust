@@ -1,4 +1,5 @@
 <template>
+
     <v-card
             :tile="true"
             :elevation="10"
@@ -6,7 +7,7 @@
             id="rounded-card"
 
     >
-        <v-layout row justify-center align-center v-if="dataLoading" style="min-height: 263px" transition="scale-transition">
+        <v-layout row justify-center align-center v-if="dataLoading" style="min-height: 263px">
             <v-progress-circular
                     indeterminate
                     color="black"
@@ -36,7 +37,7 @@
                     <template  v-slot:badge >
                         <span style="color: black"><v-btn icon size="5px" color="white" @click="pointsRules= true"><v-icon size="20px" style="font-weight:bold;">help_outline</v-icon></v-btn></span>
                     </template>
-                    <span style="font-family: cursive;">
+                    <span>
                         <animated-number
                                 :value="userPoints"
                                 :round="1"
@@ -46,7 +47,19 @@
                     </span>
                 </v-badge>
 
-                <v-card-text style="font-size: medium;padding: 0px;">Smart Code: {{ userCode }}</v-card-text>
+                <v-card-text style="font-size: medium;padding: 0; ">
+                    <v-card-text style="font-size: medium;padding: 0; ">Smart Code</v-card-text>
+                    <v-card-text class="user-code">
+                    {{ userCode }}
+                    <v-btn icon size="5px" small color="white" style="margin: 0 0 5px 0;" @click="shareSmartCode" target="_blank">
+<!--                    <div class="fb-share-button" data-href="https://developers.facebook.com/docs/plugins/" data-layout="button" data-size="small">-->
+<!--                        <a target="_blank" href="" class="fb-xfbml-parse-ignore">Share</a>-->
+<!--                    </div>-->
+
+                        <v-icon size="20px" small style="font-weight:bold;" >share</v-icon>
+                    </v-btn>
+                    </v-card-text>
+                </v-card-text>
             </div>
             <v-divider style="margin-left: 15px; margin-right: 15px"></v-divider>
             <v-card-actions style="justify-content: center;  padding-top: 20px;">
@@ -103,12 +116,13 @@
 
         <v-dialog
                 v-model="promoCodeDialog"
-
+                height="auto"
                 width="400"
         >
 
 
-            <v-scroll-x-transition name="slide-fade" tag="div" mode="out-in" v-if="promoRedeem">
+            <v-scroll-y-transition  v-if="promoRedeem"   style="overflow: hidden">
+                <div>
                 <v-card
 
                         style="text-align: center"
@@ -120,11 +134,11 @@
                     <v-card-title>
                         <v-layout row wrap style="    justify-content: center;">
                         <img style=" max-width: 237px; max-height: 183px;     filter: drop-shadow(1px 1px 2px black);" align="center" src="../../assets/undraw_treasure_of9i.svg">
-                            <v-icon size="80px" color="black" style="    filter: drop-shadow(1px 1px 2px black);">stars</v-icon>
+                            <v-icon size="80px" color="black" style="    " class="rotate-star">stars</v-icon>
                         </v-layout>
                     </v-card-title>
 
-                    <v-card-text style="justify-content: center; max-width: fit-content;margin: auto;" >
+                    <v-card-text style="justify-content: center; max-width: 60%;margin: auto; padding-bottom: 0" >
                     <v-text-field
                             v-model="PromoCode"
                             v-validate="'required:true|max:10'"
@@ -137,17 +151,23 @@
                             clearable
                             maxlength="10"
                             autofocus
-                            style="filter: drop-shadow(1px 1px 2px black);"
+                            style="filter: drop-shadow(1px 1px 3px black);"
                             v-on:keyup.enter="startRedeemCode"
-                    ></v-text-field>
+                    >
+
+                    </v-text-field>
+                    </v-card-text>
+                    <v-card-text style="justify-content: center; max-width: fit-content;margin: auto; padding-top: 0" >
                         <v-alert
                                 :value="promoCodeAlert"
                                 type="error"
                                 color="red"
                                 transition="scale-transition"
                                 outline
+                                class="custom-alert"
+
                         >
-                            {{ promoMsgError }}
+                            <div v-html="promoMsgError">{{ promoMsgError }}</div>
                         </v-alert>
                     </v-card-text>
                     <v-btn
@@ -164,28 +184,29 @@
 
 
                 </v-card>
-            </v-scroll-x-transition>
+                </div>
+            </v-scroll-y-transition>
 
-            <v-scroll-x-transition name="slide-fade" tag="div" mode="out-in" v-if="promoSuccess">
+            <v-scroll-y-transition  v-if="promoSuccess"   style="overflow: hidden">
             <v-layout row wrap style="    justify-content: center;"  origin="center center">
                 <v-card
                         elevation="0"
                         height="auto"
                         width="400"
                 >
-                    <v-responsive style="height: 300px" lazy>
+                    <v-responsive style="height: 300px">
                         <v-card-text style="font-size: larger; font-weight: bold;">
                             <v-icon size="30px" color="black" style="    filter: drop-shadow(1px 1px 2px black);">stars</v-icon>
                             <img style=" max-width: 237px; max-height: 183px; filter: drop-shadow(1px 1px 2px black);" align="center" src="../../assets/undraw_happy_birthday_s72n.svg">
                             <v-icon size="30px" color="black" style="    filter: drop-shadow(1px 1px 2px black);">stars</v-icon>
-                            <h3 style="margin-top: 30px;">{{ promoMsgError }}</h3>
+                            <h3 style="margin-top: 30px;" v-html="promoMsgError">{{ promoMsgError }}</h3>
                         </v-card-text>
 
                     </v-responsive>
 
                 </v-card>
             </v-layout>
-            </v-scroll-x-transition>
+            </v-scroll-y-transition>
 
         </v-dialog>
 
@@ -266,7 +287,7 @@
                 if(flag === true){
                     this.promoSuccess = true;
                     this.promoRedeem = false;
-                    setTimeout(this.resetPromoCodeDialog, 3000);
+                    setTimeout(this.resetPromoCodeDialog, 5000);
                 }
             }
         },
@@ -288,10 +309,8 @@
 
             },
             resetPromoCodeDialog(){
-                this.promoCodeDialog = false;
-
                 this.promoCodeDialog =false;
-                this.$validator.reset();
+
                 this.promoCodeLoading = false;
                 this.PromoCode = "";
                 this.promoCodeAlert = false;
@@ -299,21 +318,36 @@
 
                 this.promoSuccess = false;
                 this.promoRedeem = true;
+                this.$validator.reset();
             },
             cancelPromoDialog(){
                 this.promoCodeDialog =false;
-                this.$validator.reset();
-                this.promoCodeLoading = false;
                 this.PromoCode = "";
                 this.promoCodeAlert = false;
                 this.promoMsgError = "";
+                this.promoCodeLoading = false;
+                this.$validator.reset();
+            },
+            shareSmartCode(){
+               let facebookShareLink =
+                   "https://www.facebook.com/sharer/sharer.php?u="
+                   + window.location.origin + "/home"
+                   + "?smartCode=" + this.userCode;
+               window.open(facebookShareLink);
             }
         },
-        beforeCreate() {
+        created() {
             this.$store.dispatch("getMaxPointsUsersCode");
+            let readCodeUrl = this.$route.query.smartCode;
+            if(readCodeUrl !== undefined){
+                this.promoCodeDialog = true;
+                this.PromoCode = readCodeUrl;
+                // this.startRedeemCode();
+            }
         }
 
     }
+
 </script>
 
 <style>
@@ -347,5 +381,22 @@
         font-weight: 600;
         font-size: -webkit-xxx-large;
     }
-
+    .rotate-star{
+        max-height: max-content;
+        filter: drop-shadow(1px 1px 2px black);
+        animation:spin 4s linear infinite;
+    }
+    @keyframes spin {
+        100% {
+            -webkit-transform: rotate(360deg); transform:rotate(360deg);
+        }
+    }
+    .custom-alert i{
+        margin-right: 0;
+    }
+    .user-code{
+        font-size: larger;
+        padding: 0px;
+        font-family: monospace;
+    }
 </style>

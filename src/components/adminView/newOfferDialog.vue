@@ -296,11 +296,11 @@
         },
         watch:{
             firebaseSuccessShow(success) {
-                this.newOfferDialog=false;
-                this.firebaseMsg = success;
-                this.snackbarAlert = true;
-                this.btnLoading = false;
-                this.snackbarColor = "success";
+                // this.newOfferDialog=false;
+                // this.firebaseMsg = success;
+                // this.snackbarAlert = true;
+                // this.btnLoading = false;
+                // this.snackbarColor = "success";
 
                 ///reseting all inputs
                 this.offerTitle= "";

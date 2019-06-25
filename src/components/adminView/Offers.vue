@@ -8,13 +8,13 @@
     >
 
         <navbar></navbar>
-
+<page-path></page-path>
 
         <div>
 
 <!--            starting of tool bar above the datatabel-->
             <v-toolbar flat  dark>
-                <v-toolbar-title>All Offers</v-toolbar-title>
+                <v-toolbar-title><v-icon larg>star</v-icon> <v-spacer></v-spacer><div class="header-text">All Offers</div></v-toolbar-title>
                 <v-divider
                         class="mx-2"
                         inset
@@ -30,44 +30,7 @@
                         hide-details
                         color="black"
                 ></v-text-field>
-<!--                <v-dialog v-model="dialog" max-width="500px">-->
-<!--                    <template v-slot:activator="{ on }">-->
-<!--                        <v-btn color="primary" dark class="mb-2" v-on="on">New Item</v-btn>-->
-<!--                    </template>-->
-<!--                    <v-card>-->
-<!--                        <v-card-title>-->
-<!--                            <span class="headline">{{ formTitle }}</span>-->
-<!--                        </v-card-title>-->
 
-<!--                        <v-card-text>-->
-<!--                            <v-container grid-list-md>-->
-<!--                                <v-layout wrap>-->
-<!--                                    <v-flex xs12 sm6 md4>-->
-<!--                                        <v-text-field v-model="editedItem.name" label="Dessert name"></v-text-field>-->
-<!--                                    </v-flex>-->
-<!--                                    <v-flex xs12 sm6 md4>-->
-<!--                                        <v-text-field v-model="editedItem.calories" label="Calories"></v-text-field>-->
-<!--                                    </v-flex>-->
-<!--                                    <v-flex xs12 sm6 md4>-->
-<!--                                        <v-text-field v-model="editedItem.fat" label="Fat (g)"></v-text-field>-->
-<!--                                    </v-flex>-->
-<!--                                    <v-flex xs12 sm6 md4>-->
-<!--                                        <v-text-field v-model="editedItem.carbs" label="Carbs (g)"></v-text-field>-->
-<!--                                    </v-flex>-->
-<!--                                    <v-flex xs12 sm6 md4>-->
-<!--                                        <v-text-field v-model="editedItem.protein" label="Protein (g)"></v-text-field>-->
-<!--                                    </v-flex>-->
-<!--                                </v-layout>-->
-<!--                            </v-container>-->
-<!--                        </v-card-text>-->
-
-<!--                        <v-card-actions>-->
-<!--                            <v-spacer></v-spacer>-->
-<!--                            <v-btn color="blue darken-1" flat @click="close">Cancel</v-btn>-->
-<!--                            <v-btn color="blue darken-1" flat @click="save">Save</v-btn>-->
-<!--                        </v-card-actions>-->
-<!--                    </v-card>-->
-<!--                </v-dialog>-->
             </v-toolbar>
 
 <!--            starting of offers datatabel-->
@@ -94,7 +57,10 @@
                     <td class="text-xs-left">{{ props.item.offerExpDate ? props.item.offerExpDate : "*(By No of customers)"}}</td>
                     <td class="text-xs-left">{{ props.item.offerExpNum ? props.item.offerExpNum : "*(By Date)" }}</td>
                     <td class="text-xs-left">{{ props.item.offerPoints }}</td>
-                    <td class="text-xs-left"><img style="max-width: 130px; max-height: 90px;" :src="props.item.offerPic"></td>
+                    <td class="text-xs-left">
+                        <img style="max-width: 130px; max-height: 90px;" :src="props.item.offerPic || url('../../assets/no-image.jpg')" >
+<!--                        <img style="max-width: 130px; max-height: 90px;" src="">-->
+                    </td>
                     <td class="text-xs-left">{{ props.item.offerCreatedTimestamp }}</td>
                     <td class="text-xs-left">
                         ({{ props.item.offerStatus }})
@@ -106,21 +72,6 @@
                     <td class="text-xs-left">{{ props.item.userIdRedeem ? props.item.userIdRedeem : "No one yet"}}</td>
 
 
-<!--                    <td class="justify-center layout px-0">-->
-<!--                        <v-icon-->
-<!--                                small-->
-<!--                                class="mr-2"-->
-<!--                                @click="editItem(props.item)"-->
-<!--                        >-->
-<!--                            edit-->
-<!--                        </v-icon>-->
-<!--                        <v-icon-->
-<!--                                small-->
-<!--                                @click="deleteItem(props.item)"-->
-<!--                        >-->
-<!--                            delete-->
-<!--                        </v-icon>-->
-<!--                    </td>-->
                 </template>
 
                 <template v-slot:no-results>
@@ -139,10 +90,10 @@
 </template>
 <script>
     import Navbar from "./Navbar";
-
+    import pagePath from "./pagePath"
     export default {
         name: 'offers',
-        components: {Navbar},
+        components: {Navbar, pagePath},
         data: () => ({
             dataTabelLoading: true,
             searchOfferByTitle:'',
@@ -210,5 +161,11 @@
     }
     .no-of-users{
         max-width: 160px;
+
     }
+@media screen and (max-width: 375px) {
+    div.header-text {
+        font-size: smaller;
+    }
+}
 </style>
