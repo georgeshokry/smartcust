@@ -58,7 +58,10 @@
                     <td class="text-xs-left">{{ props.item.offerExpNum ? props.item.offerExpNum : "*(By Date)" }}</td>
                     <td class="text-xs-left">{{ props.item.offerPoints }}</td>
                     <td class="text-xs-left">
-                        <img style="max-width: 130px; max-height: 90px;" :src="props.item.offerPic || url('../../assets/no-image.jpg')" >
+                        <v-fade-transition mode="out-in">
+                        <v-img contain max-width="130" :src="props.item.offerPic " >
+                        </v-img>
+                        </v-fade-transition>
 <!--                        <img style="max-width: 130px; max-height: 90px;" src="">-->
                     </td>
                     <td class="text-xs-left">{{ props.item.offerCreatedTimestamp }}</td>
@@ -105,7 +108,7 @@
                 {text: 'Expiration *(By Date)', value: 'offerExpDate', class: "offer-exp-date"},
                 {text: 'Expiration *(By Number Of Customer)', value: 'offerExpNum'},
                 {text: 'Points', value: 'offerPoints'},
-                {text: 'Photo', value: 'offerPic'},
+                {text: 'Photo', value: 'offerPic', class: "image-column"},
                 {text: 'Created On', value: 'offerCreatedTimestamp'},
                 {text: 'Status', value: 'offerStatus',},
                 {text: 'No. of users redeem', value: 'userIdRedeem', class:"no-of-users"}
@@ -126,7 +129,6 @@
         getAllOffers(offersArray){
             if(offersArray !== null){
                 this.allOffers = offersArray;
-
                 console.log(this.allOffers);
             }else {
                 this.viewNoData = true;
@@ -146,7 +148,7 @@
             },
         closeOffer(item){
             this.$store.dispatch("changeOfferStatus", {offerId: item});
-        }
+        },
     }
 
     }
@@ -162,6 +164,9 @@
     .no-of-users{
         max-width: 160px;
 
+    }
+    .image-column{
+        min-width: 130px;
     }
 @media screen and (max-width: 375px) {
     div.header-text {

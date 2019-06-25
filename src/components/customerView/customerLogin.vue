@@ -254,7 +254,7 @@
                                     mask="###-###-###-##"
                                     prefix="(+2)-"
                             ></v-text-field>
-                            <h6>*required</h6>
+                            <h6 style="color: red;">*required</h6>
                             <v-alert
                                     :value="profileAlert"
                                     type="error"
