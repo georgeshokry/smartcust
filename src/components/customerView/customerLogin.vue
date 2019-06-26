@@ -641,7 +641,7 @@
                  this.custPassword = this.createRePassword;
                 this.signupDialog = false;
                 this.loginNow();
-                this.$router.replace('/home');
+                this.$router.replace('/');
 
             }
         },
@@ -652,7 +652,7 @@
             let decipherUser = simpleCrypto.decrypt(localSession);
 
                 if(decipherUser !== "No-Didit"){
-                    this.$router.replace('/home');
+                    this.$router.replace('/');
                 }
             this.$store.dispatch('checkConnetion');
         }
