@@ -5,16 +5,17 @@
         <v-layout column wrap>
         <h2 class="headline" style="text-transform: capitalize; margin-top: 15px">
 
-            <div v-if="$route.path !== '/dashboard/pointsplan'">
-                <v-btn icon v-if="$route.path.substr(1, $route.path.length) !== 'dashboard'" to="/dashboard">
-                    <v-icon>keyboard_arrow_left</v-icon>
+            <div v-if="$route.path !== '/admin/pointsplan'">
+
+                <v-btn icon v-if="$route.path.substr(1, $route.path.length) !== 'dashboard' && $route.path !== '/admin/dashboard'" to="/admin">
+                    <v-icon>arrow_back</v-icon>
                 </v-btn>
                 {{$route.path.split("/", $route.path.length)[2] ? $route.path.split("/", $route.path.length)[2]: "dashboard"}}
             </div>
 
-            <div v-if="$route.path === '/dashboard/pointsplan'">
-                <v-btn icon v-if="$route.path.substr(1, $route.path.length) !== 'dashboard'" to="/dashboard">
-                    <v-icon>keyboard_arrow_left</v-icon>
+            <div v-if="$route.path === '/admin/pointsplan'">
+                <v-btn icon v-if="$route.path.substr(1, $route.path.length) !== 'dashboard'" to="/admin">
+                    <v-icon>arrow_back</v-icon>
                 </v-btn>
                 Points Plan
             </div>

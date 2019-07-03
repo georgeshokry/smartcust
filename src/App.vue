@@ -1,51 +1,22 @@
 <template>
 
   <div id="app" style="min-height: 100vh"  >
-
-<!--      <div v-if="showAppLoader">-->
-<!--      <v-progress-circular-->
-
-<!--              :size="70"-->
-<!--              :width="7"-->
-<!--              indeterminate-->
-<!--              color="black"-->
-<!--      ></v-progress-circular>-->
-<!--      </div>-->
-
-      <home></home>
+      <router-view/>
 
   </div>
 </template>
 <script>
 
-import Home from '@/views/Home'
+
 
     export default {
-      components: {Home},
+      components: {},
       name: "app",
       data() {
         return {
 
         }
       },
-        created() {
-
-        }
-        // computed: {
-        //     user(){
-        //         return this.$store.getters.userStatus;
-        //     }
-        // },
-        // watch:{
-        //     user(value){
-        //         if(value !== null && value !== undefined){
-        //             this.showAppLoader = true;
-        //         }else {
-        //             this.showAppLoader = false;
-        //
-        //         }
-        //     },
-        // }
     }
 </script>
 <style>

@@ -137,7 +137,7 @@ const boss = "X0P3ELO7GISMdClcAXAj9jaPE4u1";
                 let decipherUser = simpleCrypto.decrypt(localSession);
 
                 if(decipherUser === boss) {
-                   this.$router.replace('/dashboard');
+                   this.$router.replace('/admin');
                 }
              }
        },
@@ -161,7 +161,7 @@ const boss = "X0P3ELO7GISMdClcAXAj9jaPE4u1";
                let decipherUser = simpleCrypto.decrypt(localSession);
 
                 if(decipherUser === boss) {
-                    this.$router.replace('/dashboard');
+                    this.$router.replace('/admin');
                 }
             }
          },
