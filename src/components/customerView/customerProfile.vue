@@ -1,12 +1,6 @@
 <template>
     <v-app>
 
-<!--        <v-layout row justify-center align-center v-if="dataLoading" style="min-height: 263px" transition="scale-transition">-->
-<!--            <v-progress-circular-->
-<!--                    indeterminate-->
-<!--                    color="black"-->
-<!--            ></v-progress-circular>-->
-<!--        </v-layout>-->
 
         <v-card flat >
             <v-toolbar
@@ -29,7 +23,7 @@
                     <v-toolbar-title ><div></div>
 
                         <img style=" max-width: 180px;max-height: 100px;"
-                                                      src="https://firebasestorage.googleapis.com/v0/b/smartcustomer-d9202.appspot.com/o/logo-teaser-photos%2Flogowhite.png?alt=media&token=b14daf87-4227-4a7c-a36c-3505a6dbb371"
+                             src="https://firebasestorage.googleapis.com/v0/b/smartcustomer-d9202.appspot.com/o/logo-teaser-photos%2Flogowhite.png?alt=media&token=b14daf87-4227-4a7c-a36c-3505a6dbb371"
                     >
 
                     </v-toolbar-title>
@@ -94,9 +88,9 @@
                                 </v-tooltip>
 
 
-                            <v-divider vertical inset  class="mx-3 ma-2"></v-divider>
+                            <v-divider vertical inset class="mx-3 ma-2"></v-divider>
 
-                            <v-menu bottom left offset-y>
+                            <v-menu bottom left fixed offset-y >
                                 <template v-slot:activator="{ on }">
                                     <v-btn
                                             icon
@@ -106,21 +100,27 @@
                                     </v-btn>
                                 </template>
 
-                                <v-list dark>
+                                <v-list style="    width: 168px; ">
                                     <v-list-tile
+
                                             @click="logoutCust"
                                     >
-                                        <v-list-tile-title>Logout </v-list-tile-title>
+                                        <v-list-tile-content>
+                                            Logout
+                                        </v-list-tile-content>
+                                        <v-list-tile-action>
                                         <v-icon right> keyboard_tab</v-icon>
+                                        </v-list-tile-action>
                                     </v-list-tile>
                                 </v-list>
                             </v-menu>
+
+
                             </v-layout>
 
                         </v-toolbar>
 
                         <v-divider></v-divider>
-
                         <v-card-text style="height: 100%; padding: 0px" >
                             <v-parallax  src="https://firebasestorage.googleapis.com/v0/b/smartcustomer-d9202.appspot.com/o/logo-teaser-photos%2Fback4.png?alt=media&token=0cce690b-982c-4b48-85dd-1b529ba2656e" height="1000" jumbotron  style="height: 100%;  background-color: black;">
 
@@ -202,16 +202,13 @@
             </v-btn>
         </v-snackbar>
 
+
+<logout-progress v-model="showLogoutProgress"></logout-progress>
+
     </v-app>
 </template>
 <script>
 
-    import Profilecard from "./profileCard";
-    import reservationsCard from "./reservationsCard";
-    import Pointscard from "./pointsCard";
-    import Newofferscard from "./newOffersCard";
-    import Appfooter from "./appFooter";
-    import Pointsplancard from "./pointsPlanCard";
 
     import SimpleCrypto from "simple-crypto-js";
     import userInfoMixin from "../mixins/userInfoMixin";
@@ -224,13 +221,22 @@
     ];
     export default {
         name: 'customerprofile',
-        components: {Pointsplancard, Appfooter, Newofferscard, Pointscard, reservationsCard, Profilecard},
+        components: {
+            Pointsplancard:() => import("./pointsPlanCard"),
+            Appfooter:() => import("./appFooter"),
+            Newofferscard:() =>import("./newOffersCard"),
+            Pointscard:() =>import("./pointsCard"),
+            reservationsCard:() => import("./reservationsCard"),
+            Profilecard:() => import("./profileCard"),
+            logoutProgress:()=> import("../../views/logoutProgress")
+        },
         mixins: [userInfoMixin, checkConnectionMixin],
         data: () => {
 
             return{
                 dataLoading: true,
                 dataLoaded: false,
+                exitLoading: false,
                 // the snackbar of whole customer app for firebase msg and alerts
                 firebaseAlerts:false,
                 firebaseMsg: "",
@@ -238,6 +244,8 @@
                 msgTimeoutInterval: 4000,
                 snackbarIcon: "",
                 counetr:0,
+
+                showLogoutProgress: false,
 
                 randomHints: hints[Math.floor(Math.random() * hints.length)],
 
@@ -285,7 +293,7 @@
             watchUserLogger(state){
                 console.log("LOGGER NOW", state);
                 if(state === null){
-                    this.$router.replace('/customerlogin');
+                    this.$router.replace('/customer-login');
                 }
 
             },
@@ -325,14 +333,14 @@
                 }
             }
         },
-        created: function() {
+        beforeMount: function() {
 
             let localSession = localStorage.getItem('appData');
             let _secretKey = "set-NuN-Chernobyl-WhoDidIt";
             let simpleCrypto = new SimpleCrypto(_secretKey);
             let decipherUser = simpleCrypto.decrypt(localSession);
             if(decipherUser === "No-Didit"){
-                this.$router.replace('/customerlogin');
+                this.$router.replace('/customer-login');
             }else {
                 this.$store.dispatch('checkConnetion');
 
@@ -352,13 +360,12 @@
                 this.counetr +=1;
             },
             logoutCust(){
+                this.showLogoutProgress = true;
                 this.$store.dispatch('logoutUser');
             },
 
         },
-        mounted () {
 
-        }
     }
 </script>
 
@@ -431,5 +438,11 @@
             max-width: 80px;
             max-height: 71px;
         }
+    }
+    .custom-progress-dialog{
+        border-radius: 35px;
+    }
+    .v-menu__content{
+        border-radius: 0px 0px 20px 20px !important;
     }
 </style>

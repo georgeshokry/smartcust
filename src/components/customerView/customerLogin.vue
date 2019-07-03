@@ -101,6 +101,7 @@
 <!--///////////////////////start of signup modal-->
 
         <v-dialog
+                lazy
                 persistent
                 v-model="signupDialog"
                 max-width="700px"
@@ -406,7 +407,7 @@
 
     import SimpleCrypto from "simple-crypto-js";
     import checkConnectionMixin from "../mixins/checkConnectionMixin";
-    import annoyingNoInternet from  "../../views/annoyingNoInternet"
+    import axios from "axios";
     export default {
         name: 'customerlogin',
         $_veeValidate: {
@@ -414,7 +415,9 @@
 
         },
         mixins: [ checkConnectionMixin],
-        components: {annoyingNoInternet},
+        components: {
+            annoyingNoInternet:()=> import("../../views/annoyingNoInternet"),
+        },
         data: () => {
             return{
                 creatingStepper: 0,
@@ -483,7 +486,7 @@
                 console.log(watcher);
                 if(watcher !== null){
                     if(this.signupDialog === false){
-                        this.$router.replace('/home');
+                        this.$router.replace('/');
                     }
 
                 }
@@ -641,11 +644,11 @@
                  this.custPassword = this.createRePassword;
                 this.signupDialog = false;
                 this.loginNow();
-                this.$router.replace('/');
+                this.$router.replace('/customer');
 
             }
         },
-        beforeCreate(){
+        created(){
             let localSession = localStorage.getItem('appData');
             let _secretKey = "set-NuN-Chernobyl-WhoDidIt";
             let simpleCrypto = new SimpleCrypto(_secretKey);
@@ -655,7 +658,20 @@
                     this.$router.replace('/');
                 }
             this.$store.dispatch('checkConnetion');
+        },
+        mounted(){
+//            navigator.geolocation.getCurrentPosition(function (res) {
+//
+//                axios.post('http://api.openweathermap.org/data/2.5/weather?lat='+res.coords.latitude+'&'+'lon=' + res.coords.longitude  +'&APPID=93f770ee06905ca5537a56af944bd51e')
+//                .then(response => (console.log(response)))
+//                .catch(error => (console.log(error)))
+//            });
+
+//            axios.post('http://api.openweathermap.org/data/2.5/weather?q=Cairo,Egypt,uk&APPID=93f770ee06905ca5537a56af944bd51e')
+//                .then(response => (console.log(response)))
+//                .catch(error => (console.log(error)))
         }
+
     }
 </script>
 

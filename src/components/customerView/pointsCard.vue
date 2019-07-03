@@ -331,7 +331,7 @@
             shareSmartCode(){
                let facebookShareLink =
                    "https://www.facebook.com/sharer/sharer.php?u="
-                   + window.location.origin + "/"
+                   + window.location.origin + "/profile"
                    + "?smartCode=" + this.userCode;
                window.open(facebookShareLink);
             }

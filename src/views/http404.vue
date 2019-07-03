@@ -66,10 +66,10 @@
 
                     if (decipherUser === "X0P3ELO7GISMdClcAXAj9jaPE4u1") {
                         this.dist = "Dashboard";
-                        this.distPath = "/dashboard";
+                        this.distPath = "/admin";
                     }else{
                         this.dist = "Profile";
-                        this.distPath = "/home";
+                        this.distPath = "/";
                     }
 
 

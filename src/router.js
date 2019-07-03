@@ -12,90 +12,120 @@ let router = new Router({
   mode: "history",
   // base: process.env.BASE_URL,
   routes: [
-
-
-
       {
-          path: "/",
-          name: "customerprofile",
-          component: () => import("@/components/customerView/customerProfile"),
-          meta: {
-              auth: true,
-              title: "Home | Smart Customer",
+          path: '/404',
+          name: 'http404',
+          component: () => import("./views/http404"),
+          meta:{
+              auth: false,
+              title: "404 | Smart Customer",
           }
       },
-
       {
-          path: "/customerlogin",
+          path: "/customer-login",
           name: "customerlogin",
-          component: () => import("@/components/customerView/customerLogin"),
+          component: () => import("./components/customerView/customerLogin"),
           meta: {
               auth: false,
               title: "Smart Customer"
 
           }
       },
-
       {
-          path: "/dashboard",
-          name: "dashboard",
-          component: () => import("@/components/adminView/Dashboard"),
+          path: "/",
+          name: "custHome",
+          redirect: { name: 'customerprofile' },
+          component: () => import("./views/custHome.vue"),
           meta: {
               auth: true,
-              title: "Admin Home | Smart Customer",
-
-          }
+              title: "Home | Smart Customer",
+          },
+          children: [
+              {
+                  path: "profile",
+                  name: "customerprofile",
+                  component: () => import("./components/customerView/customerProfile"),
+                  meta: {
+                      auth: true,
+                      title: "Home | Smart Customer",
+                  }
+              },
+          ],
       },
 
       {
-          path: "/dashboard/adminlogin",
-          name: "adminlogin",
-          component: () => import("@/views/AdminLogin"),
-          meta:{
+          path: "/admin-login",
+          name: "AdminLogin",
+          component: ()=> import("./components/adminView/AdminLogin.vue"),
+          meta: {
               title: "Admin Login | Smart Customer",
               auth: false
           }
       },
-    {
-
-      path: "/dashboard/customers",
-      name: "customers",
-        component: () => import("@/components/adminView/Customers"),
-        meta: {
-            auth: true,
-            title: "Customers | Smart Customer",
-
-        }
-    },
       {
-          path: "/dashboard/offers",
-          name: "offers",
-          component: () => import("@/components/adminView/Offers"),
+          path: "/admin",
+          name: "home",
+          redirect: { name: 'dashboard' },
+          component: () => import("./views/adminHome"),
           meta: {
               auth: true,
-              title: "Offers | Smart Customer",
+              title: "Admin Home | Smart Customer",
+          },
+          children: [
 
-          }
-      },
-      {
-          path: "/dashboard/reservations",
-          name: "reservations",
-          component: () => import("@/components/adminView/reservations"),
-          meta: {
-              auth: true,
-              title: "Reservations | Smart Customer",
+              {
+              path: "dashboard",
+    name: "dashboard",
+    component: () => import("./components/adminView/Dashboard"),
+    meta: {
+        auth: true,
+        title: "Admin Home | Smart Customer",
+    }
 
-          }
-      },
-      {
-          path: "/dashboard/pointsplan",
-          name: "pointsPlan",
-          component: () => import("@/components/adminView/pointsPlan"),
-          meta: {
-              auth: true,
-              title: "Points Plan | Smart Customer",
+},
+              {
 
-          }
+                  path: "customers",
+                  name: "customers",
+                  component: () => import("./components/adminView/Customers"),
+                  meta: {
+                      auth: true,
+                      title: "Customers | Smart Customer",
+
+                  }
+              },
+              {
+                  path: "offers",
+                  name: "offers",
+                  component: () => import("./components/adminView/Offers"),
+                  meta: {
+                      auth: true,
+                      title: "Offers | Smart Customer",
+
+                  }
+              },
+              {
+                  path: "reservations",
+                  name: "reservations",
+                  component: () => import("./components/adminView/reservations"),
+                  meta: {
+                      auth: true,
+                      title: "Reservations | Smart Customer",
+
+                  }
+              },
+              {
+                  path: "pointsplan",
+                  name: "pointsPlan",
+                  component: () => import("./components/adminView/pointsPlan"),
+                  meta: {
+                      auth: true,
+                      title: "Points Plan | Smart Customer",
+
+                  }
+
+              },
+          ],
       },
       // {
       //     path: '/',
@@ -106,20 +136,11 @@ let router = new Router({
       //         title: "Smart Customer",
       //     }
       // },
-      {
-          path: '*',
-          name: 'http404',
-          component: () => import("@/views/http404"),
-          meta:{
-              title: "404 | Smart Customer",
-          }
-      },
-
 
 
   ]
 });
-// router.replace({ path: '/', redirect: 'dashboard' });
+// router.replace({ path: '/profile', redirect: 'customerprofile' });
 
 router.beforeEach((to, from, next) => {
 
@@ -129,21 +150,28 @@ router.beforeEach((to, from, next) => {
     let decipherUser = simpleCrypto.decrypt(localSession);
 
 
-
-
+    if (to.matched.length) {
+        next();
+    } else {
+        next({
+            path: '/404'
+        });
+    }
     if(
-        to.path === "/dashboard" ||
-        to.path === "/dashboard/adminlogin" ||
-        to.path === "/dashboard/offers" ||
-        to.path === "/dashboard/customers" ||
-        to.path === "/dashboard/reservations" ||
-        to.path === "/dashboard/pointsplan"
+        to.path === "/admin" ||
+        to.path === "/admin/dashboard" ||
+        to.path === "/admin/offers" ||
+        to.path === "/admin/customers" ||
+        to.path === "/admin/reservations" ||
+        to.path === "/admin/pointsplan" ||
+        to.path === "/admin-login"
     ) {
+
         // "X0P3ELO7GISMdClcAXAj9jaPE4u1"
         if (to.meta.auth && decipherUser !== boss) {
                 document.title = to.meta.title;
                 next({
-                    path: '/dashboard/adminlogin'
+                    path: '/admin-login'
                 });
         }else {
             document.title = to.meta.title;
@@ -153,18 +181,18 @@ router.beforeEach((to, from, next) => {
 
 
     }
-    if(to.path === "/" || to.path === "/customerlogin"){
+    if(to.path === "/" || to.path === "/profile" ||to.path === "/customer-login"){
 
             if (to.meta.auth && decipherUser === "No-Didit") {
                 if (to.meta.auth && decipherUser === boss) {
                     document.title = to.meta.title;
                     next({
-                        path: '/dashboard/adminlogin'
+                        path: '/admin-login'
                     });
                 }else {
                     document.title = to.meta.title;
                     next({
-                        path: '/customerlogin'
+                        path: '/customer-login'
                     });
                 }
             } else {
@@ -175,11 +203,13 @@ router.beforeEach((to, from, next) => {
             if(to.meta.auth && decipherUser === boss) {
                 document.title = to.meta.title;
                 next({
-                    path: '/dashboard'
+                    path: '/admin'
                 });
             }
 
     }
+
+
 });
 
 

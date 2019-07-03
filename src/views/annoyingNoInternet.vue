@@ -1,9 +1,10 @@
 <template>
     <v-dialog
+            lazy
             persistent
             v-model="noInternetIcon"
             max-width="700px"
-            style="border-radius: 10px"
+            style="border-radius: 10px 10px 10px 10px;"
     >
         <v-card style="border-radius: 10px">
             <v-card-text  class="headline font-weight-bold" style="background-color: #f0f4f7;">

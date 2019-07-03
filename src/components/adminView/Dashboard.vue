@@ -3,25 +3,15 @@
     <!--content of dashboard-->
     <v-container
             fluid grid-list-md
-            style="
-            padding-top: 70px;
-            padding-bottom: 50px;
-            height: auto;"
+            style="padding-bottom: 50px"
     >
 
-<navbar></navbar>
 
-<!--        <div style="text-align: start;  margin-left: 15px; ">-->
-<!--            <h2 class="headline" style="text-transform: capitalize;">-->
-<!--                {{$route.path.substr(1, $route.path.length)}}-->
-<!--                <v-divider dark class="mx-2 ma-1"></v-divider>-->
-<!--            </h2>-->
-<!--        </div>-->
         <page-path></page-path>
 
         <v-layout row wrap justify-space-between child-flex >
             <v-flex d-flex xs12 sm4 md3 justify-center style="justify-content: space-around;">
-                <v-card  elevation="3" max-width="300" class="round-card " style="border-right: .25rem solid #00800c !important;">
+                <v-card  elevation="3" max-width="300" min-width="284" class="round-card " style="border-right: .25rem solid #00800c !important;">
 
                     <v-card-text>
                         <div class="led-box">
@@ -73,21 +63,22 @@
 </template>
 
 <script>
-    import Navbar from "./Navbar";
-    import createSpeedDial from "./CreateSpeedDial";
-    import AnimatedNumber from "animated-number-vue";
-    import pagePath from "./pagePath";
 
     export default {
         name: 'dashboard',
-        components: {Navbar, createSpeedDial, AnimatedNumber, pagePath},
+        components: {
+            Navbar: () => import("./Navbar"),
+            createSpeedDial: () => import("./CreateSpeedDial"),
+            AnimatedNumber: () => import("animated-number-vue"),
+            pagePath: () => import("./pagePath")
+        },
         data:function () {
             return {
                 cards: [
-                    {title: "Customers", icon: "people", link: "dashboard/customers", data: 0, text: "view all", id: "customer-card"},
-                    {title: "Offers", icon: "loyalty", link: "dashboard/offers", data: this.$store.getters.getNumOfOffers, text: "Edit", id: "offer-card"},
-                    {title: "Reservations", icon: "forum", link: "dashboard/reservations", data: 0, text: "manage", id: "order-card"},
-                    {title: "Points Plan", icon: "import_export", link: "dashboard/pointsplan", data: 0, text: "change", id: "point-card"}
+                    {title: "Customers", icon: "people", link: "/admin/customers", data: 0, text: "view all", id: "customer-card"},
+                    {title: "Offers", icon: "loyalty", link: "/admin/offers", data: this.$store.getters.getNumOfOffers, text: "Edit", id: "offer-card"},
+                    {title: "Reservations", icon: "forum", link: "/admin/reservations", data: 0, text: "manage", id: "order-card"},
+                    {title: "Points Plan", icon: "import_export", link: "/admin/pointsplan", data: 0, text: "change", id: "point-card"}
                 ],
                 value: 0,
                 numOfUsersOnlineNow: this.$store.getters.getNumberOfusersOnline,

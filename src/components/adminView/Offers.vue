@@ -2,12 +2,11 @@
     <v-container
             fluid grid-list-md
             style="
-            padding-top: 70px;
             padding-bottom: 50px;
             height: auto;"
     >
 
-        <navbar></navbar>
+
 <page-path></page-path>
 
         <div>

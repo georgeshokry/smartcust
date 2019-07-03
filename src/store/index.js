@@ -131,6 +131,12 @@ export const store = new Vuex.Store({
     actions:{
         checkConnetion({commit}){
 
+            // window.addEventListener('online', () =>
+            // commit('setConnectionFlag', true),
+            // );
+            // window.addEventListener('offline', () =>
+            // commit('setConnectionFlag', false),
+            // );
             let count = 0;
             firebase.database().ref(".info/connected").on("value", function(snap) {
                 if(count >= 1) {

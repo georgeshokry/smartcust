@@ -1,64 +1,72 @@
 <template>
 
-    <v-layout
-            wrap
-            style="height: 100%;"
+<v-app id="navbar">
+    <!--header toolbar-->
+    <v-toolbar
+            dark
+            app
+
+            fixed
+
     >
 
-        <!--header toolbar-->
-        <v-toolbar
-                dark
-                :fixed="true"
-                :clipped="true"
-        >
 
-
-            <v-toolbar-side-icon  @click.stop="drawer = !drawer"></v-toolbar-side-icon>
+        <v-toolbar-side-icon  @click.stop="drawer = !drawer">
+            <v-icon v-if="drawer === true">keyboard_arrow_left</v-icon>
+        </v-toolbar-side-icon>
 
 
 
-            <v-toolbar-title style="margin-left: 0!important; "><div class="responsive-title">Smart Customer</div></v-toolbar-title>
-            <v-spacer></v-spacer>
-            <v-toolbar-items >
-                <v-tooltip lazy bottom nudge-bottom="-15" color="red" >
-                    <template v-slot:activator="{ on }">
-                        <v-expand-x-transition>
-                            <v-icon v-show="noInternetIcon" v-on="on" color="red" style="cursor: default">cloud_off</v-icon>
-                        </v-expand-x-transition>
-                    </template>
-                    <span >You're offline!</span>
-                </v-tooltip>
-                <v-divider vertical inset  class="mx-2 ma-2"></v-divider>
-                <v-btn flat  @click="logout" small>Logout<v-icon right small>exit_to_app</v-icon></v-btn>
+        <v-toolbar-title >
+            <div class="responsive-title">
+                <v-layout row wrap justify-content>
+
+           <img class="image-logo" src="../../assets/logowhite.png"
+
+           >
+
+
+                </v-layout>
+            </div>
+        </v-toolbar-title>
+
+        <v-spacer></v-spacer>
+        <v-toolbar-items >
+            <v-tooltip lazy bottom nudge-bottom="-15" color="red" >
+                <template v-slot:activator="{ on }">
+                    <v-expand-x-transition>
+                        <v-icon v-show="noInternetIcon" v-on="on" color="red" style="cursor: default">cloud_off</v-icon>
+                    </v-expand-x-transition>
+                </template>
+                <span >You're offline!</span>
+            </v-tooltip>
+            <v-divider vertical inset  class="mx-2 ma-2"></v-divider>
+            <v-btn flat  @click="logout" small>Logout<v-icon right small>exit_to_app</v-icon></v-btn>
+
+        </v-toolbar-items>
+    </v-toolbar>
+    <!--the left drawer-->
+    <v-navigation-drawer
+            fixed
+
+            app
+            dark
+            v-model="drawer"
+            width="210"
+    >
 
 
 
-
-
-            </v-toolbar-items>
-        </v-toolbar>
-
-        <!--the left drawer-->
-        <v-navigation-drawer
-                v-model="drawer"
-                :mini-variant="mini"
-                :fixed="true"
-                :clipped="true"
-                dark
-                temporary
-                style="width: 210px;"
-
-        >
-            <v-list class="pa-1" >
+            <v-list class="pa-1" style="background-color: black">
                 <v-list-tile v-if="mini" @click.stop="mini = !mini">
                     <v-list-tile-action>
                         <v-icon>chevron_right</v-icon>
                     </v-list-tile-action>
                 </v-list-tile>
 
-                <v-list-tile avatar tag="div">
+                <v-list-tile avatar tag="div" >
                     <v-list-tile-avatar>
-                        <img src="https://randomuser.me/api/portraits/men/85.jpg">
+                        <img src="../../../public/favicon-logo.png">
                     </v-list-tile-avatar>
 
                     <v-list-tile-content style="overflow: visible">
@@ -82,11 +90,11 @@
                         active-class="default-class highlighted"
                 >
 
-                    <v-list-tile-action>
+                    <v-list-tile-action style="padding-left: 15px">
                         <v-icon>{{ item.icon }}</v-icon>
                     </v-list-tile-action>
 
-                    <v-list-tile-content >
+                    <v-list-tile-content style="padding-left: 15px">
                         <v-list-tile-title >{{ item.title }}</v-list-tile-title>
                     </v-list-tile-content>
 
@@ -101,6 +109,22 @@
                 </v-list-tile-action>
 
                 <v-divider light></v-divider>
+                <v-footer
+                        style="background-color: black"
+                        dark
+                        :fixed="true"
+                        height="auto"
+                        class="justify-center"
+                >
+
+
+<!--                    <v-spacer></v-spacer>-->
+                    <div class="footer">
+                        Photographer | Smart Customer<br>v1.0-beta - {{ new Date().getFullYear() }} &copy;<br>
+                        for technical issues, <a href="https://www.facebook.com" style="text-decoration: none" target="_blank">contact me!</a>
+                    </div>
+
+                </v-footer>
             </v-list>
 
 
@@ -108,17 +132,14 @@
 
         </v-navigation-drawer>
 
-        <v-footer
-                class="pa-3"
-                dark
-                :fixed="true"
-                :clipped="true"
-        >
-
+    <v-content >
+        <v-container fluid fill-height>
+            
+                <router-view></router-view>
             <create-speed-dial></create-speed-dial>
-            <v-spacer></v-spacer>
-            <div class="footer">  Photographer | Smart Customer v1.0-beta - {{ new Date().getFullYear() }} &copy;</div>
-        </v-footer>
+        </v-container>
+    </v-content>
+
 
         <v-snackbar
                 v-model="connection"
@@ -144,7 +165,7 @@
                 right
                 top
         >
-            {{ firebaseMutationsMsg }}
+            <v-icon color="white">check_circle_outline </v-icon> {{ firebaseMutationsMsg }}
             <v-btn
 
                     icon
@@ -155,9 +176,9 @@
         </v-snackbar>
 
         <annoying-no-internet v-if="$route.path !== '/dashboard'"></annoying-no-internet>
-    </v-layout>
+        <logout-progress v-model="showLogoutProgress"></logout-progress>
 
-
+</v-app>
 
 
 </template>
@@ -169,7 +190,11 @@
     import annoyingNoInternet from "../../views/annoyingNoInternet"
     export default {
         name: 'navbar',
-        components: {createSpeedDial, annoyingNoInternet},
+        components: {
+            createSpeedDial,
+            annoyingNoInternet,
+            logoutProgress:()=> import("../../views/logoutProgress")
+        },
         mixins: [checkConnectionMixin],
         data () {
             return {
@@ -177,16 +202,17 @@
                 firebaseMutationsMsg: '',
                 firebaseMutationsColor: '',
 
-                drawer: false,
+                drawer: null,
                 items: [
-                    { title: 'Home', icon: 'dashboard', link: 'dashboard',  },
-                    { title: 'Customers', icon: 'people', link: 'dashboard/customers' },
-                    { title: 'Offers', icon: 'star', link: 'dashboard/offers' },
-                    { title: 'Reservations', icon: 'forum', link: 'dashboard/reservations' },
-                    { title: 'Points Plan', icon: 'import_export', link: 'dashboard/pointsplan' }
+                    { title: 'Dashboard', icon: 'dashboard', link: '/admin/dashboard',  },
+                    { title: 'Customers', icon: 'people', link: '/admin/customers' },
+                    { title: 'Offers', icon: 'loyalty', link: '/admin/offers' },
+                    { title: 'Reservations', icon: 'forum', link: '/admin/reservations' },
+                    { title: 'Points Plan', icon: 'import_export', link: '/admin/pointsplan' }
                 ],
                 mini: false,
-                right: null
+                right: null,
+                showLogoutProgress: false,
             }
         },
         computed:{
@@ -224,14 +250,15 @@
                 let decipherUser = simpleCrypto.decrypt(localSession);
 
                 if (decipherUser !== "X0P3ELO7GISMdClcAXAj9jaPE4u1") {
-                    this.$router.replace('/dashboard/adminlogin');
+                    this.$router.replace('/admin-login');
                 }
             }
     }
         },
         methods: {
            logout(){
-               // this.$router.replace('/adminlogin');
+               // this.$router.replace('/admin-login');
+               this.showLogoutProgress = true;
                this.$store.dispatch('logoutUser');
            }
         },
@@ -242,7 +269,7 @@
 </script>
 <style>
     .highlighted{
-        background-color: #ffffff78;
+        background-color: rgba(255, 255, 255, 0.57);
     }
 
 
@@ -256,7 +283,16 @@
         }
     }
     .footer{
-        font-weight: 600;
         font-size: smaller;
+        margin-bottom: 10px;
+        margin-top: 10px;
+    }
+    .image-logo {
+        width: 100px;
+    }
+    @media screen and (max-width: 375px) {
+        .image-logo {
+            width: 60px;
+        }
     }
 </style>

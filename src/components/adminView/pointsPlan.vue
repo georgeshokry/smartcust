@@ -2,11 +2,10 @@
     <v-container
             fluid grid-list-md
             style="
-            padding-top: 70px;
             padding-bottom: 50px;
             height: auto;"
     >
-        <navbar></navbar>
+
         <page-path></page-path>
 
         <v-container fluid grid-list-md>
@@ -25,7 +24,7 @@
                             dark
                             flat
                     >
-                        <v-toolbar-title><div class="header-text">Occasions</div></v-toolbar-title>
+                        <v-toolbar-title><v-icon larg>collections_bookmark</v-icon> <v-spacer></v-spacer><div class="header-text">Occasions</div></v-toolbar-title>
                         <v-divider
                                 class="mx-2"
                                 inset
@@ -39,7 +38,7 @@
                         <v-text-field
                                 v-model="searchOccByType"
                                 append-icon="search"
-                                label="Search Offers By any type"
+                                label="Search Reservations by any type"
                                 single-line
                                 hide-details
                                 color="black"
@@ -112,7 +111,7 @@
             <v-card>
 
                 <v-card-title style="background-color: #dcdcdc; ">
-                    <span class="headline"><v-icon medium >create </v-icon> Add new Occasion Type</span>
+                    <span class="headline"><v-icon medium >create </v-icon> Add new Occasion</span>
                 </v-card-title>
 
                 <v-card-text>
@@ -272,6 +271,7 @@
     @media screen and (max-width: 375px) {
         div.header-text {
             font-size: smaller;
+            margin-right: 65px;
         }
     }
 </style>

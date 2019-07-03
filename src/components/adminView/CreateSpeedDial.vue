@@ -10,8 +10,8 @@
       transition="slide-y-reverse-transition"
       style="
       position: fixed;
-    right: -5px;
-    bottom: 35px;
+    right: 0px;
+    bottom: 0px;
 "
     >
       <template v-slot:activator>
