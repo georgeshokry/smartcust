@@ -3,12 +3,11 @@
     <!--content of dashboard-->
     <v-container
             fluid grid-list-md
-            style="padding-bottom: 50px"
+            style="padding: 0 0 50px 10px; margin: 0"
     >
 
 
         <page-path></page-path>
-
         <v-layout row wrap justify-space-between child-flex >
             <v-flex d-flex xs12 sm4 md3 justify-center style="justify-content: space-around;">
                 <v-card  elevation="3" max-width="300" min-width="284" class="round-card " style="border-right: .25rem solid #00800c !important;">
@@ -17,14 +16,9 @@
                         <div class="led-box">
                             <v-layout row wrap justify-space-between style="justify-content: center">
 
-
-
-                                <div class="led-yellow-stoped" v-if="numOfUsersOnlineNow <= 0"></div>
-                                <div class="led-yellow" v-if="numOfUsersOnlineNow > 0"></div>
-                                <div class="headline " style=" margin-right: 15px;">Online Customers {{numOfUsersOnlineNow}}</div>
-
-
-
+                                <div class="headline " style=" margin-right: 10px;">Online Customers: </div>
+                                <div class="led-yellow-stoped" v-if="numOfUsersOnlineNow <= 0"><h3 style="color: white">{{numOfUsersOnlineNow}}</h3></div>
+                                <div class="led-yellow" v-if="numOfUsersOnlineNow > 0"><h3 style="color: white">{{numOfUsersOnlineNow}}</h3></div>
 
                             </v-layout>
                         </div>
@@ -32,6 +26,7 @@
                 </v-card>
             </v-flex>
         </v-layout>
+
         <v-divider class="mx-2 ma-3"></v-divider>
         <v-layout row wrap justify-space-between child-flex>
 

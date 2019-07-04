@@ -52,7 +52,6 @@
                         v-ripple
                         @mouseover="cycleFlag = false"
                         @mouseout="cycleFlag = true"
-
                 >
                     <div class="scroll-y" style="background-image: linear-gradient(120deg, black, transparent);     height: -webkit-fill-available;">
 
@@ -80,7 +79,6 @@
                         </div>
                         </div>
                     </div>
-
                 </v-carousel-item>
             </v-carousel>
         </v-scroll-y-transition>

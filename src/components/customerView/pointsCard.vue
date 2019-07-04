@@ -46,18 +46,25 @@
                         />
                     </span>
                 </v-badge>
-
                 <v-card-text style="font-size: medium;padding: 0; ">
                     <v-card-text style="font-size: medium;padding: 0; ">Smart Code</v-card-text>
                     <v-card-text class="user-code">
                     {{ userCode }}
-                    <v-btn icon size="5px" small color="white" style="margin: 0 0 5px 0;" @click="shareSmartCode" target="_blank">
-<!--                    <div class="fb-share-button" data-href="https://developers.facebook.com/docs/plugins/" data-layout="button" data-size="small">-->
-<!--                        <a target="_blank" href="" class="fb-xfbml-parse-ignore">Share</a>-->
-<!--                    </div>-->
 
-                        <v-icon size="20px" small style="font-weight:bold;" >share</v-icon>
-                    </v-btn>
+
+                        <v-btn icon size="5px" larg color="white" style="margin: 0 0 5px 0;" @click="shareFacebook" target="_blank">
+
+                            <img width="25px" src="../../assets/facebook.svg">
+                        </v-btn>
+                        <v-btn icon size="5px" larg color="white" style="margin: 0 0 5px 0;" @click="shareTweeter" target="_blank">
+
+                            <img width="25px" src="../../assets/twitter.svg">
+                        </v-btn>
+                        <v-btn icon size="5px" larg color="white" style="margin: 0 0 5px 0;" @click="shareWhatsapp" target="_blank">
+
+                            <img width="25px" src="../../assets/whatsapp.svg">
+                        </v-btn>
+
                     </v-card-text>
                 </v-card-text>
             </div>
@@ -88,8 +95,9 @@
                 <span class="headline"><v-icon medium >help </v-icon> Points Rules*</span>
                 </v-card-title>
                 <v-responsive>
-                    <v-card-text style="font-size: larger; font-weight: bold;">
+                    <v-card-text style="font-size: larger; font-weight: bold; position: relative">
                         <img style=" max-width: 237px; max-height: 183px; filter: drop-shadow(1px 1px 2px black);" align="center" src="../../assets/undraw_choice_9385.svg">
+                        <h1 class="ques-mark">?</h1>
                     </v-card-text>
                 </v-responsive>
                 <v-card-text>
@@ -328,12 +336,26 @@
                 this.promoCodeLoading = false;
                 this.$validator.reset();
             },
-            shareSmartCode(){
+            shareFacebook(){
                let facebookShareLink =
                    "https://www.facebook.com/sharer/sharer.php?u="
                    + window.location.origin + "/profile"
                    + "?smartCode=" + this.userCode;
                window.open(facebookShareLink);
+            },
+            shareWhatsapp(){
+                let facebookShareLink =
+                    "whatsapp://send?text="
+                    + window.location.origin + "/profile"
+                    + "?smartCode=" + this.userCode;
+                window.open(facebookShareLink);
+            },
+            shareTweeter(){
+                let facebookShareLink =
+                    "https://twitter.com/intent/tweet?url="
+                    + window.location.origin + "/profile"
+                    + "?smartCode=" + this.userCode;
+                window.open(facebookShareLink);
             }
         },
         created() {
@@ -398,5 +420,11 @@
         font-size: larger;
         padding: 0px;
         font-family: monospace;
+    }
+    .ques-mark{
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(230%, -50%);
     }
 </style>
