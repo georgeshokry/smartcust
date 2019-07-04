@@ -1,9 +1,7 @@
 <template>
-
-
     <div style="text-align: start;   ">
         <v-layout column wrap>
-        <h2 class="headline" style="text-transform: capitalize; margin-top: 15px">
+        <h2 class="headline" style="text-transform: capitalize;">
 
             <div v-if="$route.path !== '/admin/pointsplan'">
 
@@ -20,27 +18,9 @@
                 Points Plan
             </div>
 
-            <v-divider dark class="mx-2 ma-3"></v-divider>
+            <v-divider style="filter: opacity(0);" class="mx-2 ma-3"></v-divider>
         </h2>
         </v-layout>
     </div>
 
 </template>
-
-<!--<script>-->
-<!--    export default {-->
-<!--        name: "pagePath",-->
-<!--        data: () => {-->
-<!--            return{-->
-
-<!--            }-->
-<!--        },-->
-<!--        methods:{-->
-
-<!--        }-->
-<!--    }-->
-<!--</script>-->
-
-<style>
-
-</style>

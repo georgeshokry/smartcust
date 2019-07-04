@@ -27,7 +27,18 @@
                             src="https://firebasestorage.googleapis.com/v0/b/smartcustomer-d9202.appspot.com/o/logo-teaser-photos%2Fteaser1.png?alt=media&token=245212ee-6aa3-49ef-8564-7fe2cbc18513"
                             lazy-src="https://firebasestorage.googleapis.com/v0/b/smartcustomer-d9202.appspot.com/o/logo-teaser-photos%2Fteaser1.png?alt=media&token=245212ee-6aa3-49ef-8564-7fe2cbc18513"
                             aspect-ratio="2.55"
-                    ></v-img>
+                    >
+                        <template v-slot:placeholder>
+                            <v-layout
+                                    fill-height
+                                    align-center
+                                    justify-center
+                                    ma-0
+                            >
+                                <v-progress-circular indeterminate color="grey darken-2 lighten-5"></v-progress-circular>
+                            </v-layout>
+                        </template>
+                    </v-img>
                     </v-responsive>
 
                     <v-card-title style="justify-content: center;">

@@ -121,7 +121,7 @@
 <!--                    <v-spacer></v-spacer>-->
                     <div class="footer">
                         Photographer | Smart Customer<br>v1.0-beta - {{ new Date().getFullYear() }} &copy;<br>
-                        for technical issues, <a href="https://www.facebook.com" style="text-decoration: none" target="_blank">contact me!</a>
+                        for technical support, <a href="https://www.facebook.com/george.shokry1" style="text-decoration: none" target="_blank">contact me!</a>
                     </div>
 
                 </v-footer>
@@ -133,7 +133,7 @@
         </v-navigation-drawer>
 
     <v-content >
-        <v-container fluid fill-height>
+        <v-container fluid>
             
                 <router-view></router-view>
             <create-speed-dial></create-speed-dial>
@@ -175,7 +175,7 @@
             </v-btn>
         </v-snackbar>
 
-        <annoying-no-internet v-if="$route.path !== '/dashboard'"></annoying-no-internet>
+        <annoying-no-internet v-if="$route.path !== '/admin/dashboard'"></annoying-no-internet>
         <logout-progress v-model="showLogoutProgress"></logout-progress>
 
 </v-app>
