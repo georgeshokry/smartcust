@@ -17,7 +17,8 @@
 
 
 
-        <v-toolbar-title >
+        <v-toolbar-title @click="$router.replace('/admin/dashboard')" style="cursor: pointer">
+
             <div class="responsive-title">
                 <v-layout row wrap justify-content>
 
@@ -44,7 +45,9 @@
             <v-btn flat  @click="logout" small>Logout<v-icon right small>exit_to_app</v-icon></v-btn>
 
         </v-toolbar-items>
+
     </v-toolbar>
+
     <!--the left drawer-->
     <v-navigation-drawer
             fixed
@@ -133,9 +136,11 @@
         </v-navigation-drawer>
 
     <v-content >
+
         <v-container fluid>
             
                 <router-view></router-view>
+
             <create-speed-dial></create-speed-dial>
         </v-container>
     </v-content>
@@ -158,22 +163,22 @@
             </v-btn>
         </v-snackbar>
 
+    <v-snackbar
+            v-model="firebaseMutationsAlert"
+            :color="firebaseMutationsColor"
+            right
+            top
+    >
+        <v-icon color="white">{{iconAlert}}&nbsp</v-icon>&nbsp{{ firebaseMutationsMsg }}
+        <v-btn
 
-        <v-snackbar
-                v-model="firebaseMutationsAlert"
-                :color="firebaseMutationsColor"
-                right
-                top
+                icon
+                @click="firebaseMutationsAlert = false"
         >
-            <v-icon color="white">check_circle_outline </v-icon> {{ firebaseMutationsMsg }}
-            <v-btn
+            <v-icon>close</v-icon>
+        </v-btn>
+    </v-snackbar>
 
-                    icon
-                    @click="firebaseMutationsAlert = false"
-            >
-                <v-icon>close</v-icon>
-            </v-btn>
-        </v-snackbar>
 
         <annoying-no-internet v-if="$route.path !== '/admin/dashboard'"></annoying-no-internet>
         <logout-progress v-model="showLogoutProgress"></logout-progress>
@@ -201,6 +206,7 @@
                 firebaseMutationsAlert: false,
                 firebaseMutationsMsg: '',
                 firebaseMutationsColor: '',
+                iconAlert: '',
 
                 drawer: null,
                 items: [
@@ -229,17 +235,22 @@
         },
         watch:{
             firebaseSuccessShow(success) {
-                this.firebaseMutationsMsg = success;
-                this.firebaseMutationsAlert=true;
-                this.firebaseMutationsColor = "success";
+                if(success !==null) {
+                    this.firebaseMutationsMsg = success;
 
+                    this.iconAlert = "check_circle";
+                    this.firebaseMutationsColor = "success";
+                    this.firebaseMutationsAlert = true;
+                }
             },
             firebaseErrorShow(error){
-                this.firebaseMutationsMsg = error;
-                this.firebaseMutationsAlert=true;
-                this.firebaseMutationsColor = "error";
+                if(error !== null) {
+                    this.firebaseMutationsMsg = error;
 
-
+                    this.iconAlert = "cancel";
+                    this.firebaseMutationsColor = "error";
+                    this.firebaseMutationsAlert = true;
+                }
 
             },
             user(checkStat){
@@ -269,9 +280,8 @@
 </script>
 <style>
     .highlighted{
-        background-color: rgba(255, 255, 255, 0.57);
+        background-color: rgba(255, 255, 255, 0.21);
     }
-
 
     @media screen and (max-width: 375px) {
         div.responsive-title {

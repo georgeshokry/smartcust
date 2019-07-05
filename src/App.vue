@@ -1,6 +1,20 @@
 <template>
 
   <div id="app" style="min-height: 100vh"  >
+      <v-alert
+              :value="warning"
+              color="black"
+              style="margin: 0; height: 10px"
+              outline
+      >
+          <h3>
+              <v-icon small color="white">info</v-icon>
+              for better experince use
+              <a href="https://www.google.com/intl/en/chrome/" style="text-decoration: none;" target="_blank">Google Chrome </a>
+<!--              <v-icon small color="white" @click="warning = false"> clear</v-icon>-->
+          </h3>
+
+      </v-alert>
       <router-view/>
 
   </div>
@@ -13,10 +27,18 @@
       components: {},
       name: "app",
       data() {
-        return {
-
-        }
+          return{
+              warning: true
+          }
       },
+        created() {
+           let detect =  window.navigator.userAgent.search("Chrome");
+            if(detect > -1){
+                this.warning = false
+            }else if(detect <= -1){
+                this.warning = true
+            }
+        }
     }
 </script>
 <style>

@@ -59,6 +59,16 @@
                     <td class="text-xs-left">
                         <v-fade-transition mode="out-in">
                         <v-img contain max-width="130" :src="props.item.offerPic " >
+                            <template v-slot:placeholder>
+                                <v-layout
+                                        fill-height
+                                        align-center
+                                        justify-center
+                                        ma-0
+                                >
+                                    <v-progress-circular indeterminate color="white darken-2 lighten-5"></v-progress-circular>
+                                </v-layout>
+                            </template>
                         </v-img>
                         </v-fade-transition>
 <!--                        <img style="max-width: 130px; max-height: 90px;" src="">-->
