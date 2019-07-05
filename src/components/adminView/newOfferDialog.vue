@@ -301,23 +301,25 @@
                 // this.snackbarAlert = true;
                 // this.btnLoading = false;
                 // this.snackbarColor = "success";
-
-                ///reseting all inputs
-                this.offerTitle= "";
-                this.offerContent= "";
-                this.offerExpDate= new Date().toISOString().substr(0, 10);
-                this.points=5;
-                this.numOfCustomers= 5;
-                this.offerPic='';
-                this.fileSelect = '';
-                this.imagePreview="";
+                if(success !==null) {
+                    ///reseting all inputs
+                    this.offerTitle = "";
+                    this.offerContent = "";
+                    this.offerExpDate = new Date().toISOString().substr(0, 10);
+                    this.points = 5;
+                    this.numOfCustomers = 5;
+                    this.offerPic = '';
+                    this.fileSelect = '';
+                    this.imagePreview = "";
+                }
             },
             firebaseErrorShow(error){
-                this.firebaseMsg = error;
-                this.snackbarAlert = true;
-                this.btnLoading = false;
-                this.snackbarColor = "error";
-
+                if(error !== null) {
+                    this.firebaseMsg = error;
+                    this.snackbarAlert = true;
+                    this.btnLoading = false;
+                    this.snackbarColor = "error";
+                }
 
             }
         },
@@ -365,7 +367,7 @@
                             this.$store.dispatch('addNewOffer', {
                                 offerTitle: this.offerTitle,
                                 offerContent: this.offerContent,
-                                offerPoints: this.points,
+                                offerPoints: JSON.parse(this.points),
                                 offerExpDate: this.offerExpDate,
                                 offerExpNum: null,
 
@@ -395,9 +397,9 @@
                             this.$store.dispatch('addNewOffer', {
                                 offerTitle: this.offerTitle,
                                 offerContent: this.offerContent,
-                                offerPoints: this.points,
+                                offerPoints: JSON.parse(this.points),
                                 offerExpDate: null,
-                                offerExpNum: this.numOfCustomers,
+                                offerExpNum: JSON.parse(this.numOfCustomers),
 
                                 offerPic: this.fileSelect,
                                 picName: this.offerPic

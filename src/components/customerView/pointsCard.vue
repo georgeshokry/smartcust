@@ -35,14 +35,14 @@
                 <v-badge right  color="white" style="margin-top: 10px;" >
 
                     <template  v-slot:badge >
-                        <span style="color: black"><v-btn icon size="5px" color="white" @click="pointsRules= true"><v-icon size="20px" style="font-weight:bold;">help_outline</v-icon></v-btn></span>
+                        <span style="color: black"><v-btn icon small color="white" @click="pointsRules= true"><v-icon size="20px" style="font-weight:bold;">help_outline</v-icon></v-btn></span>
                     </template>
                     <span>
                         <animated-number
                                 :value="userPoints"
                                 :round="1"
                                 :duration="3000"
-                                style="font-size: -webkit-xxx-large;"
+                                style="font-size: xx-large;"
                         />
                     </span>
                 </v-badge>

@@ -17,7 +17,7 @@ export const store = new Vuex.Store({
         userSession: null,
         firebaseSuccess: null,
         allOffersData: null,
-        numOfOffers:0,
+        numOfOffers:null,
         connectionFlag: true,
         signupError: "",
         signupUserId: null,
@@ -28,6 +28,9 @@ export const store = new Vuex.Store({
         usersMaxPoints: null,
         numberOfUsersOnline:null,
         allOccasions:null,
+        maxPointsLevel:null,
+        allCustomers:null,
+        numOfCustomers:null,
 
 ////to stop any listener during the app after the user logged out
         stopProfileListener: null,
@@ -87,6 +90,15 @@ export const store = new Vuex.Store({
         },
         setAllOccasions(state, payload){
             state.allOccasions = payload;
+        },
+        setMaxPointsLevel(state, payload){
+            state.maxPointsLevel = payload;
+        },
+        setAllCustomers(state, payload){
+            state.allCustomers = payload;
+        },
+        setNumOfCustomers(state, payload){
+            state.numOfCustomers = payload;
         },
 
 
@@ -562,7 +574,9 @@ export const store = new Vuex.Store({
 
             let offerCreatedTimestamp = new Date();
 
-            let stopOffersListener = db.collection('offers').orderBy('offerCreatedTimestamp', 'desc').onSnapshot(function (querySnapshot) {
+            let stopOffersListener = db.collection('offers')
+                .orderBy('offerCreatedTimestamp', 'desc')
+                .onSnapshot(function (querySnapshot) {
                 let offers = [];
                 querySnapshot.forEach(function (doc) {
                     offers.push(doc.data());
@@ -576,6 +590,7 @@ export const store = new Vuex.Store({
 
         },
         listenNumberOfOffers({commit}){
+            commit("setAllOffers", {"numOfOffers": null});
             const db = firebase.firestore();
             let stopOffersListener = db.collection('offers').onSnapshot(function (querySnapshot) {
                let offersNumbers = querySnapshot.size;
@@ -655,6 +670,23 @@ export const store = new Vuex.Store({
                 commit('setError', "Problem in Saving Occasion, Try Again!");
             });
         },
+        editOccasionType({commit}, payload){
+            const db = firebase.firestore();
+
+            let typeCreatedTimestamp = new Date();
+            commit('setError', null);
+            commit('setFirebaseSuccess', null);
+            db.collection('occasionTypes').doc(payload.idOfOcc).update({
+                occasionName: payload.occasionName,
+                occasionPrice: payload.occasionPrice,
+                occasionPoints: payload.occasionPoints,
+                occasionCreatedTimeStamp: typeCreatedTimestamp.toLocaleString(),
+            }).then(function () {
+                commit('setFirebaseSuccess', "Occasion Edited Successfully!");
+            }).catch(function () {
+                commit('setError', "Problem in Editing Occasion, Try Again!");
+            });
+        },
         listenOnAllOccasions({commit}){
             const db = firebase.firestore();
 
@@ -676,6 +708,74 @@ export const store = new Vuex.Store({
             // commit("setOccasionsListener", stopOccasionsListener);
 
 
+        },
+        readMaxPointsLevel({commit}){
+            const db = firebase.firestore();
+            commit("setMaxPointsLevel", null);
+
+            let stopMaxPointsLevel = db.collection('usersPromo').doc('maxPointsLevel')
+                .onSnapshot(function (querySnapshot) {
+                    let max = querySnapshot.data();
+                    commit("setMaxPointsLevel", max);
+
+                });
+        },
+        editMaxPointsLevel({commit}, payload){
+            const db = firebase.firestore();
+            commit('setError', null);
+            commit('setFirebaseSuccess', null);
+
+            db.collection('usersPromo').doc('maxPointsLevel').update({
+                maxNewToAdd: payload.maxNew,
+                maxOwnerToAdd: payload.maxOwner
+            }).then(function () {
+                    commit('setFirebaseSuccess', "Max Points Edited Successfully!");
+
+            }).catch(function (error) {
+                commit('setError', "Problem in Editing Max Points, Try Again!");
+            });
+        },
+        readAllCustomers({commit}){
+            let stopMaxPointsLevel;
+            const db = firebase.firestore();
+            commit("setAllCustomers", null);
+
+            firebase.database().ref().child('usersessions/').on('value',function (session) {
+                let customers = [];
+                session.forEach(function (querySnapshot) {
+                    console.log(querySnapshot.key);
+                    let state = querySnapshot.child('userActiveState').val();
+                    db.collection('users').doc(''+querySnapshot.key).get().then(function (doc) {
+
+                            customers.push({
+                                userActiveState: state,
+                                userFirstName: doc.data().userFirstName,
+                                userPhone: doc.data().userPhone,
+                                userEmail: doc.data().userEmail,
+                                userMaritalStatus: doc.data().userMaritalStatus,
+                                userPoints: doc.data().userPoints,
+                                userLastActive: doc.data().userLastActive,
+                                userCode: doc.data().userCode,
+                                userGender: doc.data().userGender
+                            });
+
+
+                        });
+                        console.log(customers);
+                        commit("setAllCustomers", customers);
+                    });
+
+
+                });
+
+        },
+        readNumOfCustomers({commit}){
+            commit("setNumOfCustomers", null);
+            const db = firebase.firestore();
+            let stopOffersListener = db.collection('users').onSnapshot(function (querySnapshot) {
+                let number = querySnapshot.size;
+                commit("setNumOfCustomers", number);
+            });
         }
 
     },
@@ -721,6 +821,15 @@ export const store = new Vuex.Store({
         },
         getAllOccasions(state){
             return state.allOccasions;
+        },
+        getMaxPointsLevel(state){
+            return state.maxPointsLevel;
+        },
+        getAllCustomers(state){
+            return state.allCustomers;
+        },
+        getNumOfCustomers(state){
+            return state.numOfCustomers;
         }
 
 

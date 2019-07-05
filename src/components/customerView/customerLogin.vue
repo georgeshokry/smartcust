@@ -655,7 +655,7 @@
                  this.custPassword = this.createRePassword;
                 this.signupDialog = false;
                 this.loginNow();
-                this.$router.replace('/customer');
+                this.$router.replace('/');
 
             }
         },

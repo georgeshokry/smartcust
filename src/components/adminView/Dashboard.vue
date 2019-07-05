@@ -39,13 +39,25 @@
 
                             </v-card-text>
                             <v-card-text class="headline font-weight-bold">
+                                <small v-if="card.data2"> new</small>
                                 <animated-number
+
                                     :value="card.data"
                                     :round="1"
                                     :duration="900"
-                                    style="font-size: -webkit-xxx-large;"
+                                    style="font-size: xx-large;"
                             />
+                               <span v-if="card.data2"> - </span>
+                                <animated-number
+                                        v-if="card.data2"
+                                        :value="card.data2"
+                                        :round="1"
+                                        :duration="900"
+                                        style="font-size: xx-large;"
+                                />
+                                <small v-if="card.data2">old </small>
                             </v-card-text>
+
                             <v-divider class="mx-3" style="margin-bottom: 5px"></v-divider>
                             <v-btn   :to="card.link" dark> {{ card.text }} </v-btn>
                         </v-card>
@@ -70,10 +82,10 @@
         data:function () {
             return {
                 cards: [
-                    {title: "Customers", icon: "people", link: "/admin/customers", data: 0, text: "view all", id: "customer-card"},
-                    {title: "Offers", icon: "loyalty", link: "/admin/offers", data: this.$store.getters.getNumOfOffers, text: "Edit", id: "offer-card"},
+                    {title: "Customers", icon: "people", link: "/admin/customers", data: 0, text: "view", id: "customer-card"},
+                    {title: "Offers", icon: "loyalty", link: "/admin/offers", data: 0, text: "Edit", id: "offer-card"},
                     {title: "Reservations", icon: "forum", link: "/admin/reservations", data: 0, text: "manage", id: "order-card"},
-                    {title: "Points Plan", icon: "import_export", link: "/admin/pointsplan", data: 0, text: "change", id: "point-card"}
+                    {title: "Points Plan", icon: "import_export", link: "/admin/pointsplan", data: 0, data2: 0, text: "change", id: "point-card"}
                 ],
                 value: 0,
                 numOfUsersOnlineNow: this.$store.getters.getNumberOfusersOnline,
@@ -82,24 +94,39 @@
         created() {
             this.$store.dispatch("listenToOnlineUsers");
             this.$store.dispatch("listenNumberOfOffers");
+            this.$store.dispatch("readNumOfCustomers");
+            this.$store.dispatch('readMaxPointsLevel');
         },
         computed: {
-
-            getAllOffers(){
-
+            getNumOfCustomers(){
+                return this.$store.getters.getNumOfCustomers;
+            },
+            getNumOfOffers(){
                 return this.$store.getters.getNumOfOffers;
+            },
+            getMaxPointsLevel(){
+                return this.$store.getters.getMaxPointsLevel;
             },
             getOnlineUsersNo(){
                 return this.$store.getters.getNumberOfusersOnline;
-            }
+            },
         },
 
         watch: {
-            getAllOffers(offersCount){
-                if(offersCount !== 0){
-                   let objIndex = this.cards.findIndex((obj => obj.title === "Offers"));
-                    this.cards[objIndex].data = offersCount;
-
+            getNumOfCustomers(num){
+                if(num !== null){
+                   this.cards[0].data = num;
+                }
+            },
+            getNumOfOffers(num){
+                if(num !== null){
+                    this.cards[1].data = num;
+                }
+            },
+            getMaxPointsLevel(max){
+                if(max !== null){
+                    this.cards[3].data = max.maxNewToAdd;
+                    this.cards[3].data2 = max.maxOwnerToAdd;
                 }
             },
             getOnlineUsersNo(no){
@@ -154,7 +181,7 @@
 
 @keyframes blinkYellow {
     from { background-color: #09ff00; }
-    50% { background-color: #00aa2c; box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #00800c 0 -1px 9px, #00ff13 0 2px 0; }
+    50% { background-color: #00aa2c; box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #00800c 0 -1px 9px, #00ff13 0 0px 0; }
     to { background-color: #00ff1f; }
 }
 
