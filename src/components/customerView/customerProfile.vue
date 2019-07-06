@@ -44,7 +44,7 @@
                                 ></v-progress-circular>
                             </v-layout>
 
-                            <div  style="z-index: 2" v-show="dataLoaded">
+                            <div  style="z-index: 2" v-if="dataLoaded">
                                 <v-layout row wrap style="align-items: center; justify-content: center">
                                 <v-avatar
                                         :tile="false"
@@ -324,7 +324,7 @@
                 }
             },
             getFirebaseErrors(error){
-                if(alert !== null){
+                if(error !== null){
                     this.firebaseMsg=  error;
                     this.msgColor = "error";
                     this.snackbarIcon = "highlight_off";
@@ -349,6 +349,7 @@
 
                 this.$store.dispatch("changeLastLoginState");
                 this.$store.dispatch("changeUserToOffline");
+                this.$store.dispatch('listenOnAllOccasions');
             }
         },
         methods: {

@@ -23,7 +23,7 @@
                         <div class="btn-corner" style="z-index: 1">
                             <v-tooltip left color="black" >
                                 <template v-slot:activator="{ on }">
-                                    <v-btn flat icon color="black " style="margin: 0" v-on="on" @click="editProfileDialog = true">
+                                    <v-btn flat icon color="black " style="margin: 0" v-on="on" @click="openEditProfileDialogNow">
                                         <v-icon>create</v-icon>
                                     </v-btn>
                                 </template>
@@ -69,96 +69,10 @@
 
                         </v-content>
 
-                       <!--     starting of editing profile dialog-->
-                        <v-dialog
-                                v-model="editProfileDialog"
-                                width="500"
-                                scrollable
-                        >
 
-
-                            <v-card>
-
-                                <v-card-title style="background-color: #dcdcdc; ">
-                                    <span class="headline"><v-icon medium >create </v-icon> Edit Profile</span>
-                                </v-card-title>
-
-                                <v-card-text>
-                                    <v-text-field
-                                            v-model="editEmail"
-                                            label="Email (Can't Edit this field)"
-                                            color="black"
-                                            readonly
-                                            disabled
-                                    ></v-text-field>
-                                    <v-text-field
-                                            v-model="editFirstName"
-                                            v-validate="'required:true'"
-                                            :error-messages="errors.collect('First Name')"
-                                            label="First Name"
-                                            hint="This name will use in the whole app"
-                                            data-vv-name="First Name"
-                                            color="black"
-                                            required
-                                    ></v-text-field>
-                                    <v-text-field
-                                            v-model="editLastName"
-                                            v-validate="'required:true'"
-                                            :error-messages="errors.collect('Last Name')"
-                                            label="Last Name"
-                                            data-vv-name="Last Name"
-                                            color="black"
-                                            required
-                                    ></v-text-field>
-                                    <v-combobox
-                                            v-model="editMartial"
-                                            v-validate="'required:true'"
-                                            :error-messages="errors.collect('Marital Status')"
-                                            :items="maritalSelect"
-                                            label="Marital Status"
-                                            data-vv-name="Marital Status"
-                                            required
-                                            color="black"
-                                    ></v-combobox>
-                                    <v-text-field
-                                            style="    margin-top: 15px;"
-                                            v-model="editPhone"
-                                            v-validate="'required:true|digits:11'"
-                                            :error-messages="errors.collect('Phone')"
-                                            label="Mobile Number"
-                                            data-vv-name="Phone"
-                                            color="black"
-                                            required
-                                            mask="###-###-###-##"
-                                            prefix="(+2)-"
-                                    ></v-text-field>
-                                </v-card-text>
-
-                                <v-divider></v-divider>
-
-                                <v-card-actions>
-                                    <v-spacer></v-spacer>
-                                    <v-btn
-                                            color="black"
-                                            flat
-                                            @click="editProfileDialog = false"
-                                    >
-                                        cancel
-                                    </v-btn>
-                                    <v-btn
-                                            color="black"
-                                            flat
-                                            @click="startSaveEdits"
-                                    >
-                                        save
-                                    </v-btn>
-                                </v-card-actions>
-                            </v-card>
-
-                        </v-dialog>
                             </div>
                         </v-scroll-y-transition>
-
+<edit-profile-dialog :editDialog="EditProfileDialog" @closeEditProfileDialog="closeEditProfileDialog"></edit-profile-dialog>
                     </v-card>
 
 </template>
@@ -167,31 +81,27 @@
     import avatarMixin from "../mixins/userInfoMixin"
     export default {
         name: 'profilecard',
-        components: {},
+        components: {
+            editProfileDialog: ()=> import('./editProfileDialog.vue')
+        },
         mixins: [avatarMixin],
         data: () => {
             return{
                 //the loading views show until all data loaded from database
                 dataLoading: true,
                 dataLoaded: false,
+                EditProfileDialog: false,
 
-                editProfileDialog: false,
                 greetings: '',
                 userName: '',
                 userEmail:'',
                 userPhone: '',
                 avatarIcon: '',
 
-                // properties of editor dialog
-                editEmail: '',
-                editFirstName: '',
-                editLastName: '',
-                editPhone: '',
-                editMartial: '',
-                maritalSelect: ["Single", "Engaged", "Married"],
-                allDbData: '',
+
             }
         },
+
         computed:{
             getData(){
                 return this.dataGetted;
@@ -207,13 +117,7 @@
                     this.userName = userData.userFirstName;
                     this.userEmail = userData.userEmail;
                     this.userPhone = userData.userPhone;
-                    // starting fill in dialog for editing
-                    this.editEmail = userData.userEmail;
-                    this.editFirstName = userData.userFirstName;
-                    this.editLastName = userData.userLastName;
-                    this.editPhone = userData.userPhone;
-                    this.editMartial = userData.userMaritalStatus;
-                    this.allDbData = userData;
+
 
                     ///starting remove progress and show data
                     this.dataLoading =  false;
@@ -221,11 +125,6 @@
 
                 }
             },
-            getFirebaseSuccess(alert){
-                if(alert !== null){
-                    this.editProfileDialog = false;
-                }
-            }
 
         },
         created(){
@@ -233,6 +132,12 @@
 
         },
         methods:{
+            openEditProfileDialogNow(){
+                this.EditProfileDialog = true;
+            },
+            closeEditProfileDialog(){
+                this.EditProfileDialog = false;
+            },
             // check the time now to start greeting the user
           greetingsCheck(){
               let timeNow = new Date().toLocaleTimeString().replace(/([\d]+:[\d]{2})(:[\d]{2})(.*)/, "$1$3");
@@ -243,34 +148,7 @@
                   this.greetings = "Good Morning";
               }
           },
-            startSaveEdits(){
 
-                const results = Promise.all([
-                    this.$validator.validate('First Name'),
-                    this.$validator.validate('Last Name'),
-                    this.$validator.validate('Marital Status'),
-                    this.$validator.validate('Phone'),
-                ]);
-                this.$validator.validateAll(results).then(() => {
-                    if (!this.errors.any()) {
-                        if(
-                            this.editFirstName !== this.allDbData.userFirstName ||
-                            this.editLastName !== this.allDbData.userLastName ||
-                            this.editPhone !== this.allDbData.userPhone ||
-                            this.editMartial !== this.allDbData.userMaritalStatus
-                        ) {
-
-                            this.$store.dispatch('editCustProfileInfo', {
-                                userFirstName: this.editFirstName,
-                                userLastName: this.editLastName,
-                                userPhone: this.editPhone,
-                                userMaritalStatus: this.editMartial,
-                            });
-                        }
-
-                    }
-                });
-            }
         }
     }
 </script>

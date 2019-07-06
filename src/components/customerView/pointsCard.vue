@@ -42,7 +42,6 @@
                                 :value="userPoints"
                                 :round="1"
                                 :duration="3000"
-                                style="font-size: xx-large;"
                         />
                     </span>
                 </v-badge>
@@ -51,8 +50,10 @@
                     <v-card-text class="user-code">
                     {{ userCode }}
 
-
-                        <v-btn icon size="5px" larg color="white" style="margin: 0 0 5px 0;" @click="shareFacebook" target="_blank">
+                        <v-tooltip bottom color="black" nudge-bottom="-10">
+                            <template v-slot:activator="{ on }">
+                                <div v-on="on">
+                        <v-btn icon  size="5px" larg color="white" style="margin: 0 0 5px 0;" @click="shareFacebook" target="_blank">
 
                             <img width="25px" src="../../assets/facebook.svg">
                         </v-btn>
@@ -60,11 +61,14 @@
 
                             <img width="25px" src="../../assets/twitter.svg">
                         </v-btn>
-                        <v-btn icon size="5px" larg color="white" style="margin: 0 0 5px 0;" @click="shareWhatsapp" target="_blank">
+                        <v-btn icon   size="5px" larg color="white" style="margin: 0 0 5px 0;" @click="shareWhatsapp" target="_blank">
 
                             <img width="25px" src="../../assets/whatsapp.svg">
                         </v-btn>
-
+                                </div>
+                            </template>
+                            <span >Share Smart Code</span>
+                        </v-tooltip>
                     </v-card-text>
                 </v-card-text>
             </div>

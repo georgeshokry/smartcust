@@ -4,7 +4,7 @@ export default {
 
         return{
             iconType: "",
-            dataGetted: "",
+            dataGetted: null,
         }
     },
     computed:{
