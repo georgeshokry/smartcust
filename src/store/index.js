@@ -690,16 +690,15 @@ export const store = new Vuex.Store({
         listenOnAllOccasions({commit}){
             const db = firebase.firestore();
 
-
+            let data = [];
             let stopOccasionsListener = db.collection('occasionTypes')
-                .orderBy('occasionCreatedTimeStamp', 'desc')
+                .orderBy('occasionPoints', 'desc')
                 .onSnapshot(function (querySnapshot) {
-                    let data = [];
+                    data = [];
                 querySnapshot.forEach(function (doc) {
                     data.push(doc.data());
-                    console.log(data);
-                });
 
+                });
 
                 commit("setAllOccasions", data);
 
@@ -776,7 +775,24 @@ export const store = new Vuex.Store({
                 let number = querySnapshot.size;
                 commit("setNumOfCustomers", number);
             });
-        }
+        },
+        // setNewOrder({commit}, payload){
+        //     commit('setFirebaseSuccess', null);
+        //     commit('setError', null);
+        //     let db = firebase.firestore();
+        //     let orderData = {
+        //         reservOfferId: null,
+        //         reservType:
+        //     }
+        //     db.collection("reservations").set(profileData).then(function () {
+        //
+        //                 commit('setFirebaseSuccess', "Offer Published Successfully, Prepare to get Orders Now!");
+        //             }).catch(function(error) {
+        //                 commit('setError', "Problem in Saving Offer, Try Again!");
+        //             });
+        //         }); commit('setError', "Problem in Saving Photo, Try Again!");
+        //
+        // }
 
     },
     getters:{
