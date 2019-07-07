@@ -79,16 +79,31 @@
                                 style="width: 170px"
                                 color="black"
                                 v-on="on"
+                                v-validate="'required:true'"
+                                :error-messages="errors.collect('occasion date')"
+                                data-vv-name="occasion date"
+                                placeholder="Select Date"
                         ></v-text-field>
                     </template>
-                    <v-date-picker dark v-model="occDate" @input="datePickerMenu = false"></v-date-picker>
+                    <v-date-picker
+                            :min="todayDate"
+                            dark
+                            v-model="occDate"
+                            :first-day-of-week="6"
+                            :show-current="true"
+                            @input="datePickerMenu = false"
+                    >
+
+                            <div class="text--lighten-5" style="color: white;text-align: left;">*You can't make reservation before (2 days) of <br> the occasion</div>
+
+                    </v-date-picker>
                 </v-menu>
                     <v-menu
 
                             v-model="timePickerMenu"
                             :close-on-content-click="false"
                             :nudge-right="40"
-                            format="ampm"
+                            format="12hr"
                             lazy
                             transition="scale-transition"
                             offset-y
@@ -96,6 +111,7 @@
                             min-width="290px"
                             color="black"
                             @click="timePickerMenu = !timePickerMenu"
+
                     >
                         <template v-slot:activator="{ on }">
                             <v-text-field
@@ -107,6 +123,11 @@
                                     style="width: 170px"
                                     color="black"
                                     v-on="on"
+                                    v-validate="'required:true'"
+                                    :error-messages="errors.collect('occasion time')"
+                                    data-vv-name="occasion time"
+                                    placeholder="Select Time"
+                                    format="12hr"
                             ></v-text-field>
                         </template>
                         <v-time-picker dark format="ampm" v-model="occTime" ></v-time-picker>
@@ -205,7 +226,7 @@
                 <v-btn
                         color="black"
                         flat
-
+                        @click="startSendReserv"
                 >
                     Send
                 </v-btn>
@@ -214,12 +235,70 @@
         </v-card>
 
     </v-dialog>
+        <v-dialog
+                persistent
+                v-model="confirmSendDialog"
+                width="300"
+                content-class="custom-progress-dialog"
+        >
+            <v-card class="rounded-card">
+                <div v-if="sendWait">
+                <v-card-title>
+                    <v-card-text>
+                        <h3>Are you sure to send this reservation?</h3>
+                    </v-card-text>
+                    <h5><b>Note:</b> you can't cancel the reservation after <b>"Payment Confirmation".</b></h5>
+                </v-card-title>
+
+                <v-card-actions style="justify-content: space-between; padding: 20px;">
+                    <v-btn
+                            color="black"
+                            flat
+                            @click="confirmSendDialog = false"
+                    >
+                        cancel
+                    </v-btn>
+                    <v-btn
+                            color="black"
+                            dark
+                            @click="confirmSendReserv"
+                    >
+                        confirm
+                    </v-btn>
+                </v-card-actions>
+                </div>
+                <v-fade-transition>
+                <div v-if="sendConfirmed">
+                    <v-layout row wrap style="    justify-content: center; padding: 20px 20px 0 20px">
+                        <img style=" max-width: 237px; max-height: 183px; " align="center" src="../../assets/undraw_camera_mg5h.svg">
+                        <v-icon size="100px" color="green" class="done-reserve-icon">done</v-icon>
+                        <v-card-title>
+                            <h4>
+                            Reservation Sent Successfully!<br>
+                            We will contact you soon!
+                            </h4>
+                        </v-card-title>
+                    </v-layout>
+                    <v-card-actions style="justify-content: center">
+                        <v-btn
+                                color="black"
+                                dark
+                                @click="doneReservationFinal"
+                        >
+                            done
+                        </v-btn>
+
+                    </v-card-actions>
+                </div>
+                </v-fade-transition>
+            </v-card>
+        </v-dialog>
     <edit-profile-dialog :editDialog="editPhone" @closeEditProfileDialog="closeEditProfileDialog"></edit-profile-dialog>
     </div>
 </template>
 
 <script>
-
+    import moment from 'moment';
     export default {
         name: "reservationDialog",
         components:{
@@ -233,9 +312,10 @@
                 occTypeText: [],
                 occAddress: '',
                 datePickerMenu: false,
-                occDate: new Date().toISOString().substr(0, 10),
+                occDate: '',
+                todayDate: moment().add(3, 'days').toISOString().substr(0, 10),
                 timePickerMenu: false,
-                occTime: "12:00",
+                occTime: '',
                 occComment: '',
 
                 editPhone: false,
@@ -246,6 +326,10 @@
 
                 occPrice:'',
                 occPoints:'',
+                confirmSendDialog: false,
+                sendWait: true,
+                sendConfirmed: false,
+                sendLoading: false,
             }
         },
         props: {
@@ -262,6 +346,12 @@
             getAllOccasions(){
                 return this.$store.getters.getAllOccasions;
             },
+            getFirebaseSuccess(){
+                return this.$store.getters.firebaseSuccesses;
+            },
+            getFirebaseErrors() {
+                return this.$store.getters.firebaseError;
+            },
         },
         watch: {
             getAllOccasions(occasionsArray){
@@ -271,7 +361,20 @@
                     for(let i in data) {
                         this.occTypeText.push(data[i].occasionName);
                     }
-                    console.log(this.occTypeSelect);
+                }
+            },
+            getFirebaseSuccess(alert){
+                if(alert !== null){
+                    this.sendLoading = false;
+                    this.sendWait = false;
+                    this.sendConfirmed = true;
+
+                }
+            },
+            getFirebaseErrors(error){
+                if(error !== null){
+                    this.sendLoading = false;
+
                 }
             },
         },
@@ -295,9 +398,9 @@
                 this.occTypeSelect = [];
                     this.occAddress = '';
                     this.datePickerMenu = false;
-                    this.occDate = new Date().toISOString().substr(0, 10);
+                    this.occDate = '';
                     this.timePickerMenu = false;
-                    this.occTime = "12:00";
+                    this.occTime = '';
                     this.occComment = '';
 
             },
@@ -312,6 +415,53 @@
                     this.occPrice = '';
                     this.occPoints = '';
                 }
+            },
+            startSendReserv(){
+                // this.confirmSendDialog = true;
+
+
+                const results = Promise.all([
+                    this.$validator.validate('occasion type'),
+                    this.$validator.validate('occasion address'),
+                    this.$validator.validate('occasion date'),
+                    this.$validator.validate('occasion time'),
+                ]);
+                this.$validator.validateAll(results).then(() => {
+                    if (!this.errors.any()) {
+                        this.confirmSendDialog = true;
+                        this.sendLoading = false;
+                        this.sendWait = true;
+                        this.sendConfirmed = false;
+                    }
+                });
+            },
+            confirmSendReserv(){
+                this.sendLoading = true;
+                let idOfOccasion = this.allOcc.find(data => data.occasionName === this.occType);
+                this.$store.dispatch('setNewOrder', {
+                    idOfOccasion: idOfOccasion,
+                    reservAddress: this.occAddress,
+                    reservDate: this.occDate,
+                    reservTime: this.occTime,
+                });
+            },
+            doneReservationFinal(){
+
+                this.confirmSendDialog = false;
+                this.$emit('closeNow');
+                this.sendWait = true;
+                this.sendConfirmed =false;
+                this.occAddress = '';
+                this.datePickerMenu = false;
+                this.occDate = '';
+                this.todayDate = '';
+                this.occTime = '';
+                this.occComment = '';
+
+                this.confirmSendDialog = false;
+                this.sendLoading = false;
+                this.sendWait = true;
+                this.sendConfirmed = false;
             }
         },
 
@@ -321,5 +471,12 @@
 </script>
 
 <style>
-
+    .rounded-card{
+        border-radius: 20px !important;
+    }
+    .done-reserve-icon{
+        top: 105px;
+        right: 100px;
+        position: absolute;
+    }
 </style>
