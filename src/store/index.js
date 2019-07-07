@@ -31,6 +31,8 @@ export const store = new Vuex.Store({
         maxPointsLevel:null,
         allCustomers:null,
         numOfCustomers:null,
+        allCustomerReservations: null,
+        allReservStatus: null,
 
 ////to stop any listener during the app after the user logged out
         stopProfileListener: null,
@@ -99,6 +101,12 @@ export const store = new Vuex.Store({
         },
         setNumOfCustomers(state, payload){
             state.numOfCustomers = payload;
+        },
+        setAllCustomerReservations(state, payload){
+          state.allCustomerReservations = payload;
+        },
+        setAllReservStatus(state, payload){
+          state.allReservStatus = payload;
         },
 
 
@@ -776,23 +784,69 @@ export const store = new Vuex.Store({
                 commit("setNumOfCustomers", number);
             });
         },
-        // setNewOrder({commit}, payload){
-        //     commit('setFirebaseSuccess', null);
-        //     commit('setError', null);
-        //     let db = firebase.firestore();
-        //     let orderData = {
-        //         reservOfferId: null,
-        //         reservType:
-        //     }
-        //     db.collection("reservations").set(profileData).then(function () {
-        //
-        //                 commit('setFirebaseSuccess', "Offer Published Successfully, Prepare to get Orders Now!");
-        //             }).catch(function(error) {
-        //                 commit('setError', "Problem in Saving Offer, Try Again!");
-        //             });
-        //         }); commit('setError', "Problem in Saving Photo, Try Again!");
-        //
-        // }
+        setNewOrder({commit}, payload){
+            let user = firebase.auth().currentUser.uid;
+            commit('setFirebaseSuccess', null);
+            commit('setError', null);
+            let db = firebase.firestore();
+            let date = new Date();
+            let orderData = {
+                customerId: user,
+                reservOfferId: null,
+                idOfOccasion: payload.idOfOccasion,
+                reservAddress: payload.reservAddress,
+                reservDate: payload.reservDate,
+                reservTime: payload.reservTime,
+                reservStatusId: "status_1",
+                reservCreatedTimeStamp: date
+            };
+            db.collection("reservations").add(orderData).then(function () {
+                commit('setFirebaseSuccess', "Reservation Sent Successfully!");
+            }).catch(function(error) {
+                commit('setError', "Problem in sending reservation, Try Again!");
+            });
+
+        },
+        listenOnAllCustomerReservations({commit}){
+            commit('setAllCustomerReservations', null);
+
+            let user = firebase.auth().currentUser.uid;
+            const db = firebase.firestore();
+            let reservations = [];
+            let statusNow = '';
+            let stopOffersListener = db.collection('reservations').where('customerId', '==', user)
+                    .onSnapshot(function (querySnapshot) {
+                        reservations = [];
+                        querySnapshot.forEach(function (doc) {
+                            let statOfReserv = doc.data().reservStatusId;
+                            // db.collection('reservStatus').doc(statOfReserv).get().then(function (statType) {
+                            //     statusNow = statType.data().state;
+                                reservations.push({
+                                    idOfOccasion: doc.data().idOfOccasion.occasionName,
+                                    reservAddress: doc.data().reservAddress,
+                                    reservDate: doc.data().reservDate,
+                                    reservTime: doc.data().reservTime,
+                                    reservStatusId: doc.data().reservStatusId,
+                                    reservCreatedTimeStamp: doc.data().reservCreatedTimeStamp,
+                                });
+                            // });
+
+                        });
+                        commit('setAllCustomerReservations', reservations);
+
+            });
+        },
+        readAllReservStatus({commit}){
+            commit('setAllReservStatus', null);
+            const db = firebase.firestore();
+            let stopOffersListener = db.collection('reservStatus').get().then(function (status) {
+                let arrayOfStatus = []
+                status.forEach(function (data) {
+                    arrayOfStatus.push({name: data.data().state, id: data.id})
+                });
+                commit('setAllReservStatus', arrayOfStatus);
+            });
+        }
 
     },
     getters:{
@@ -846,6 +900,12 @@ export const store = new Vuex.Store({
         },
         getNumOfCustomers(state){
             return state.numOfCustomers;
+        },
+        getAllCustomerReservations(state){
+            return state.allCustomerReservations;
+        },
+        getAllReservStatus(state){
+            return state.allReservStatus;
         }
 
 

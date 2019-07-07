@@ -2,8 +2,7 @@
     <v-card
             :tile="true"
             :elevation="10"
-            max-width="100%"
-            min-width="250px"
+            width="100%"
             height="460px"
             id="rounded-card"
 
@@ -14,7 +13,11 @@
                 id="orders-title"
         >
             <div>
-                <v-icon size="50px" color="black">loyalty</v-icon>
+                <v-responsive avatar>
+                    <v-avatar color="black">
+                        <v-icon size="40px" color="white">loyalty</v-icon>
+                    </v-avatar>
+                </v-responsive>
                 <h3>Latest Offers</h3>
 
 
@@ -32,28 +35,23 @@
         <!--some of user data show here-->
 
 
-            <v-layout row justify-center align-center v-show="dataLoading" style="min-height: 263px" transition="scale-transition">
-                <v-progress-circular
-                        indeterminate
-                        color="black"
-                ></v-progress-circular>
-            </v-layout>
+            <loading-data-progress v-if="dataLoading"/>
 
 
         <v-scroll-y-transition >
-            <v-carousel :cycle="cycleFlag" :interval="4000"  hide-controls v-show="dataLoaded" :height="345" vertical reverse style=" box-shadow: none; border-radius: 0;" >
+            <v-carousel :cycle="cycleFlag = false" :interval="4000"  hide-controls v-show="dataLoaded" :height="345" :max="300" vertical reverse style=" box-shadow: none; border-radius: 0;" >
                 <v-carousel-item
                         v-for="(item,i) in items"
                         :key="i"
                         :src="item.offerPic"
                         :lazy-src="item.offerPic"
                         @click.stop="offerSelected(item.idOfOffer)"
-                        style="cursor: pointer;  "
+                        style="cursor: pointer;"
                         v-ripple
                         @mouseover="cycleFlag = false"
                         @mouseout="cycleFlag = true"
                 >
-                    <div class="scroll-y" style="background-image: linear-gradient(120deg, black, transparent);     height: -webkit-fill-available;">
+                    <div class="scroll-y" style="background-image: linear-gradient(120deg, black, transparent);     height: 100%;">
 
                         <div style="text-align: left; margin-top: 5px">
                         <h1 class="offer-title">{{ item.offerTitle }}</h1>
@@ -85,10 +83,12 @@
     </v-card>
 </template>
 <script>
-
+    import loadingDataProgress from './loadingDataProgress.vue'
     export default {
         name: 'newofferscard',
-        components: {},
+        components: {
+            loadingDataProgress
+        },
         data: () => {
             return{
                 dataLoading: true,

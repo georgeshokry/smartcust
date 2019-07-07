@@ -133,7 +133,7 @@
                                 <v-layout row wrap>
                                 <div style=" margin: 5px; width: 100%">
 
-                                    <v-flex d-flex xs12 justify-center style="margin-bottom: 10px; height: fit-content; min-width: fit-content">
+                                    <v-flex d-flex xs12 justify-center style="margin-bottom: 10px; height: fit-content; min-width: fit-content;">
                                         <newofferscard style="margin: 10px; "></newofferscard>
                                     </v-flex>
 

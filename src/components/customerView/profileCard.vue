@@ -9,13 +9,7 @@
 
                     >
 
-                        <v-layout row justify-center align-center style="min-height: 263px" v-if="dataLoading" >
-                            <v-progress-circular
-                                    indeterminate
-                                    color="black"
-                            ></v-progress-circular>
-                        </v-layout>
-
+                        <loading-data-progress v-if="dataLoading"/>
 
                         <v-scroll-y-transition >
                             <div v-if="dataLoaded">
@@ -79,9 +73,11 @@
 <script>
 
     import avatarMixin from "../mixins/userInfoMixin"
+    import loadingDataProgress from './loadingDataProgress.vue';
     export default {
         name: 'profilecard',
         components: {
+            loadingDataProgress,
             editProfileDialog: ()=> import('./editProfileDialog.vue')
         },
         mixins: [avatarMixin],

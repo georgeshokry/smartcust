@@ -7,12 +7,7 @@
             id="rounded-card"
 
     >
-        <v-layout row justify-center align-center v-if="dataLoading" style="min-height: 263px">
-            <v-progress-circular
-                    indeterminate
-                    color="black"
-            ></v-progress-circular>
-        </v-layout>
+        <loading-data-progress v-if="dataLoading"/>
 
 
         <div v-if="dataLoaded" >
@@ -22,7 +17,11 @@
                 id="points-title"
         >
             <div>
-                <v-icon size="50px" color="black">stars</v-icon>
+                <v-responsive avatar>
+                    <v-avatar color="white">
+                        <v-icon size="50px" color="black">stars</v-icon>
+                    </v-avatar>
+                </v-responsive>
                 <h3>Points</h3>
 
             </div>
@@ -226,9 +225,10 @@
 </template>
 <script>
     import AnimatedNumber from "animated-number-vue";
+    import loadingDataProgress from './loadingDataProgress.vue';
     export default {
         name: 'pointscard',
-        components: {AnimatedNumber},
+        components: {AnimatedNumber, loadingDataProgress},
         $_veeValidate: {
             validator: 'new',
 

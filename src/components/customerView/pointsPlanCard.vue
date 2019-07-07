@@ -13,7 +13,11 @@
                 id="plan-title"
         >
             <div>
-                <v-icon size="50px" color="black">import_export</v-icon>
+                <v-responsive avatar>
+                    <v-avatar color="black">
+                        <v-icon size="40px" color="white">import_export</v-icon>
+                    </v-avatar>
+                </v-responsive>
                 <h3>Points Plan</h3>
             </div>
 
@@ -21,12 +25,9 @@
 
 
         <v-content >
-            <v-layout row justify-center align-center  v-if="dataLoading" style="margin: 20px;" transition="scale-transition">
-                <v-progress-circular
-                        indeterminate
-                        color="black"
-                ></v-progress-circular>
-            </v-layout>
+
+            <loading-data-progress v-if="dataLoading"/>
+
             <div class="scroll-y" style="max-height: 190px;" >
 
 
@@ -76,10 +77,12 @@
     </v-card>
 </template>
 <script>
-
+    import loadingDataProgress from './loadingDataProgress.vue';
     export default {
         name: 'pointsplancard',
-        components: {},
+        components: {
+            loadingDataProgress
+        },
         data: () => {
             return{
                 items: '',
