@@ -16,7 +16,7 @@ export default {
         getUserInfo(userData) {
 
 
-            if (userData) {
+            if (userData !== null) {
                 this.dataGetted = userData;
                 if (userData.userGender === "Male") {
                   this.iconType = require("@/assets/male-avatar.png");

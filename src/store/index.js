@@ -257,6 +257,15 @@ export const store = new Vuex.Store({
                 }
             });
         },
+        resetCustomerPassword({commit}, payload){
+            commit('setFirebaseSuccess', null);
+            commit('setError', null);
+            firebase.auth().sendPasswordResetEmail(payload).then(function() {
+                commit('setFirebaseSuccess', "Check your email inbox!");
+            }).catch(function(error) {
+                commit('setError', "Wrong E-mail, Double check and try again!");
+            });
+        },
         signupUser({commit}, payload){
             commit('clearSignupError');
             let errorNow = null;
@@ -624,10 +633,10 @@ export const store = new Vuex.Store({
             let userId= this.state.userStat;
 
            let profileListener = db.collection("users").doc(userId).onSnapshot(function (querySnapshot) {
-               commit('setProfileInfoDb', querySnapshot.data());
+               let data = querySnapshot.data();
+               commit('setProfileInfoDb', data);
 
             },function (error) {
-                commit('setError', "Problem in User Profile!");
             });
             commit('setProfileListener', profileListener);
         },
@@ -798,7 +807,7 @@ export const store = new Vuex.Store({
                 reservDate: payload.reservDate,
                 reservTime: payload.reservTime,
                 reservStatusId: "status_1",
-                reservCreatedTimeStamp: date
+                reservCreatedTimeStamp: date.toLocaleString()
             };
             db.collection("reservations").add(orderData).then(function () {
                 commit('setFirebaseSuccess', "Reservation Sent Successfully!");
@@ -814,9 +823,11 @@ export const store = new Vuex.Store({
             const db = firebase.firestore();
             let reservations = [];
             let statusNow = '';
-            let stopOffersListener = db.collection('reservations').where('customerId', '==', user)
+            let stopOffersListener = db.collection('reservations')
+                .orderBy('reservCreatedTimeStamp', 'desc')
+                .where('customerId', '==', user)
                     .onSnapshot(function (querySnapshot) {
-                        reservations = [];
+
                         querySnapshot.forEach(function (doc) {
                             let statOfReserv = doc.data().reservStatusId;
                             // db.collection('reservStatus').doc(statOfReserv).get().then(function (statType) {
@@ -828,13 +839,28 @@ export const store = new Vuex.Store({
                                     reservTime: doc.data().reservTime,
                                     reservStatusId: doc.data().reservStatusId,
                                     reservCreatedTimeStamp: doc.data().reservCreatedTimeStamp,
+                                    idOfReservation: doc.id
                                 });
+
                             // });
 
                         });
-                        commit('setAllCustomerReservations', reservations);
 
+                        commit('setAllCustomerReservations', reservations);
+                        reservations = [];
             });
+        },
+        editReservationStatusToCanceledByCust({commit}, payload){
+            let user = firebase.auth().currentUser.uid;
+            commit('setFirebaseSuccess', null);
+            commit('setError', null);
+            let db = firebase.firestore();
+            db.collection('reservations').doc(''+payload.idOfReservation).update({"reservStatusId": "canceled by customer"})
+                .then(function () {
+                    commit('setFirebaseSuccess', "Reservation Canceled Successfully!");
+                }).catch(function (error) {
+                    commit('setError', "Problem in canceling reservation, Try Again!", ">>> "+error);
+            })
         },
         readAllReservStatus({commit}){
             commit('setAllReservStatus', null);

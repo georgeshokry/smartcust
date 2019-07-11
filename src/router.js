@@ -22,6 +22,16 @@ let router = new Router({
           }
       },
       {
+          path: "/reset-password",
+          name: "resetPassword",
+          component: () => import("./components/customerView/resetPassword"),
+          meta: {
+              auth: false,
+              title: "Reset password | Smart Customer"
+
+          }
+      },
+      {
           path: "/customer-login",
           name: "customerlogin",
           component: () => import("./components/customerView/customerLogin"),
@@ -181,7 +191,7 @@ router.beforeEach((to, from, next) => {
 
 
     }
-    if(to.path === "/" || to.path === "/profile" ||to.path === "/customer-login"){
+    if(to.path === "/" || to.path === "/profile" ||to.path === "/customer-login" || to.path === "/reset-password"){
 
             if (to.meta.auth && decipherUser === "No-Didit") {
                 if (to.meta.auth && decipherUser === boss) {

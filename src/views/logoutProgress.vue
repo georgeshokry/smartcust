@@ -25,14 +25,10 @@
 
             }
         },
-        computed:{
+        props:{
             exitLoading:{
-                get () {
-                    return this.value
-                },
-                set (value) {
-                    this.$emit('input', value)
-                }
+                default: false,
+                type: Boolean,
             }
         }
     }
