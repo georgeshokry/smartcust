@@ -14,7 +14,7 @@
                         <v-scroll-y-transition >
                             <div v-if="dataLoaded">
 <!--                        the edit profile icon with tooltip-->
-                        <div class="btn-corner" style="z-index: 1">
+                        <div class="btn-corner">
                             <v-tooltip left color="black" >
                                 <template v-slot:activator="{ on }">
                                     <v-btn flat icon color="black " style="margin: 0" v-on="on" @click="openEditProfileDialogNow">
@@ -25,6 +25,7 @@
                             </v-tooltip>
                         </div>
 
+                                <div style="padding-top: 20px">
 <!--                        starting of profile avatar-->
                         <div class="avatar" style="z-index: 2">
                         <v-avatar
@@ -47,23 +48,18 @@
 
                             </div>
                         </v-card-title>
-                                <v-divider class="profile-divider" style="margin-left: 15px; margin-right: 15px"></v-divider>
+                                <v-divider class="profile-divider pa-2"  style="margin-left: 15px; margin-right: 15px"></v-divider>
                         <!--some of user data show here-->
-                        <v-content style="text-align: left; padding-left: 16px; padding-bottom: 16px">
-
-                            <v-card-text style="padding: 0">
-                                <v-icon>contact_mail </v-icon>
-                                {{ userEmail }}
-                            </v-card-text>
-
-                            <v-card-text style="padding: 0">
-                                <v-icon>contact_phone </v-icon>
-                                {{ userPhone }}
-                            </v-card-text>
-
+                        <v-content style="text-align: center; padding-left: 16px; padding-bottom: 16px; padding-right: 16px">
+<!--                            <div style="font-weight: 600; text-align: center">Profile</div>-->
+<!--                            <v-icon small>contact_mail </v-icon><br>-->
+<!--                            {{ userEmail }}<br>-->
+<!--                            <v-icon small>contact_phone </v-icon><br>-->
+<!--                            {{ userPhone }}-->
                         </v-content>
 
 
+                            </div>
                             </div>
                         </v-scroll-y-transition>
 <edit-profile-dialog :editDialog="EditProfileDialog" @closeEditProfileDialog="closeEditProfileDialog"></edit-profile-dialog>
@@ -168,10 +164,12 @@
     .btn-corner{
         background-color: #b7b7b7;
         border-bottom-left-radius: 230px;
-        margin-left: 208px;
+        margin-left: 207px !important;
         text-align: right;
         padding-bottom: 7px;
         padding-left: 7px;
+        z-index: 1;
+        position: absolute
 
     }
 

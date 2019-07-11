@@ -52,6 +52,7 @@
                         :auto-grow="true"
                         no-resize
                         rows="1"
+                        clearable
                 ></v-textarea>
 
                 <br>
@@ -83,6 +84,7 @@
                                 :error-messages="errors.collect('occasion date')"
                                 data-vv-name="occasion date"
                                 placeholder="Select Date"
+                                clearable
                         ></v-text-field>
                     </template>
                     <v-date-picker
@@ -128,6 +130,7 @@
                                     data-vv-name="occasion time"
                                     placeholder="Select Time"
                                     format="12hr"
+                                    clearable
                             ></v-text-field>
                         </template>
                         <v-time-picker dark format="ampm" v-model="occTime" ></v-time-picker>
@@ -143,6 +146,7 @@
                         :auto-grow="true"
                         no-resize
                         rows="1"
+                        clearable
                 ></v-textarea>
 
                 <h6 style="color: red;">*required</h6>
@@ -153,55 +157,14 @@
                     Make sure the phone number you have associated with your account is up-to-date to allow us to contact you.<br>
                     <v-btn outline small @click="openEditPhone">update phone number</v-btn>
                 </v-card-text>
-<!--                <v-text-field-->
-<!--                        v-model="offerId != null"-->
-<!--                        label="Email (Can't Edit this field)"-->
-<!--                        color="black"-->
-<!--                        readonly-->
-<!--                        disabled-->
-<!--                ></v-text-field>-->
 
-
-
-
-<!--                <v-text-field-->
-<!--                        v-model="editLastName"-->
-<!--                        v-validate="'required:true'"-->
-<!--                        :error-messages="errors.collect('Last Name')"-->
-<!--                        label="Last Name"-->
-<!--                        data-vv-name="Last Name"-->
-<!--                        color="black"-->
-<!--                        required-->
-<!--                ></v-text-field>-->
-<!--                <v-combobox-->
-<!--                        v-model="editMartial"-->
-<!--                        v-validate="'required:true'"-->
-<!--                        :error-messages="errors.collect('Marital Status')"-->
-<!--                        :items="maritalSelect"-->
-<!--                        label="Marital Status"-->
-<!--                        data-vv-name="Marital Status"-->
-<!--                        required-->
-<!--                        color="black"-->
-<!--                ></v-combobox>-->
-<!--                <v-text-field-->
-<!--                        style="    margin-top: 15px;"-->
-<!--                        v-model="editPhone"-->
-<!--                        v-validate="'required:true|digits:11'"-->
-<!--                        :error-messages="errors.collect('Phone')"-->
-<!--                        label="Mobile Number"-->
-<!--                        data-vv-name="Phone"-->
-<!--                        color="black"-->
-<!--                        required-->
-<!--                        mask="###-###-###-##"-->
-<!--                        prefix="(+2)-"-->
-<!--                ></v-text-field>-->
             </v-card-text>
 
             <v-divider></v-divider>
             <v-divider></v-divider>
             <v-card-actions>
                 <v-layout row wrap style="justify-content: flex-end;">
-                <v-expand-transition>
+
                     <v-card-text v-if="occType !== null" style="    padding-top: 0;">
 
 
@@ -212,7 +175,7 @@
                             Occasion Reward Points: {{occPoints}} <v-icon small>stars</v-icon><br>
                         </div>
                     </v-card-text>
-                </v-expand-transition>
+
 
                 <v-spacer></v-spacer>
 
@@ -247,7 +210,7 @@
                     <v-card-text>
                         <h3>Are you sure to send this reservation?</h3>
                     </v-card-text>
-                    <h5><b>Note:</b> you can't cancel the reservation after <b>"Payment Confirmation".</b></h5>
+                    <h5><b>Note:</b> you can't cancel the reservation after "<b>Payment Confirmation</b>".</h5>
                 </v-card-title>
 
                 <v-card-actions style="justify-content: space-between; padding: 20px;">
@@ -267,7 +230,7 @@
                     </v-btn>
                 </v-card-actions>
                 </div>
-                <v-fade-transition>
+
                 <div v-if="sendConfirmed">
                     <v-layout row wrap style="    justify-content: center; padding: 20px 20px 0 20px">
                         <img style=" max-width: 237px; max-height: 183px; " align="center" src="../../assets/undraw_camera_mg5h.svg">
@@ -290,7 +253,7 @@
 
                     </v-card-actions>
                 </div>
-                </v-fade-transition>
+
             </v-card>
         </v-dialog>
     <edit-profile-dialog :editDialog="editPhone" @closeEditProfileDialog="closeEditProfileDialog"></edit-profile-dialog>
@@ -405,6 +368,8 @@
 
             },
             viewSelected(selected){
+                this.sendWait = true;
+                this.sendConfirmed = false;
                 if(selected) {
                     let result = this.allOcc.find(data => data.occasionName === selected);
                     this.occType = selected;
@@ -449,7 +414,6 @@
 
                 this.confirmSendDialog = false;
                 this.$emit('closeNow');
-                this.sendWait = true;
                 this.sendConfirmed =false;
                 this.occAddress = '';
                 this.datePickerMenu = false;
@@ -460,8 +424,8 @@
 
                 this.confirmSendDialog = false;
                 this.sendLoading = false;
-                this.sendWait = true;
-                this.sendConfirmed = false;
+
+
             }
         },
 

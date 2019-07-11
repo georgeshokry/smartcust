@@ -7,10 +7,10 @@
             id="rounded-card"
 
     >
-        <loading-data-progress v-if="dataLoading"/>
 
 
-        <div v-if="dataLoaded" >
+
+
 <!--        starting of points card-->
         <v-card-title
                 primary-title
@@ -26,7 +26,8 @@
 
             </div>
         </v-card-title>
-
+        <loading-data-progress v-if="dataLoading "/>
+        <div v-if="dataLoaded " >
         <v-content class="points">
             <div>
 
@@ -44,14 +45,14 @@
                         />
                     </span>
                 </v-badge>
-                <v-card-text style="font-size: medium;padding: 0; ">
+                <v-card-text style="font-size: medium;padding:  0 !important; justify-content: center ">
                     <v-card-text style="font-size: medium;padding: 0; ">Smart Code</v-card-text>
                     <v-card-text class="user-code">
                     {{ userCode }}
 
                         <v-tooltip bottom color="black" nudge-bottom="-10">
                             <template v-slot:activator="{ on }">
-                                <div v-on="on">
+                                <div v-on="on" style="width: fit-content;     margin: auto;">
                         <v-btn icon  size="5px" larg color="white" style="margin: 0 0 5px 0;" @click="shareFacebook" target="_blank">
 
                             <img width="25px" src="../../assets/facebook.svg">
@@ -384,7 +385,7 @@
 
     }
     #points-title{
-        padding-top: 45px;
+        padding-top: 20px;
         padding-bottom: 5px;
         justify-content: center;
     }
@@ -405,7 +406,8 @@
         text-align: center !important;
         padding-bottom: 16px !important;
         font-weight: 600;
-        font-size: -webkit-xxx-large;
+        font-size: 50px;
+
     }
     .rotate-star{
         max-height: max-content;

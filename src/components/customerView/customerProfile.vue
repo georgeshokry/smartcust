@@ -192,7 +192,7 @@
                 right
                 top
         >
-            <v-icon color="white">check_circle_outline </v-icon> {{ firebaseMsg }}
+            <v-icon color="white">{{snackbarIcon}} </v-icon> {{ firebaseMsg }}
             <v-btn
 
                     icon
@@ -203,7 +203,7 @@
         </v-snackbar>
 
 
-<logout-progress v-model="showLogoutProgress"></logout-progress>
+<logout-progress :exitLoading="showLogoutProgress"></logout-progress>
 
     </v-app>
 </template>
@@ -213,7 +213,7 @@
     import SimpleCrypto from "simple-crypto-js";
     import userInfoMixin from "../mixins/userInfoMixin";
     import checkConnectionMixin from "../mixins/checkConnectionMixin";
-
+    import logoutProgress from "../../views/logoutProgress";
     const hints = [
         "Check Out the latest Offers!",
         "Don't forget to share your SmartCode!",
@@ -222,13 +222,14 @@
     export default {
         name: 'customerprofile',
         components: {
+            logoutProgress,
             Pointsplancard:() => import("./pointsPlanCard"),
             Appfooter:() => import("./appFooter"),
             Newofferscard:() =>import("./newOffersCard"),
             Pointscard:() =>import("./pointsCard"),
             reservationsCard:() => import("./reservationsCard"),
             Profilecard:() => import("./profileCard"),
-            logoutProgress:()=> import("../../views/logoutProgress")
+
         },
         mixins: [userInfoMixin, checkConnectionMixin],
         data: () => {

@@ -120,7 +120,7 @@
         border-radius: 20px;
     }
     #plan-title{
-        padding-top: 40px;
+        padding-top: 20px;
         padding-bottom: 5px;
         justify-content: center;
     }

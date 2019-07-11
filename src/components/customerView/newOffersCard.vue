@@ -12,7 +12,7 @@
                 primary-title
                 id="orders-title"
         >
-            <div>
+            <div style="padding-top: 15px">
                 <v-responsive avatar>
                     <v-avatar color="black">
                         <v-icon size="40px" color="white">loyalty</v-icon>
@@ -39,7 +39,7 @@
 
 
         <v-scroll-y-transition >
-            <v-carousel :cycle="cycleFlag = false" :interval="4000"  hide-controls v-show="dataLoaded" :height="345" :max="300" vertical reverse style=" box-shadow: none; border-radius: 0;" >
+            <v-carousel :cycle="cycleFlag" :interval="4000"  hide-controls v-show="dataLoaded" :height="345" :max="300" vertical reverse style=" box-shadow: none; border-radius: 0;" >
                 <v-carousel-item
                         v-for="(item,i) in items"
                         :key="i"
@@ -57,7 +57,7 @@
                         <h1 class="offer-title">{{ item.offerTitle }}</h1>
 
                         <div  class="offer-rules">
-                            <v-layout column wrap style="padding-bottom: 10px; min-width: 210px;">
+                            <v-layout column wrap style="padding-bottom: 10px; min-width: 220px;">
                             <h3 class="offer-content">{{ item.offerContent }}</h3>
 
 
@@ -68,9 +68,9 @@
 <!--                                ></v-divider>-->
                             <div>
                                 <v-divider style="margin-top: 5px"></v-divider>
-                            <h3>Will get: {{item.offerPoints}} <v-icon size="20px" color="white" style="margin-top: 5px">stars</v-icon></h3>
-                            <h3 v-if="item.offerExpNum != null" >Expired By First: {{item.offerExpNum}} <v-icon size="20px" color="white">directions_run</v-icon></h3>
-                            <h3 v-if="item.offerExpDate != null">Expired On: {{item.offerExpDate}} <v-icon size="20px" color="white">av_timer</v-icon></h3>
+                            <h3>Will get {{item.offerPoints}} <v-icon size="20px" color="white" style="margin-top: 5px">stars</v-icon></h3>
+                            <h3 v-if="item.offerExpNum != null" >End By First {{item.offerExpNum}} <v-icon size="20px" color="white">directions_run</v-icon></h3>
+                            <h3 v-if="item.offerExpDate != null">End {{item.offerExpDate}} <v-icon size="20px" color="white">av_timer</v-icon></h3>
                             <v-btn class="order-btn" depressed small outline >Order Now</v-btn>
                             </div>
                             </v-layout>
@@ -84,6 +84,7 @@
 </template>
 <script>
     import loadingDataProgress from './loadingDataProgress.vue'
+    import moment from 'moment';
     export default {
         name: 'newofferscard',
         components: {
@@ -112,8 +113,29 @@
                 let offersData = [];
                 if (offers !== null || offers !== undefined) {
                     offers.forEach(function (i) {
-                        if(i.offerStatus === "opened") {
-                            offersData.push(i);
+                        if(i.offerStatus === "opened" ) {
+                            if(i.offerExpDate !== null ) {
+                                if(moment() <= moment(i.offerExpDate)) {
+                                    offersData.push({
+                                        offerTitle: i.offerTitle,
+                                        offerContent: i.offerContent,
+                                        offerExpDate: moment(i.offerExpDate).fromNow(),
+                                        offerExpNum: null,
+                                        offerPoints: i.offerPoints,
+                                        offerPic: i.offerPic
+
+                                    });
+                                }
+                            }else {
+                                offersData.push({
+                                    offerTitle: i.offerTitle,
+                                    offerContent: i.offerContent,
+                                    offerExpDate: null,
+                                    offerExpNum: i.offerExpNum,
+                                    offerPoints: i.offerPoints,
+                                    offerPic: i.offerPic
+                                });
+                            }
                         }
                     });
                     this.items = offersData;
@@ -128,7 +150,7 @@
         methods:{
             offerSelected(thisOfferId){
                 console.log("offer selected", thisOfferId);
-            }
+            },
         }
     }
 </script>

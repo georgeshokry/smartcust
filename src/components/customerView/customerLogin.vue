@@ -82,7 +82,7 @@
                                 autofocus
                         ></v-text-field>
 
-                        <h4><a style="color: black" @click.stop="signupDialog = true">Don't Have Account? Create One Now!</a></h4>
+
                     </v-card-text>
                     <v-alert
                             :value="custAlert"
@@ -93,6 +93,12 @@
                     >
                         {{ errMsg }}
                     </v-alert>
+                    <v-card-text style="color: black">
+
+                        <h4><a style="color: black" @click.stop="$router.replace('/reset-password')">Forget Password?</a></h4>
+                        <v-divider class="ma-2" style="max-width: 60%;"></v-divider>
+                        <h4><a style="color: black" @click.stop="signupDialog = true">Don't Have Account? Create One Now!</a></h4>
+                    </v-card-text>
                     <v-card-actions style="justify-content: center">
 
                         <v-btn
