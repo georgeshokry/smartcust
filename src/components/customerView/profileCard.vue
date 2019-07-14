@@ -70,6 +70,7 @@
 
     import avatarMixin from "../mixins/userInfoMixin"
     import loadingDataProgress from './loadingDataProgress.vue';
+    import moment from 'moment';
     export default {
         name: 'profilecard',
         components: {
@@ -132,7 +133,7 @@
             },
             // check the time now to start greeting the user
           greetingsCheck(){
-              let timeNow = new Date().toLocaleTimeString().replace(/([\d]+:[\d]{2})(:[\d]{2})(.*)/, "$1$3");
+              let timeNow = moment().format('LT').replace(/([\d]+:[\d]{2})(:[\d]{2})(.*)/, "$1$3");
               let dayOrNight = timeNow.split(" ");
               if(dayOrNight[1] === "PM"){
                   this.greetings = "Good Afternoon";

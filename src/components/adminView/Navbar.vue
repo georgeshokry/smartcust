@@ -22,10 +22,9 @@
             <div class="responsive-title">
                 <v-layout row wrap justify-content>
 
-           <img class="image-logo" src="../../assets/logowhite.png"
+           <img class="image-logo" src="../../assets/logowhite-nameONLY.png"
 
            >
-
 
                 </v-layout>
             </div>
@@ -82,7 +81,7 @@
 
             </v-list>
 
-            <v-list class="pt-0" dense>
+            <v-list class="pt-0" dense  >
                 <v-divider light></v-divider>
 
                 <v-list-tile
@@ -91,6 +90,7 @@
                         :to="item.link"
                         :value="item.active"
                         active-class="default-class highlighted"
+
                 >
 
                     <v-list-tile-action style="padding-left: 15px">
@@ -99,8 +99,9 @@
 
                     <v-list-tile-content style="padding-left: 15px">
                         <v-list-tile-title >{{ item.title }}</v-list-tile-title>
-                    </v-list-tile-content>
 
+                    </v-list-tile-content>
+                    <div v-bind:id="item.id" style=" width: 10px; color: #df322e;     height: 90%;"></div>
                 </v-list-tile>
 
                 <v-divider light></v-divider>
@@ -181,7 +182,7 @@
 
 
         <annoying-no-internet v-if="$route.path !== '/admin/dashboard'"></annoying-no-internet>
-        <logout-progress v-model="showLogoutProgress"></logout-progress>
+        <logout-progress :exitLoading="showLogoutProgress"></logout-progress>
 
 </v-app>
 
@@ -210,11 +211,11 @@
 
                 drawer: null,
                 items: [
-                    { title: 'Dashboard', icon: 'dashboard', link: '/admin/dashboard',  },
-                    { title: 'Customers', icon: 'people', link: '/admin/customers' },
-                    { title: 'Offers', icon: 'loyalty', link: '/admin/offers' },
-                    { title: 'Reservations', icon: 'forum', link: '/admin/reservations' },
-                    { title: 'Points Plan', icon: 'import_export', link: '/admin/pointsplan' }
+                    { title: 'Dashboard', icon: 'dashboard', link: '/admin/dashboard',id: "dashboard-tile"  },
+                    { title: 'Customers', icon: 'people', link: '/admin/customers', id: "customer-tile"},
+                    { title: 'Offers', icon: 'loyalty', link: '/admin/offers', id: "offer-tile" },
+                    { title: 'Reservations', icon: 'forum', link: '/admin/reservations', id: "order-tile" },
+                    { title: 'Points Plan', icon: 'import_export', link: '/admin/pointsplan', id: "point-tile" }
                 ],
                 mini: false,
                 right: null,
@@ -230,7 +231,6 @@
             },
             firebaseErrorShow(){
                 return this.$store.getters.firebaseError;
-
             },
         },
         watch:{
@@ -264,7 +264,7 @@
                     this.$router.replace('/admin-login');
                 }
             }
-    }
+            }
         },
         methods: {
            logout(){
@@ -275,6 +275,11 @@
         },
         created() {
             this.$store.dispatch('checkConnetion');
+
+
+        },
+        mounted() {
+
         }
     }
 </script>
@@ -302,7 +307,27 @@
     }
     @media screen and (max-width: 375px) {
         .image-logo {
-            width: 60px;
+            width: 80px;
         }
+    }
+    .v-list__tile{
+        padding-left: 16px;
+        padding-right: 0;
+    }
+
+    #customer-tile{
+        border-right: .25rem solid #00ff18 !important;
+    }
+    #offer-tile{
+        border-right: .25rem solid #ff3935 !important;
+    }
+    #order-tile{
+        border-right: .25rem solid #f874ff !important;
+    }
+    #point-tile{
+        border-right: .25rem solid #5884ff !important;
+    }
+    #dashboard-tile{
+        border-right: .25rem solid #000000 !important;
     }
 </style>

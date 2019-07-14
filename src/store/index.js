@@ -33,6 +33,8 @@ export const store = new Vuex.Store({
         numOfCustomers:null,
         allCustomerReservations: null,
         allReservStatus: null,
+        allAdminReservations: null,
+        customerInfoById:null,
 
 ////to stop any listener during the app after the user logged out
         stopProfileListener: null,
@@ -107,6 +109,12 @@ export const store = new Vuex.Store({
         },
         setAllReservStatus(state, payload){
           state.allReservStatus = payload;
+        },
+        setAllAdminReservations(state, payload){
+            state.allAdminReservations = payload;
+        },
+        setCustomerInfoById(state, payload){
+            state.customerInfoById = payload;
         },
 
 
@@ -354,7 +362,7 @@ export const store = new Vuex.Store({
                     //////check if user used this code before or not
                         usersRedemsId = doc.data().usersRedeem;
                         if(!usersRedemsId.includes(signedupUserId)) {
-                            dateNow = new Date().toLocaleString().split(",", 1);
+                            dateNow = new Date().toISOString().split("T", 1);
                             promoExpdb = doc.data().Exp;
                             /////check if the code expired or not
                             if(promoExpdb >= dateNow){
@@ -375,11 +383,11 @@ export const store = new Vuex.Store({
                             }else if(promoExpdb < dateNow){
                                 ///here the code expired
 
-                                commit('setPromoCodeMsg', "Expired Promo Code!");
+                                commit('setPromoCodeMsg', "<b>&nbspWrong&nbsp</b>or<b>&nbspExpired&nbsp</b>Promo Code!");
                             }
 
                         }else {
-                            commit('setPromoCodeMsg', "You have used this promo code before!");
+                            commit('setPromoCodeMsg', "You have used your first<b>&nbspSmart Code&nbsp</b>before!");
                         }
 
 
@@ -484,9 +492,9 @@ export const store = new Vuex.Store({
         changeLastLoginState({commit}){
             const db = firebase.firestore();
             let signedupUserId = firebase.auth().currentUser.uid;
-            let loginTimeStamp = new Date();
+            let loginTimeStamp = new Date().toISOString();
             db.collection("users").doc(signedupUserId).update({
-                userLastActive : loginTimeStamp.toLocaleString(),
+                userLastActive : loginTimeStamp,
             });
             firebase.database().ref().child('usersessions').child(signedupUserId).update({userActiveState: "online"});
 
@@ -536,7 +544,7 @@ export const store = new Vuex.Store({
             const db = firebase.firestore();
             const storage = firebase.storage();
 
-            let offerCreatedTimestamp = new Date();
+            let offerCreatedTimestamp = new Date().toISOString();
             commit('setError', null);
             commit('setFirebaseSuccess', null);
             let dataWithExpType;
@@ -551,7 +559,7 @@ export const store = new Vuex.Store({
                     offerStatus: "opened",  ////need to make in future
                     offerExpDate: payload.offerExpDate,
                     offerExpNum: null,
-                    offerCreatedTimestamp: offerCreatedTimestamp.toLocaleString()
+                    offerCreatedTimestamp: offerCreatedTimestamp
 
                 }];
             }else if(payload.offerExpDate === null && payload.offerExpNum !== null){
@@ -589,7 +597,6 @@ export const store = new Vuex.Store({
             commit('setError', null);
             const db = firebase.firestore();
 
-            let offerCreatedTimestamp = new Date();
 
             let stopOffersListener = db.collection('offers')
                 .orderBy('offerCreatedTimestamp', 'desc')
@@ -671,14 +678,14 @@ export const store = new Vuex.Store({
         addNewOccasionType({commit}, payload){
             const db = firebase.firestore();
 
-            let typeCreatedTimestamp = new Date();
+            let typeCreatedTimestamp = new Date().toISOString();
             commit('setError', null);
             commit('setFirebaseSuccess', null);
             db.collection('occasionTypes').add({
                 occasionName: payload.occasionName,
                 occasionPrice: payload.occasionPrice,
                 occasionPoints: payload.occasionPoints,
-                occasionCreatedTimeStamp: typeCreatedTimestamp.toLocaleString(),
+                occasionCreatedTimeStamp: typeCreatedTimestamp
             }).then(function (docRef) {
                 db.collection("occasionTypes").doc(docRef.id).update({idOfOccasion: docRef.id}).then(function () {
                     commit('setFirebaseSuccess', "Occasion Added Successfully!");
@@ -690,14 +697,14 @@ export const store = new Vuex.Store({
         editOccasionType({commit}, payload){
             const db = firebase.firestore();
 
-            let typeCreatedTimestamp = new Date();
+            let typeCreatedTimestamp = new Date().toISOString();
             commit('setError', null);
             commit('setFirebaseSuccess', null);
             db.collection('occasionTypes').doc(payload.idOfOcc).update({
                 occasionName: payload.occasionName,
                 occasionPrice: payload.occasionPrice,
                 occasionPoints: payload.occasionPoints,
-                occasionCreatedTimeStamp: typeCreatedTimestamp.toLocaleString(),
+                occasionCreatedTimeStamp: typeCreatedTimestamp,
             }).then(function () {
                 commit('setFirebaseSuccess', "Occasion Edited Successfully!");
             }).catch(function () {
@@ -762,18 +769,18 @@ export const store = new Vuex.Store({
                     console.log(querySnapshot.key);
                     let state = querySnapshot.child('userActiveState').val();
                     db.collection('users').doc(''+querySnapshot.key).get().then(function (doc) {
-
-                            customers.push({
-                                userActiveState: state,
-                                userFirstName: doc.data().userFirstName,
-                                userPhone: doc.data().userPhone,
-                                userEmail: doc.data().userEmail,
-                                userMaritalStatus: doc.data().userMaritalStatus,
-                                userPoints: doc.data().userPoints,
-                                userLastActive: doc.data().userLastActive,
-                                userCode: doc.data().userCode,
-                                userGender: doc.data().userGender
-                            });
+                        let userData = {
+                            userActiveState: state,
+                            userFirstName: doc.data().userFirstName,
+                            userPhone: doc.data().userPhone,
+                            userEmail: doc.data().userEmail,
+                            userMaritalStatus: doc.data().userMaritalStatus,
+                            userPoints: doc.data().userPoints,
+                            userLastActive: doc.data().userLastActive,
+                            userCode: doc.data().userCode,
+                            userGender: doc.data().userGender
+                        };
+                            customers.push(userData);
 
 
                         });
@@ -798,7 +805,7 @@ export const store = new Vuex.Store({
             commit('setFirebaseSuccess', null);
             commit('setError', null);
             let db = firebase.firestore();
-            let date = new Date();
+            let date = new Date().toISOString();
             let orderData = {
                 customerId: user,
                 reservOfferId: null,
@@ -807,7 +814,7 @@ export const store = new Vuex.Store({
                 reservDate: payload.reservDate,
                 reservTime: payload.reservTime,
                 reservStatusId: "status_1",
-                reservCreatedTimeStamp: date.toLocaleString()
+                reservCreatedTimeStamp: date
             };
             db.collection("reservations").add(orderData).then(function () {
                 commit('setFirebaseSuccess', "Reservation Sent Successfully!");
@@ -859,20 +866,74 @@ export const store = new Vuex.Store({
                 .then(function () {
                     commit('setFirebaseSuccess', "Reservation Canceled Successfully!");
                 }).catch(function (error) {
-                    commit('setError', "Problem in canceling reservation, Try Again!", ">>> "+error);
+                    commit('setError', "Problem in canceling reservation, Try Again!");
             })
         },
         readAllReservStatus({commit}){
             commit('setAllReservStatus', null);
             const db = firebase.firestore();
             let stopOffersListener = db.collection('reservStatus').get().then(function (status) {
-                let arrayOfStatus = []
+                let arrayOfStatus = [];
                 status.forEach(function (data) {
                     arrayOfStatus.push({name: data.data().state, id: data.id})
                 });
                 commit('setAllReservStatus', arrayOfStatus);
+               arrayOfStatus = [];
             });
-        }
+        },
+        listenOnAllAdminReservations({commit}){
+            commit('setAllAdminReservations', null);
+            const db = firebase.firestore();
+            let reservations = [];
+            let statusNow = '';
+            let stopOffersListener = db.collection('reservations')
+                .orderBy('reservCreatedTimeStamp', 'desc')
+                .onSnapshot(function (querySnapshot) {
+
+                    querySnapshot.forEach(function (doc) {
+                        // db.collection('reservStatus').doc(statOfReserv).get().then(function (statType) {
+                        //     statusNow = statType.data().state;
+                        reservations.push({
+                            idOfOccasion: doc.data().idOfOccasion.occasionName,
+                            reservAddress: doc.data().reservAddress,
+                            reservDate: doc.data().reservDate,
+                            reservTime: doc.data().reservTime,
+                            reservStatusId: doc.data().reservStatusId,
+                            reservCreatedTimeStamp: doc.data().reservCreatedTimeStamp,
+                            idOfReservation: doc.id,
+                            customerId: doc.data().customerId,
+                            occasionMap: doc.data().idOfOccasion
+                        });
+
+                        // });
+
+                    });
+
+                    commit('setAllAdminReservations', reservations);
+                    reservations = [];
+                });
+        },
+        readCustomerInfoById({commit}, payload){
+            commit('setCustomerInfoById', null);
+            const db = firebase.firestore();
+            db.collection('users').doc(payload).get().then(function (statType) {
+                commit('setCustomerInfoById', statType.data());
+            });
+        },
+        //////////////////////////////////////////////////still working>>>> after payment confirmed add points to customer
+        editReservationStatusByAdmin({commit}, payload){
+            let user = firebase.auth().currentUser.uid;
+            commit('setFirebaseSuccess', null);
+            commit('setError', null);
+            let db = firebase.firestore();
+            db.collection('reservations').doc(''+payload.idOfReservation).update({"reservStatusId": payload.status})
+                .then(function () {
+
+                    commit('setFirebaseSuccess', "Reservation Status Changed Successfully!");
+                }).catch(function (error) {
+                commit('setError', "Problem in changing reservation status, Try Again!");
+            })
+        },
 
     },
     getters:{
@@ -932,6 +993,12 @@ export const store = new Vuex.Store({
         },
         getAllReservStatus(state){
             return state.allReservStatus;
+        },
+        getAllAdminReservations(state){
+            return state.allAdminReservations;
+        },
+        getCustomerInfoById(state){
+            return state.customerInfoById;
         }
 
 

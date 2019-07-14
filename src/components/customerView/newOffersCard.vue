@@ -45,7 +45,7 @@
                         :key="i"
                         :src="item.offerPic"
                         :lazy-src="item.offerPic"
-                        @click.stop="offerSelected(item.idOfOffer)"
+                        @click.stop="offerSelected(item.offerId)"
                         style="cursor: pointer;"
                         v-ripple
                         @mouseover="cycleFlag = false"
@@ -122,8 +122,8 @@
                                         offerExpDate: moment(i.offerExpDate).fromNow(),
                                         offerExpNum: null,
                                         offerPoints: i.offerPoints,
-                                        offerPic: i.offerPic
-
+                                        offerPic: i.offerPic,
+                                        offerId: i.idOfOffer
                                     });
                                 }
                             }else {
@@ -133,7 +133,8 @@
                                     offerExpDate: null,
                                     offerExpNum: i.offerExpNum,
                                     offerPoints: i.offerPoints,
-                                    offerPic: i.offerPic
+                                    offerPic: i.offerPic,
+                                    offerId: i.idOfOffer
                                 });
                             }
                         }

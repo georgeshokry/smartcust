@@ -19,6 +19,8 @@
                         inset
                         vertical
                 ></v-divider>
+                <v-btn icon="" color="white" class="black--text" @click="showForm = true"><v-icon>add_circle</v-icon></v-btn>
+
                 <v-spacer></v-spacer>
 
                 <v-text-field
@@ -95,17 +97,17 @@
             </v-data-table>
         </div>
 
-
-
+        <new-offer-dialog style="display: none" v-model="showForm"></new-offer-dialog>
 
     </v-container>
 </template>
 <script>
     import Navbar from "./Navbar";
     import pagePath from "./pagePath"
+    import newOfferDialog from './newOfferDialog';
     export default {
         name: 'offers',
-        components: {Navbar, pagePath},
+        components: {Navbar, pagePath, newOfferDialog},
         data: () => ({
             dataTabelLoading: true,
             searchOfferByTitle:'',
@@ -123,6 +125,7 @@
                 {text: 'No. of users redeem', value: 'userIdRedeem', class:"no-of-users"}
             ],
         allOffers: [],
+            showForm: false,
 
     }),
 

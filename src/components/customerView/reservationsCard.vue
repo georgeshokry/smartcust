@@ -111,7 +111,7 @@
 
                         <v-layout column justify-center >
                         <v-timeline
-                                v-if="item.reservStatusId.substr(0, 7) === 'status_'"
+                                v-if="['status_1','status_2','status_3','status_4','status_5'].includes(item.reservStatusId)"
                                 dense
                                 v-for="(stat,h) in allTypesOfStatus"
 
@@ -128,7 +128,7 @@
                         </v-timeline>
 
                             <v-timeline
-                                    v-if="item.reservStatusId === 'canceled by customer' || item.reservStatusId === 'canceled by photographer'"
+                                    v-if="item.reservStatusId === 'status_50'"
                                     dense
 
                             >
@@ -139,7 +139,24 @@
                                     </v-avatar>
                                 </template>
                                     <div style="color: red" class="status-checked">
-                                        {{item.reservStatusId}}
+                                        canceled by you
+                                    </div>
+
+                                </v-timeline-item>
+                            </v-timeline>
+                            <v-timeline
+                                    v-if="item.reservStatusId === 'status_51'"
+                                    dense
+
+                            >
+                                <v-timeline-item small color="grey" >
+                                    <template v-slot:icon  >
+                                        <v-avatar size="18">
+                                            <v-icon color="white" size="15" style="background-color: red">clear</v-icon>
+                                        </v-avatar>
+                                    </template>
+                                    <div style="color: red" class="status-checked">
+                                        canceled by photographer
                                     </div>
 
                                 </v-timeline-item>
@@ -147,7 +164,7 @@
                             <v-divider style="    max-width: 40px;"></v-divider>
                             <strong>Done</strong>
                             <v-btn @click="startCancelConfirm(item.idOfReservation)" outline small color="red" v-if="['status_1','status_2'].includes(item.reservStatusId)">Cancel Reservation?*</v-btn>
-                            <h5 style="color: red; text-align: center" v-if="item.reservStatusId.substr(0,8) !== 'canceled'">
+                            <h5 style="color: red; text-align: center" v-if="['status_1','status_2','status_3','status_4','status_5'].includes(item.reservStatusId)">
                                 <b>*</b>You can't cancel the reservation after "<b>Payment Confirmation</b>", Contact us for more details.
                             </h5>
                         </v-layout>
@@ -241,7 +258,7 @@
                             reservDate: {fromNow: moment(reservastions[i].reservDate).fromNow(), On: moment(reservastions[i].reservDate).format("YYYY-MM-DD")} ,
                             reservTime: moment(reservastions[i].reservTime, "hh:mm").format("LT"),
                             reservStatusId: reservastions[i].reservStatusId,
-                            reservCreatedTimeStamp: moment(reservastions[i].reservCreatedTimeStamp).toNow(true),
+                            reservCreatedTimeStamp: moment(reservastions[i].reservCreatedTimeStamp.toLocaleString()).toNow(true),
 
                         });
                     }

@@ -10,13 +10,13 @@
         <page-path></page-path>
         <v-layout row wrap justify-space-between child-flex >
             <v-flex d-flex xs12 sm4 md3 justify-center style="justify-content: space-around;">
-                <v-card  elevation="3" max-width="300" min-width="284" class="round-card " style="border-right: .25rem solid #00800c !important;">
+                <v-card  elevation="3" max-width="300" min-width="284" class="round-card " style="border-right: .25rem solid #00ff16 !important;">
 
                     <v-card-text>
                         <div class="led-box">
                             <v-layout row wrap justify-space-between style="justify-content: center">
 
-                                <div class="headline " style=" margin-right: 10px;">Online Customers: </div>
+                                <div class="headline " style=" margin-right: 10px;">Online Customers </div>
                                 <div class="led-yellow-stoped" v-if="numOfUsersOnlineNow <= 0"><h3 style="color: white">{{numOfUsersOnlineNow}}</h3></div>
                                 <div class="led-yellow" v-if="numOfUsersOnlineNow > 0"><h3 style="color: white">{{numOfUsersOnlineNow}}</h3></div>
 
@@ -65,7 +65,36 @@
 
 
         </v-layout>
+<!--        <v-divider class="mx-2 ma-3"></v-divider>-->
+<!--        <v-layout row wrap>-->
+<!--            <v-card-->
 
+<!--                   width="500"-->
+<!--            >-->
+<!--                <v-card-text class="headline">-->
+<!--                    Reservations-->
+<!--                </v-card-text>-->
+<!--                <v-sheet-->
+<!--                        class="v-sheet&#45;&#45;offset mx-auto"-->
+<!--                        color="black"-->
+<!--                        elevation="5"-->
+<!--                        max-width="calc(100% - 32px)"-->
+
+<!--                >-->
+<!--                    <v-sparkline-->
+<!--                            :labels="labels"-->
+<!--                            :value="graph"-->
+<!--                            color="white"-->
+<!--                            line-width="2"-->
+<!--                            padding="16"-->
+<!--                            :show-labels="true"-->
+<!--                            auto-draw-->
+<!--                            label-size="50"-->
+<!--                            :auto-draw-duration="5000"-->
+<!--                    ></v-sparkline>-->
+<!--                </v-sheet>-->
+<!--            </v-card>-->
+<!--        </v-layout>-->
     </v-container>
 </template>
 
@@ -89,6 +118,22 @@
                 ],
                 value: 0,
                 numOfUsersOnlineNow: this.$store.getters.getNumberOfusersOnline,
+                labels: [
+                    '12am',
+                    '3am',
+                    '6am',
+                    '9am',
+                    '12pm',
+                    '3pm',
+                ],
+                graph: [
+                    10,
+                    20,
+                    90,
+                    2,
+                    5,
+                    18
+                ]
             }
         },
         created() {
@@ -148,16 +193,16 @@
 }
 
 #customer-card{
-    border-bottom: .25rem solid #00800c !important;
+    border-bottom: .25rem solid #00ff0c !important;
 }
 #offer-card{
-    border-bottom: .25rem solid #df322e !important;
+    border-bottom: .25rem solid #ff3834 !important;
 }
 #order-card{
-    border-bottom: .25rem solid #7c3a80 !important;
+    border-bottom: .25rem solid #f874ff !important;
 }
 #point-card{
-    border-bottom: .25rem solid #4e73df!important;
+    border-bottom: .25rem solid #5884ff !important;
 }
 
 
