@@ -37,36 +37,137 @@
                     :items="allReserv"
                     :loading="dataTabelLoading"
                     :search="searchServByTitle"
+                    :expand="expand"
+                    item-key="idOfOccasion"
                     class="elevation-1  white--text"
                     color="black"
                     dark
                     no-data-text="Stay Tuned, This Might Take Some Time!"
 
             >
-                <v-progress-linear v-slot:progress  indeterminate></v-progress-linear>
                 <template v-slot:no-data v-if="viewNoData">
 
                     <h5 >No <b>Reservations</b> yet,Try to create <b>Offers</b> to attract more <b>customers</b>!</h5>
 
                 </template>
-                <template v-slot:items="props">
-                    <td class="text-xs-left">{{ props.item.offerTitle }}</td>
-                    <td class="text-xs-left">{{ props.item.offerContent}}</td>
-                    <td class="text-xs-left">{{ props.item.offerExpDate}}</td>
-                    <td class="text-xs-left">{{ props.item.offerExpNum}}</td>
-                    <td class="text-xs-left">{{ props.item.offerPoints }}</td>
-                    <td class="text-xs-left">{{ props.item.offerCreatedTimestamp }}</td>
-                    <td class="text-xs-left">({{ props.item.offerStatus }})</td>
+                <template v-slot:items="props" >
 
+
+                        <td class="text-xs-left">{{ props.item.idOfOccasion }}</td>
+<!--                        <td class="text-xs-left">{{ allStatusTypes[props.item.reservStatusId].name}}</td>-->
+
+                        <td>
+                            <v-edit-dialog
+                                    lazy
+                                    @open="statusSelected = allStatusTypes[props.item.reservStatusId].name"
+
+
+                            > {{ allStatusTypes[props.item.reservStatusId].name }}
+                                <template v-slot:input >
+                                    <v-select
+                                            v-if=" ['status_1','status_2','status_50','status_51'].includes(props.item.reservStatusId)"
+                                            v-model="statusSelected"
+                                            :items="allStatusTypesNames"
+                                            label="Change Status"
+                                            :menu-props="{ maxHeight: '150' }"
+                                            color="black"
+                                            autofocus
+                                    ></v-select>
+                                    <v-select
+                                            v-if="['status_3','status_4','status_5','status_6'].includes(props.item.reservStatusId)"
+                                            v-model="statusSelected"
+                                            :items="statusSelectedAfterPayment"
+                                            label="Change Status"
+                                            :menu-props="{ maxHeight: '150' }"
+                                            color="black"
+                                            autofocus
+                                    ></v-select>
+                                    <v-btn @click="changeReservStatus(statusSelected, props.item.idOfReservation )">Change</v-btn>
+                                </template>
+                            </v-edit-dialog>
+                            <v-dialog
+                                    persistent
+                                    v-model="confirmPaymentDialog"
+                                    width="300"
+                                    content-class="custom-progress-dialog"
+                            >
+                                <v-card class="rounded-card">
+
+                                    <v-card-title>
+                                        <v-card-text>
+                                            Are you sure to<br> <strong>confirm payment</strong> <br> on this Reservation?
+                                        </v-card-text>
+                                        <v-card-text>
+                                        <b>Note: {{props.item.occasionMap.occasionPoints}}</b> points<br>will add to customer account.<br>
+                                            <strong style="color: red">IF CONFIRMED CAN'T BE UNDO</strong>
+                                        </v-card-text>
+                                    </v-card-title>
+                                    <v-card-actions style="justify-content: space-between; padding: 20px;">
+                                        <v-btn
+                                                color="black"
+                                                flat
+                                                @click="confirmPaymentDialog = false"
+                                        >
+                                            cancel
+                                        </v-btn>
+                                        <v-btn
+                                                color="black"
+                                                dark
+                                                @click="confirmPayment(statusSelected, props.item.idOfReservation )"
+                                        >
+                                            confirm
+                                        </v-btn>
+                                    </v-card-actions>
+                                </v-card>
+                            </v-dialog>
+                        </td>
+                    <tr @click="props.expanded = !props.expanded; getSelectedCustomerInfo(props.item.customerId, props.item.occasionMap)" style="cursor: pointer">
+                        <td class="text-xs-left">Click for Info</td>
+                    </tr>
+                        <td class="text-xs-left">{{ props.item.reservDate}}</td>
+                        <td class="text-xs-left">{{ props.item.reservTime}}</td>
+                        <td class="text-xs-left">{{ props.item.reservAddress }}</td>
 
                 </template>
+                <template v-slot:expand="props">
+                    <v-card flat color="grey">
+                        <v-card-text style="text-align: left">
+                            <v-layout row wrap>
 
+                                <div>
+                                    <strong class="black--text">Occasion Information</strong><br>
+                                    <strong class="black--text">Type &nbsp</strong>{{occasionInfo.occasionName}}<br>
+                                    <strong class="black--text">Price &nbsp</strong>{{occasionInfo.occasionPrice}}&nbsp EGP<br>
+                                    <strong class="black--text">Points &nbsp</strong>{{occasionInfo.occasionPoints}}<br>
+                                </div>
+                                <v-divider vertical class="ma-3"></v-divider>
+                                <div>
+                                <strong class="black--text">User Information</strong><br>
+                            <strong v-if="customerInfo ===''">Loading....</strong>
+                            <div v-if="customerInfo !==''">
+
+                            <strong class="black--text">Name &nbsp</strong>{{customerInfo.userFirstName}} {{customerInfo.userLastName}}<br>
+                            <strong class="black--text">Phone &nbsp</strong>{{customerInfo.userPhone}} <br>
+                            <strong class="black--text">Email &nbsp</strong>{{customerInfo.userEmail}}<br>
+                            <v-btn
+                                    small
+                                    v-bind:href="'tel:' + customerInfo.userPhone"
+                                    v-if="isMobile"
+                            >
+                                <v-icon small left>call </v-icon>
+                                Call Now
+                            </v-btn>
+                            </div>
+                                </div>
+                            </v-layout>
+                        </v-card-text>
+                    </v-card>
+                </template>
                 <template v-slot:no-results>
-                    <v-alert :value="true" color="error" icon="warning">
+                    <v-alert :value="true" color="error" icon="warning" style="text-align: left">
                         No results for "{{ searchServByTitle }}" .
                     </v-alert>
                 </template>
-
             </v-data-table>
         </div>
 
@@ -80,6 +181,7 @@
 <script>
     import Navbar from "./Navbar";
     import pagePath from "./pagePath";
+    import moment from 'moment';
 
     export default {
         name: "reservations",
@@ -89,39 +191,105 @@
                 dataTabelLoading: true,
                 searchServByTitle:'',
                 viewNoData: false,
+                expand: false,
                 headers: [
-                    {text: 'Reservation Type', value: 'offerTitle'},
-                    {text: 'Customer', value: 'userIdRedeem', class:"no-of-users"},
-                    {text: 'Date', value: 'offerContent', class: "offer-content"},
-                    {text: 'Time', value: 'offerExpDate', class: "offer-exp-date"},
-                    {text: 'Address', value: 'offerExpNum'},
-                    {text: 'Points', value: 'offerPoints'},
-                    {text: 'Photo', value: 'offerPic'},
-                    {text: 'Created On', value: 'offerCreatedTimestamp'},
-                    {text: 'Reservation Status', value: 'offerStatus',},
-                    {text: 'Offer Used', value: 'userIdRedeem', class:"no-of-users"}
+                    {text: 'Reservation Type', value: 'idOfOccasion'},
+                    {text: 'Status', value: 'idOfOccasion', class: 'status-detail'},
+                    {text: 'Customer', value: 'customerId', sortable: false, class: 'customer-detail'},
+                    {text: 'Date', value: 'reservDate', class: 'date'},
+                    {text: 'Time', value: 'reservTime', class: 'reserv-time'},
+                    {text: 'Address', value: 'reservAddress', class: 'reserv-address'},
                 ],
                 allReserv: [],
+                allStatusTypes: [],
+                allStatusTypesNames: [],
+                statusSelectedAfterPayment:[],
+                arrayOfStatusTypes:[],
+                statusSelected: '',
+                customerInfo:'',
+                occasionInfo: '',
+                isMobile: false,
+                confirmPaymentDialog: false,
             }
         },
         computed: {
 
             getAllReserv(){
-
-
-            }
+                return this.$store.getters.getAllAdminReservations;
+            },
+            getCustomerSelected(){
+                return this.$store.getters.getCustomerInfoById;
+            },
+            getAllReservStatus(){
+                return this.$store.getters.getAllReservStatus;
+            },
+            getFirebaseSuccess(){
+                return this.$store.getters.firebaseSuccesses;
+            },
+            getFirebaseErrors() {
+                return this.$store.getters.firebaseError;
+            },
         },
 
         watch: {
             getAllReserv(resvArray){
+                console.log(resvArray);
                 if(resvArray !== null){
-                    this.allOffers = resvArray;
-
+                    this.allReserv = [];
+                    for(let i in resvArray) {
+                        this.allReserv.push({
+                            idOfOccasion: resvArray[i].idOfOccasion,
+                            reservAddress: resvArray[i].reservAddress,
+                            reservDate: resvArray[i].reservDate,
+                            reservTime: moment(resvArray[i].reservTime, "hh:mm").format("LT"),
+                            reservStatusId: resvArray[i].reservStatusId,
+                            reservCreatedTimeStamp: resvArray[i].reservCreatedTimeStamp,
+                            idOfReservation: resvArray[i].idOfReservation,
+                            customerId: resvArray[i].customerId,
+                            occasionMap: resvArray[i].occasionMap
+                        });
+                    }
                 }else {
                     this.viewNoData = true;
                 }
                 this.dataTabelLoading = false;
-            }
+            },
+            getCustomerSelected(customer){
+                if(customer !== null){
+                    this.customerInfo = customer;
+                }
+            },
+            getAllReservStatus(status){
+                if(status !== null){
+                    this.allStatusTypes = [];
+                    for(let i in status) {
+                        this.allStatusTypes[status[i].id] = {
+                            id: status[i].id,
+                            name: status[i].name
+                        };
+                        if(status[i].id !== 'status_50') {
+                            this.allStatusTypesNames.push(status[i].name);
+                            this.statusSelectedAfterPayment.push(status[i].name);
+                            this.arrayOfStatusTypes.push(status[i]);
+                        }
+                    }
+                    this.allStatusTypesNames.splice(3, 7, "canceled by photographer");
+                    this.statusSelectedAfterPayment.splice(0,3);
+                    console.log(this.allStatusTypesNames);
+                }
+            },
+            getFirebaseSuccess(alert){
+                if(alert !== null){
+                    this.confirmPaymentDialog = false;
+
+                }
+            },
+            getFirebaseErrors(error){
+                if(error !== null){
+
+
+                }
+            },
 
         },
 
@@ -130,11 +298,47 @@
         },
 
         methods: {
-
+            getSelectedCustomerInfo(customerId, occasionId){
+                this.customerInfo= '';
+                this.$store.dispatch('readCustomerInfoById', customerId);
+                console.log("occasion data: ", occasionId)
+                this.occasionInfo = occasionId;
+                this.isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+            },
+            changeReservStatus(status, idOfReservation){
+                if(status !== 'payment confirmed'){
+                let result = this.arrayOfStatusTypes.find(state => state.name === status);
+                this.$store.dispatch('editReservationStatusByAdmin', {idOfReservation: idOfReservation, status: result.id});
+                }else {
+                    this.confirmPaymentDialog = true;
+                }
+            },
+            confirmPayment(status, idOfReservation){
+                let result = this.arrayOfStatusTypes.find(state => state.name === status);
+                this.$store.dispatch('editReservationStatusByAdmin', {idOfReservation: idOfReservation, status: result.id});
+            }
+        },
+        created() {
+            this.$store.dispatch('readAllReservStatus');
+            this.$store.dispatch('listenOnAllAdminReservations');
         }
     }
 </script>
 
-<style scoped>
-
+<style>
+.date{
+    min-width: 120px;
+}
+.customer-detail{
+    min-width: 150px;
+}
+    .reserv-time{
+        min-width: 120px;
+    }
+    .reserv-address{
+        min-width: 200px;
+    }
+    .status-detail{
+        min-width: 200px;
+    }
 </style>

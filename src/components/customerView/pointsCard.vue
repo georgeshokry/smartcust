@@ -342,25 +342,34 @@
                 this.$validator.reset();
             },
             shareFacebook(){
-               let facebookShareLink =
+               let ShareLink =
                    "https://www.facebook.com/sharer/sharer.php?u="
                    + window.location.origin + "/profile"
                    + "?smartCode=" + this.userCode;
-               window.open(facebookShareLink);
+               window.open(ShareLink);
             },
             shareWhatsapp(){
-                let facebookShareLink =
-                    "whatsapp://send?text="
-                    + window.location.origin + "/profile"
-                    + "?smartCode=" + this.userCode;
-                window.open(facebookShareLink);
+                let isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+                if(isMobile){
+                    let shareOnMobile =
+                        "whatsapp://send?text="
+                        + window.location.origin + "/profile"
+                        + "?smartCode=" + this.userCode;
+                    window.open(shareOnMobile);
+                }else{
+                    let ShareLink =
+                        "https://web.whatsapp.com/send?text="
+                        + window.location.origin + "/profile"
+                        + "?smartCode=" + this.userCode;
+                    window.open(ShareLink);
+                }
             },
             shareTweeter(){
-                let facebookShareLink =
+                let ShareLink =
                     "https://twitter.com/intent/tweet?url="
                     + window.location.origin + "/profile"
                     + "?smartCode=" + this.userCode;
-                window.open(facebookShareLink);
+                window.open(ShareLink);
             }
         },
         created() {

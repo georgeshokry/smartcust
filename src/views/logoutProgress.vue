@@ -34,6 +34,8 @@
     }
 </script>
 
-<style scoped>
-
+<style>
+    .custom-progress-dialog{
+        border-radius: 35px;
+    }
 </style>

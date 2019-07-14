@@ -441,9 +441,7 @@
             max-height: 71px;
         }
     }
-    .custom-progress-dialog{
-        border-radius: 35px;
-    }
+
     .v-menu__content{
         border-radius: 0px 0px 20px 20px !important;
     }

@@ -1,5 +1,5 @@
 <template>
-    <v-app id="home">
+    <v-app id="home" >
 <!--    <div  style="min-height: 100vh">-->
 
         <navbar></navbar>
