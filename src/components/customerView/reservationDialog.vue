@@ -16,8 +16,19 @@
             </v-card-title>
 
             <v-card-text>
+                <v-textarea
+                        v-if="occasionNameSelected !== ''"
+                        prepend-icon="party_mode"
+                        v-model="occasionNameSelected"
+                        label="Occasion Type Offer Selected"
+                        color="black"
+                        no-resize
+                        rows="1"
+                        disabled
+                ></v-textarea>
 
                 <v-select
+                        v-if="occasionNameSelected === ''"
                         prepend-icon="party_mode"
                         v-model="occType"
                         v-validate="'required:true'"
@@ -46,7 +57,7 @@
                         data-vv-name="occasion address"
                         label="Occasion Address*"
                         placeholder="please type the address in details"
-                        hint="حديقة الميريلاند- مصر الجديدة"
+                        hint="EL-merleland Masr El-gdeda"
                         color="black"
                         required
                         :auto-grow="true"
@@ -165,17 +176,30 @@
             <v-card-actions>
                 <v-layout row wrap style="justify-content: flex-end;">
 
-                    <v-card-text v-if="occType !== null" style="    padding-top: 0;">
+                    <v-card-text v-if="occType !== null && occasionNameSelected ===''" style="    padding-top: 0;">
+
 
 
                         <div style="text-align: left">
                             <h4>You have Selected</h4>
                             Occasion Type: {{occType}} <v-icon small>party_mode</v-icon><br>
                             Occasion Price: {{occPrice}} EGP <v-icon small>attach_money</v-icon><br>
-                            Occasion Reward Points: {{occPoints}} <v-icon small>stars</v-icon><br>
+                            Occasion Reward Points: +{{occPoints}} <v-icon small>stars</v-icon><br>
                         </div>
                     </v-card-text>
+                    <v-card-text v-if="occType === null && occasionNameSelected !==''" style="    padding-top: 0;">
 
+
+                        <div style="text-align: left">
+                            <h4>You have Selected</h4>
+                            Occasion Type: {{occasionNameSelected}} <v-icon small>party_mode</v-icon><br>
+                            Occasion Price: {{occasionPrice}} EGP <v-icon small>attach_money</v-icon><br>
+                            Offer Discount Points: -{{offerPoints}} <v-icon small>stars</v-icon><br>
+                            <v-spacer></v-spacer>
+                            You Will Pay: {{occasionPrice}} - {{offerPoints}} = {{ occasionPrice-offerPoints }} EGP <v-icon small>attach_money</v-icon><br>
+                        </div>
+                    </v-card-text>
+                    <v-divider vertical></v-divider>
 
                 <v-spacer></v-spacer>
 
@@ -269,7 +293,7 @@
         },
         data:()=>{
             return{
-                offerChosen:'',
+
 
                 occType: null,
                 occTypeText: [],
@@ -300,10 +324,21 @@
                 default: false,
                 type: Boolean,
             },
-            // offerId:{
-            //     default: null,
-            //     type: String,
-            // }
+            occasionNameSelected:{
+                default: '',
+                type: String
+            },
+            occasionPrice:{
+                default: null,
+
+            },
+            offerPoints:{
+                default: null,
+
+            },
+            reservOfferId:{
+                default: null,
+            },
         },
         computed:{
             getAllOccasions(){
@@ -331,13 +366,27 @@
                     this.sendLoading = false;
                     this.sendWait = false;
                     this.sendConfirmed = true;
+                    this.reservOfferId = null;
 
                 }
             },
             getFirebaseErrors(error){
                 if(error !== null){
                     this.sendLoading = false;
+                    this.reservOfferId = null;
+                    this.confirmSendDialog = false;
+                    this.$emit('closeNow');
+                    this.sendConfirmed =false;
+                    this.occAddress = '';
+                    this.datePickerMenu = false;
+                    this.occDate = '';
+                    this.todayDate = moment().add(3, 'days').toISOString().substr(0, 10);
+                    this.occTime = '';
+                    this.occComment = '';
 
+                    this.confirmSendDialog = false;
+                    this.occasionNameSelected = '';
+                    this.$validator.reset();
                 }
             },
         },
@@ -361,11 +410,12 @@
                 this.occTypeSelect = [];
                     this.occAddress = '';
                     this.datePickerMenu = false;
-                    this.occDate = '';
+                    this.todayDate = moment().add(3, 'days').toISOString().substr(0, 10);
                     this.timePickerMenu = false;
                     this.occTime = '';
                     this.occComment = '';
-
+                    this.occasionNameSelected = '';
+                this.$validator.reset();
             },
             viewSelected(selected){
                 this.sendWait = true;
@@ -402,28 +452,47 @@
             },
             confirmSendReserv(){
                 this.sendLoading = true;
-                let idOfOccasion = this.allOcc.find(data => data.occasionName === this.occType);
-                this.$store.dispatch('setNewOrder', {
-                    idOfOccasion: idOfOccasion,
-                    reservAddress: this.occAddress,
-                    reservDate: this.occDate,
-                    reservTime: this.occTime,
-                });
+                if(this.occType !== null) {
+                    let idOfOccasion = this.allOcc.find(data => data.occasionName === this.occType);
+                    console.log(this.reservOfferId);
+                    this.$store.dispatch('setNewOrder', {
+                        idOfOccasion: idOfOccasion,
+                        reservAddress: this.occAddress,
+                        reservDate: this.occDate,
+                        reservTime: this.occTime,
+                        reservOfferId: null,
+                        reservPayment: idOfOccasion.occasionPrice
+                    });
+                } else {
+                    let idOfOccasion = this.allOcc.find(data => data.occasionName === this.occasionNameSelected);
+                    console.log(this.reservOfferId);
+                    this.$store.dispatch('setNewOrder', {
+                        idOfOccasion: idOfOccasion,
+                        reservAddress: this.occAddress,
+                        reservDate: this.occDate,
+                        reservTime: this.occTime,
+                        reservOfferId: this.reservOfferId,
+                        reservPayment: this.occasionPrice - this.offerPoints
+
+                    });
+                }
             },
             doneReservationFinal(){
-
+                this.reservOfferId = null;
                 this.confirmSendDialog = false;
                 this.$emit('closeNow');
                 this.sendConfirmed =false;
                 this.occAddress = '';
                 this.datePickerMenu = false;
                 this.occDate = '';
-                this.todayDate = '';
+                this.todayDate = moment().add(3, 'days').toISOString().substr(0, 10);
                 this.occTime = '';
                 this.occComment = '';
 
                 this.confirmSendDialog = false;
                 this.sendLoading = false;
+                this.occasionNameSelected = '';
+                this.$validator.reset();
 
 
             }

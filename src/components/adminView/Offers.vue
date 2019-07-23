@@ -53,6 +53,7 @@
 
                 </template>
                 <template v-slot:items="props">
+                    <td class="text-xs-left">{{ props.item.occasionType.occasionName }}</td>
                     <td class="text-xs-left">{{ props.item.offerTitle }}</td>
                     <td class="text-xs-left">{{ props.item.offerContent}}</td>
                     <td class="text-xs-left">{{ props.item.offerExpDate ? props.item.offerExpDate : "*(By No of customers)"}}</td>
@@ -114,13 +115,14 @@
             viewNoData: false,
             idOfOffer: "",
             headers: [
+                {text: 'Occasion Type', value: 'occasionType'},
                 {text: 'Offer Title', value: 'offerTitle'},
                 {text: 'Content', value: 'offerContent', class: "offer-content"},
                 {text: 'Expiration *(By Date)', value: 'offerExpDate', class: "offer-exp-date"},
                 {text: 'Expiration *(By Number Of Customer)', value: 'offerExpNum'},
                 {text: 'Points', value: 'offerPoints'},
                 {text: 'Photo', value: 'offerPic', class: "image-column"},
-                {text: 'Created On', value: 'offerCreatedTimestamp'},
+                {text: 'Created', value: 'offerCreatedTimestamp'},
                 {text: 'Status', value: 'offerStatus',},
                 {text: 'No. of users redeem', value: 'userIdRedeem', class:"no-of-users"}
             ],

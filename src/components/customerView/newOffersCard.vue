@@ -3,7 +3,7 @@
             :tile="true"
             :elevation="10"
             width="100%"
-            height="460px"
+            height="480px"
             id="rounded-card"
 
     >
@@ -38,26 +38,24 @@
             <loading-data-progress v-if="dataLoading"/>
 
 
-        <v-scroll-y-transition >
-            <v-carousel :cycle="cycleFlag" :interval="4000"  hide-controls v-show="dataLoaded" :height="345" :max="300" vertical reverse style=" box-shadow: none; border-radius: 0;" >
+        <v-fade-transition >
+            <v-carousel     v-if="items.length !== 0" :cycle="cycleFlag" :interval="4000"  hide-controls v-show="dataLoaded" :height="345" :max="300" vertical reverse style=" box-shadow: none; border-radius: 0;" >
                 <v-carousel-item
+
                         v-for="(item,i) in items"
                         :key="i"
                         :src="item.offerPic"
                         :lazy-src="item.offerPic"
-                        @click.stop="offerSelected(item.offerId)"
-                        style="cursor: pointer;"
-                        v-ripple
                         @mouseover="cycleFlag = false"
                         @mouseout="cycleFlag = true"
                 >
-                    <div class="scroll-y" style="background-image: linear-gradient(120deg, black, transparent);     height: 100%;">
+                    <div class="scroll-y" style="background: linear-gradient(120deg, rgba(0,0,0,1) 0%, rgba(255,255,255,0) 65%); position: absolute;    height: 100%;">
 
-                        <div style="text-align: left; margin-top: 5px">
+                        <div style="text-align: left; margin-top: 5px; ">
                         <h1 class="offer-title">{{ item.offerTitle }}</h1>
 
                         <div  class="offer-rules">
-                            <v-layout column wrap style="padding-bottom: 10px; min-width: 220px;">
+                            <v-layout column wrap style="padding-bottom: 10px; min-width: 230px;">
                             <h3 class="offer-content">{{ item.offerContent }}</h3>
 
 
@@ -68,10 +66,21 @@
 <!--                                ></v-divider>-->
                             <div>
                                 <v-divider style="margin-top: 5px"></v-divider>
-                            <h3>Will get {{item.offerPoints}} <v-icon size="20px" color="white" style="margin-top: 5px">stars</v-icon></h3>
-                            <h3 v-if="item.offerExpNum != null" >End By First {{item.offerExpNum}} <v-icon size="20px" color="white">directions_run</v-icon></h3>
-                            <h3 v-if="item.offerExpDate != null">End {{item.offerExpDate}} <v-icon size="20px" color="white">av_timer</v-icon></h3>
-                            <v-btn class="order-btn" depressed small outline >Order Now</v-btn>
+                                <h3>Occasion Type {{item.occasionName}}* <v-icon size="15px" color="white" style="margin-top: 5px">party_mode</v-icon></h3>
+                            <h3 v-if="item.offerExpNum != null" >Offer End By First {{item.offerExpNum}} <v-icon size="15px" color="white">directions_run</v-icon></h3>
+                            <h3 v-if="item.offerExpDate != null">Offer End {{item.offerExpDate}} <v-icon size="15px" color="white">av_timer</v-icon></h3>
+                                <h3>Points -{{item.offerPoints}} <v-icon size="15px" color="white" style="margin-top: 5px">stars</v-icon></h3>
+                            <v-btn
+                                    class="order-btn"
+                                    depressed
+                                    small
+                                    outline
+                                    v-if="userPoints >= item.offerPoints"
+                                    @click.stop="openReservDialog(item.offerId,item.occasionName, item.occasionPrice, item.offerPoints)"
+                            >
+                                Order Now
+                            </v-btn>
+                                <h3 v-if="userPoints < item.offerPoints">Earn more points to order!</h3>
                             </div>
                             </v-layout>
                         </div>
@@ -79,24 +88,49 @@
                     </div>
                 </v-carousel-item>
             </v-carousel>
-        </v-scroll-y-transition>
+            <v-card-text style="height: 75%" v-if="items.length === 0">
+
+                <v-flex style="margin-top: 10%;">
+                    <v-card-title  class="headline align-center" >
+                        <v-layout column wrap>
+                            <div>
+                        <img src="../../../public/favicon-logo.png">
+                            </div>
+                        <h3>Stay Tuned!</h3>
+                        </v-layout>
+                    </v-card-title>
+                </v-flex>
+            </v-card-text>
+        </v-fade-transition>
+        <div style="text-align: center"><h5>*Offer applies <b>only</b> on the occasion type in the offer</h5></div>
+        <reservation-dialog :reservOfferId="id" :createResvDialog="openReservNow" :occasionNameSelected="occasionName" :offerPoints="offerPoints" :occasionPrice="occasionPrice" @closeNow="resetOccasionName" ></reservation-dialog>
     </v-card>
+
+
 </template>
 <script>
     import loadingDataProgress from './loadingDataProgress.vue'
+    import reservationDialog from "./reservationDialog";
     import moment from 'moment';
     export default {
         name: 'newofferscard',
         components: {
-            loadingDataProgress
+            loadingDataProgress,
+            reservationDialog
         },
         data: () => {
             return{
                 dataLoading: true,
                 dataLoaded: false,
+                openReservNow: false,
                 cycleFlag: true,
-
+                occasionName: '',
+                occasionPrice: '',
+                offerPoints: '',
                 items:'',
+                noOffers: false,
+                id: null,
+                userPoints: '',
             }
         },
         mounted() {
@@ -105,25 +139,31 @@
         computed:{
             getAllOffers(){
                 return this.$store.getters.getAllOffersGetter;
-            }
+            },
+            getUserPoints(){
+                return this.$store.getters.getProfileInfoDb;
+            },
         },
         watch:{
             getAllOffers(offers) {
                 this.items = '';
                 let offersData = [];
-                if (offers !== null || offers !== undefined) {
+                console.log(offers);
+                if (offers.length !== 0) {
                     offers.forEach(function (i) {
                         if(i.offerStatus === "opened" ) {
                             if(i.offerExpDate !== null ) {
-                                if(moment() <= moment(i.offerExpDate)) {
+                                if(moment() <= moment(i.offerExpDateLocalString)) {
                                     offersData.push({
                                         offerTitle: i.offerTitle,
                                         offerContent: i.offerContent,
-                                        offerExpDate: moment(i.offerExpDate).fromNow(),
+                                        offerExpDate: i.offerExpDate,
                                         offerExpNum: null,
                                         offerPoints: i.offerPoints,
                                         offerPic: i.offerPic,
-                                        offerId: i.idOfOffer
+                                        offerId: i.idOfOffer,
+                                        occasionName: i.occasionType.occasionName,
+                                        occasionPrice: i.occasionType.occasionPrice,
                                     });
                                 }
                             }else {
@@ -134,24 +174,46 @@
                                     offerExpNum: i.offerExpNum,
                                     offerPoints: i.offerPoints,
                                     offerPic: i.offerPic,
-                                    offerId: i.idOfOffer
+                                    offerId: i.idOfOffer,
+                                    occasionName: i.occasionType.occasionName,
+                                    occasionPrice: i.occasionType.occasionPrice,
                                 });
                             }
                         }
                     });
                     this.items = offersData;
+                    console.log(this.items);
                     ///starting remove progress and show data
                     this.dataLoading = false;
                     this.dataLoaded = true;
 
                 }
-            }
+                // else{
+                //     this.dataLoading = false;
+                //     this.dataLoaded = true;
+                //     this.noOffers = true;
+                // }
+            },
+            getUserPoints(points) {
+                console.log(points)
+                if (points) {
+                    this.userPoints = points.userPoints;
+                }
+            },
         },
 
         methods:{
-            offerSelected(thisOfferId){
-                console.log("offer selected", thisOfferId);
+            openReservDialog(id,name, price, points){
+                this.openReservNow = true;
+                this.occasionName = name;
+                this.occasionPrice = price;
+                this.offerPoints = points;
+                this.id = id;
+
             },
+            resetOccasionName(){
+                this.openReservNow = false;
+            }
         }
     }
 </script>

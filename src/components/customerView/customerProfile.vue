@@ -109,7 +109,7 @@
                                             Logout
                                         </v-list-tile-content>
                                         <v-list-tile-action>
-                                        <v-icon right> keyboard_tab</v-icon>
+                                        <v-icon right> exit_to_app</v-icon>
                                         </v-list-tile-action>
                                     </v-list-tile>
                                 </v-list>
@@ -318,7 +318,7 @@
                 if(alert !== null){
                     this.firebaseMsg=  alert;
                     this.msgColor = "success";
-                    this.snackbarIcon = "check_circle_outline";
+                    this.snackbarIcon = "check_circle";
                     this.msgTimeoutInterval= 4000;
                     this.firebaseAlerts= true;
 

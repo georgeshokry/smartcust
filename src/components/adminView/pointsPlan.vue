@@ -93,15 +93,15 @@
                             <v-list dense>
                                 <v-list-tile>
                                     <v-list-tile-content>Price:</v-list-tile-content>
-                                    <v-list-tile-content class="align-end">{{ props.item.occasionPrice }}</v-list-tile-content>
+                                    <v-list-tile-content class="align-end pa-3">{{ props.item.occasionPrice }}</v-list-tile-content>
                                 </v-list-tile>
                                 <v-list-tile>
                                     <v-list-tile-content>Points:</v-list-tile-content>
-                                    <v-list-tile-content class="align-end">{{ props.item.occasionPoints }}</v-list-tile-content>
+                                    <v-list-tile-content class="align-end pa-3">{{ props.item.occasionPoints }}</v-list-tile-content>
                                 </v-list-tile>
                                 <v-list-tile>
                                     <v-list-tile-content>Created/Edited On:</v-list-tile-content>
-                                    <v-list-tile-content class="align-end">{{ props.item.occasionCreatedTimeStamp.split(',', 1).toLocaleString() }}</v-list-tile-content>
+                                    <v-list-tile-content class="align-end pa-3">{{ props.item.occasionCreatedTimeStamp.split(',', 1).toLocaleString() }}</v-list-tile-content>
                                 </v-list-tile>
                             </v-list>
                         </v-card>

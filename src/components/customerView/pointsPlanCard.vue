@@ -42,8 +42,8 @@
                         </v-list-tile-content>
 
                         <v-list-tile-action>
-                            <v-list-tile-action-text style="font-size: larger;font-weight: bold;">
-                                {{ item.occasionPoints }} <v-icon color="black">stars</v-icon>
+                            <v-list-tile-action-text style="font-size: small;font-weight: bold;">
+                                +{{ item.occasionPoints }} <v-icon small color="black">stars</v-icon>
                             </v-list-tile-action-text>
                         </v-list-tile-action>
                     </v-list-tile>
