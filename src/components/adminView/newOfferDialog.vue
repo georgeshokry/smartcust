@@ -49,6 +49,25 @@
                     <v-card-text>
                         <v-container grid-list-md>
                             <v-layout wrap>
+                                <v-flex xs12>
+                                <v-select
+                                        prepend-icon="party_mode"
+                                        v-model="occType"
+                                        v-validate="'required:true'"
+                                        :error-messages="errors.collect('occasion type')"
+                                        :items="occTypeText"
+                                        label="Occasion Type"
+                                        data-vv-name="occasion type"
+                                        placeholder="Select Occasion Type"
+                                        :menu-props="{ maxHeight: '150' }"
+                                        required
+                                        color="black"
+                                        autofocus
+                                        hide-selected
+                                        clearable
+                                        open-on-clear
+                                ></v-select>
+                                </v-flex>
                                 <!--the name of offer-->
                                 <v-flex xs12>
                                     <v-text-field
@@ -82,7 +101,7 @@
 
                                     <v-flex
                                             shrink
-                                            style="width: 120px"
+                                            style="width: 170px"
                                     >
                                         <v-text-field
                                                 v-model="points"
@@ -213,8 +232,8 @@
 <!--                                                        <v-btn icon depressed  style="max-width: 40px;" color="white" @click="removePic"><v-icon>close</v-icon></v-btn>-->
 <!--                                                            <h3 style="font-size: large;">Remove</h3>-->
 <!--                                                        </div>-->
-                                                    <div class="remove-btn">
-                                                        <v-btn icon depressed  style="max-width: 40px;" color="white" @click="startPicking"><v-icon>edit</v-icon></v-btn>
+                                                    <div class="remove-btn"style="cursor: pointer; max-width: fit-content" @click="startPicking">
+                                                        <v-btn icon depressed  style="max-width: 40px;" color="white" ><v-icon>edit</v-icon></v-btn>
                                                         <h3 style="font-size: large;">Change</h3>
                                                     </div>
                                                     </div>
@@ -253,6 +272,9 @@
 
         },
         data: () => ({
+            occType: "",
+            occTypeText: [],
+            allOcc: '',
             offerTitle: "",
             offerContent: "",
             offerExpDate: new Date().toISOString().substr(0, 10),
@@ -291,6 +313,9 @@
             },
             firebaseSuccessShow(){
                 return this.$store.getters.firebaseSuccesses;
+            },
+            getAllOccasions(){
+                return this.$store.getters.getAllOccasions;
             }
 
         },
@@ -321,7 +346,19 @@
                     this.snackbarColor = "error";
                 }
 
-            }
+            },
+            getAllOccasions(occasionsArray){
+                if(occasionsArray !== null){
+                    this.allOcc = occasionsArray;
+                    let data = occasionsArray;
+                    for(let i in data) {
+                        this.occTypeText.push(data[i].occasionName);
+                    }
+                }
+            },
+        },
+        mounted(){
+            this.$store.dispatch("listenOnAllOccasions");
         },
         methods: {
             startPicking() {
@@ -355,7 +392,7 @@
                         this.$validator.validate('Offer Title'),
                         this.$validator.validate('Offer Content'),
                         this.$validator.validate('Offer Points'),
-
+                        this.$validator.validate('occasion type')
 
                     ]);
 
@@ -363,8 +400,9 @@
                         if (!this.errors.any()) {
                             this.btnLoading = true;
 
-
+                            let result = this.allOcc.find(data => data.occasionName === this.occType);
                             this.$store.dispatch('addNewOffer', {
+                                occasionType: result,
                                 offerTitle: this.offerTitle,
                                 offerContent: this.offerContent,
                                 offerPoints: JSON.parse(this.points),
@@ -393,7 +431,7 @@
                         if (!this.errors.any()) {
                             this.btnLoading = true;
 
-
+                            let result = this.allOcc.find(data => data.occasionName === this.occType);
                             this.$store.dispatch('addNewOffer', {
                                 offerTitle: this.offerTitle,
                                 offerContent: this.offerContent,

@@ -118,28 +118,13 @@
                 ],
                 value: 0,
                 numOfUsersOnlineNow: this.$store.getters.getNumberOfusersOnline,
-                labels: [
-                    '12am',
-                    '3am',
-                    '6am',
-                    '9am',
-                    '12pm',
-                    '3pm',
-                ],
-                graph: [
-                    10,
-                    20,
-                    90,
-                    2,
-                    5,
-                    18
-                ]
             }
         },
         created() {
             this.$store.dispatch("listenToOnlineUsers");
             this.$store.dispatch("listenNumberOfOffers");
             this.$store.dispatch("readNumOfCustomers");
+            this.$store.dispatch("readNumOfReservations");
             this.$store.dispatch('readMaxPointsLevel');
         },
         computed: {
@@ -155,6 +140,9 @@
             getOnlineUsersNo(){
                 return this.$store.getters.getNumberOfusersOnline;
             },
+            getNumOfReservations(){
+                return this.$store.getters.getNumOfReservations;
+            }
         },
 
         watch: {
@@ -172,6 +160,11 @@
                 if(max !== null){
                     this.cards[3].data = max.maxNewToAdd;
                     this.cards[3].data2 = max.maxOwnerToAdd;
+                }
+            },
+            getNumOfReservations(reserv){
+                if(reserv !== null){
+                    this.cards[2].data = reserv;
                 }
             },
             getOnlineUsersNo(no){

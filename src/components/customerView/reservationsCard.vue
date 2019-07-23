@@ -79,7 +79,7 @@
                         </div>
                             <span style="font-size: small">Sent: {{item.reservCreatedTimeStamp}} ago</span>
                         <div>
-                        <span  style="font-size: small; color: red" v-if="item.reservStatusId === 'canceled by customer' || item.reservStatusId === 'canceled by photographer'">
+                        <span  style="font-size: small; color: red" v-if="item.reservStatusId === 'status_50' || item.reservStatusId === 'status_51'">
                             <v-icon small color="red">highlight_off</v-icon>
                             Canceled
                         </span>
@@ -210,7 +210,7 @@
             </v-card>
         </v-dialog>
     </div>
-<reservation-dialog :createResvDialog="oneWayFlag" @closeNow="twoWayFlag" ></reservation-dialog>
+<reservation-dialog :createResvDialog="oneWayFlag"  @closeNow="twoWayFlag" ></reservation-dialog>
 </v-card>
 </template>
 <script>
@@ -247,7 +247,7 @@
         watch:{
             getAllCustomerReservations(reservastions){
 
-                if(reservastions){
+                if(reservastions.length !== 0){
                     this.data = [];
                     for(let i in reservastions){
 

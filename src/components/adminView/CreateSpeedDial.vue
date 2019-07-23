@@ -36,32 +36,37 @@
                         small
                         @click.stop="showForm=true"
                 >
-<!--                    <v-tooltip left color="black" >-->
-<!--                        <template v-slot:activator="{ on }">-->
-
-                            <v-icon >loyalty</v-icon>
-
-<!--                        </template>-->
-<!--                        <span >Create New Offer</span>-->
-<!--                    </v-tooltip>-->
+                    <v-icon >loyalty</v-icon>
                 </v-btn>
+        <v-btn
 
+                color="white--text"
+                dark
+                fab
+                small
+                @click.stop="showGenerator=true"
+        >
+            <v-icon >star</v-icon>
+        </v-btn>
 
 
 
     </v-speed-dial>
-    <new-offer-dialog v-model="showForm"></new-offer-dialog>
+        <new-offer-dialog v-model="showForm"></new-offer-dialog>
+        <promoCodeGeneratorDialog v-model="showGenerator"></promoCodeGeneratorDialog>
     </div>
 </template>
 <script>
 import newOfferDialog from"./newOfferDialog";
+import promoCodeGeneratorDialog from "./promoCodeGeneratorDialog"
     export default {
         name: 'createSpeedDial',
-        components: {newOfferDialog},
+        components: {newOfferDialog, promoCodeGeneratorDialog},
         data:()=>{
             return{
                 fab: false,
-                showForm: false
+                showForm: false,
+                showGenerator: false,
 
             }
         }
