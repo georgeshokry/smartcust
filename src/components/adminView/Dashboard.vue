@@ -25,6 +25,7 @@
                     </v-card-text>
                 </v-card>
             </v-flex>
+
         </v-layout>
 
         <v-divider class="mx-2 ma-3"></v-divider>
@@ -65,6 +66,10 @@
 
 
         </v-layout>
+        <v-divider class="mx-2 ma-3"></v-divider>
+        <v-layout row wrap justify-space-between child-flex>
+            <reserv-calender></reserv-calender>
+        </v-layout>
 <!--        <v-divider class="mx-2 ma-3"></v-divider>-->
 <!--        <v-layout row wrap>-->
 <!--            <v-card-->
@@ -95,10 +100,12 @@
 <!--                </v-sheet>-->
 <!--            </v-card>-->
 <!--        </v-layout>-->
+
     </v-container>
 </template>
 
 <script>
+    import reservCalender from './reservCalender';
 
     export default {
         name: 'dashboard',
@@ -106,7 +113,8 @@
             Navbar: () => import("./Navbar"),
             createSpeedDial: () => import("./CreateSpeedDial"),
             AnimatedNumber: () => import("animated-number-vue"),
-            pagePath: () => import("./pagePath")
+            pagePath: () => import("./pagePath"),
+            reservCalender
         },
         data:function () {
             return {
