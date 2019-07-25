@@ -902,7 +902,6 @@ export const store = new Vuex.Store({
             let reservations = [];
             let statusNow = '';
             let stopOffersListener = db.collection('reservations')
-                .orderBy('reservCreatedTimeStamp', 'desc')
                 .where('customerId', '==', user)
                     .onSnapshot(function (querySnapshot) {
 
@@ -959,7 +958,7 @@ export const store = new Vuex.Store({
             let reservations = [];
             let statusNow = '';
             let stopOffersListener = db.collection('reservations')
-                .orderBy('reservCreatedTimeStamp', 'desc')
+                .orderBy('reservDate', 'asc')
                 .onSnapshot(function (querySnapshot) {
 
                     querySnapshot.forEach(function (doc) {
@@ -1013,6 +1012,24 @@ export const store = new Vuex.Store({
             }
 
         },
+        ////////////////////////create new promo code
+        createNewPromoCode({commit}, payload){
+            commit('setFirebaseSuccess', null);
+            commit('setError', null);
+            let db = firebase.firestore();
+            let createdDate = new Date().toISOString();
+            db.collection('promoCodes').doc(""+payload.promoCode).set({
+                "Exp": payload.Exp,
+                "pointsToAdd": payload.pointsToAdd,
+                "usersRedeem": [],
+                "createdTimeStamp": createdDate
+                }).then(function () {
+
+                    commit('setFirebaseSuccess', "Promo Code Saved Successfully!");
+                }).catch(function (error) {
+                commit('setError', "Problem in saving promo code, Try Again!");
+            });
+        }
 
     },
     getters:{
