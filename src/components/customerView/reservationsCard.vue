@@ -45,7 +45,7 @@
     </v-card-title>
 
     <!--some of user data show here-->
-    <v-content style="text-align: left; padding: 0 0 25px 0; max-height: 350px; margin-bottom: 20px " class="scroll-y">
+    <v-content style="text-align: left; padding: 0; height: 250px; margin-bottom: 0px " class="scroll-y">
         <div style="justify-content: center; text-align: center;" v-if="data.length ===0">
             <v-responsive style="    min-height: 175px;">
             <img width="150px" src="../../assets/photographer.svg">
@@ -70,10 +70,10 @@
 
                 <template v-slot:header style="    padding: 15px;">
                     <v-layout row wrap>
-                    <v-card-title style="font-size: large">
+                    <v-card-title style="font-size: large" >
                         <v-layout column>
-                        <div>
-                            <v-icon >party_mode</v-icon>
+                        <div style="    font-size: medium;">
+                            <v-icon small>party_mode</v-icon>
                             {{item.idOfOccasion}}
 
                         </div>
@@ -117,7 +117,7 @@
 
                         >
                             <v-timeline-item small color="grey"  >
-                                <template v-slot:icon  v-if="parseInt(item.reservStatusId.substr(7)) >= parseInt(stat.id.substr(7)) || item.reservDate.On === new Date().toISOString().substr(0, 10)">
+                                <template v-slot:icon  v-if="parseInt(item.reservStatusId.substr(7)) >= parseInt(stat.id.substr(7))">
                                     <v-avatar size="18">
                                         <v-icon color="white" size="15" style="background-color: green">done</v-icon>
                                     </v-avatar>
@@ -172,6 +172,7 @@
                 </v-card>
             </v-expansion-panel-content>
         </v-expansion-panel>
+
     </v-content>
 
         <v-dialog
@@ -209,6 +210,8 @@
                     </v-card-actions>
             </v-card>
         </v-dialog>
+        <v-divider class="mx-0 ma-0"></v-divider>
+        <div style="text-align: center; padding-bottom: 5px"><h5>Points of reservation applies when <b>Payment Confirm</b> by photographer.</h5></div>
     </div>
 <reservation-dialog :createResvDialog="oneWayFlag"  @closeNow="twoWayFlag" ></reservation-dialog>
 </v-card>
@@ -265,6 +268,9 @@
                     this.dataLoading = false;
                     this.dataLoaded = true;
 
+                }else {
+                    this.dataLoading = false;
+                    this.dataLoaded = true;
                 }
             },
             getAllReservStatus(status){

@@ -323,15 +323,8 @@
             },
             resetPromoCodeDialog(){
                 this.promoCodeDialog =false;
+                setTimeout(this.cancelPromoDialog, 2000);
 
-                this.promoCodeLoading = false;
-                this.PromoCode = "";
-                this.promoCodeAlert = false;
-                this.promoMsgError = "";
-
-                this.promoSuccess = false;
-                this.promoRedeem = true;
-                this.$validator.reset();
             },
             cancelPromoDialog(){
                 this.promoCodeDialog =false;
@@ -339,6 +332,8 @@
                 this.promoCodeAlert = false;
                 this.promoMsgError = "";
                 this.promoCodeLoading = false;
+                this.promoSuccess = false;
+                this.promoRedeem = true;
                 this.$validator.reset();
             },
             shareFacebook(){
@@ -421,13 +416,9 @@
     .rotate-star{
         max-height: max-content;
         filter: drop-shadow(1px 1px 2px black);
-        animation:spin 4s linear infinite;
+
     }
-    @keyframes spin {
-        100% {
-            -webkit-transform: rotate(360deg); transform:rotate(360deg);
-        }
-    }
+
     .custom-alert i{
         margin-right: 0;
     }

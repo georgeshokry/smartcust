@@ -49,7 +49,7 @@
                         @mouseover="cycleFlag = false"
                         @mouseout="cycleFlag = true"
                 >
-                    <div class="scroll-y" style="background: linear-gradient(120deg, rgba(0,0,0,1) 0%, rgba(255,255,255,0) 65%); position: absolute;    height: 100%;">
+                    <div class="scroll-y" style=" background: linear-gradient(120deg, rgba(0,0,0,1) 0%, rgba(255,255,255,0) 65%); position: absolute;    height: 100%; padding-bottom: 50px">
 
                         <div style="text-align: left; margin-top: 5px; ">
                         <h1 class="offer-title">{{ item.offerTitle }}</h1>
@@ -88,7 +88,7 @@
                     </div>
                 </v-carousel-item>
             </v-carousel>
-            <v-card-text style="height: 75%" v-if="items.length === 0">
+            <v-card-text style="height: 75%" v-if="items.length === 0 && dataLoaded">
 
                 <v-flex style="margin-top: 10%;">
                     <v-card-title  class="headline align-center" >
@@ -96,7 +96,7 @@
                             <div>
                         <img src="../../../public/favicon-logo.png">
                             </div>
-                        <h3>Stay Tuned!</h3>
+                        <h3>No Offers Now, Stay Tuned!</h3>
                         </v-layout>
                     </v-card-title>
                 </v-flex>

@@ -12,8 +12,8 @@
                     <v-layout column wrap>
 
                             <div >
-                                <v-card-text ><h2>Generated Code</h2></v-card-text>
-                            <h3>{{finalCode}}</h3>
+                                <v-card-text  ><h2 >Generated Code</h2></v-card-text>
+                            <h3 style="background-color: grey; color: white">{{finalCode}}</h3>
                             </div>
                             <br>
                         <v-flex xs7 sm6>
@@ -97,6 +97,7 @@
                         flat
                         :loading="btnLoading"
                         :disabled="btnLoading"
+                        @click="startSaveCode"
                 >Save Code</v-btn>
             </v-card-actions>
         </v-card>
@@ -134,6 +135,26 @@
                 },
                 set(value) {
                     this.$emit('input', value)
+                }
+            },
+            getFirebaseSuccess(){
+                return this.$store.getters.firebaseSuccesses;
+            },
+            getFirebaseErrors() {
+                return this.$store.getters.firebaseError;
+            },
+        },
+        watch:{
+            getFirebaseSuccess(alert){
+                if(alert !== null){
+                    this.btnLoading = false;
+                    this.$emit('input', false);
+                    this.$validator.reset();
+                }
+            },
+            getFirebaseErrors(error){
+                if(error !== null){
+                    this.btnLoading = true;
                 }
             },
         },
@@ -174,6 +195,24 @@
                     randomstring += chars.substring(rnum,rnum+1);
                 }
                 this.finalCode = randomstring;
+            },
+            startSaveCode(){
+                if(this.finalCode !== '') {
+                    const results = Promise.all([
+                        this.$validator.validate('Code Points'),
+                        this.$validator.validate('code exp date'),
+                    ]);
+                    this.$validator.validateAll(results).then(() => {
+                        if (!this.errors.any()) {
+                            this.btnLoading = true;
+                            this.$store.dispatch('createNewPromoCode', {
+                                promoCode: this.finalCode,
+                                Exp: this.codeExpDate,
+                                pointsToAdd: this.points,
+                            });
+                        }
+                    });
+                }
             }
         },
 
