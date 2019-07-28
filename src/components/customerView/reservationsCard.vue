@@ -286,7 +286,6 @@
                             });
                         }
                     }
-                    console.log(this.allTypesOfStatus);
                 }
             }
         },
@@ -298,7 +297,6 @@
                 this.oneWayFlag = false;
             },
             startCancelConfirm(id){
-                console.log(id);
                 this.reservationIdSelected = id;
                 this.confirmCancelDialog = true;
             },

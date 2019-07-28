@@ -160,7 +160,7 @@
             getAllOffers(offers) {
                 this.items = '';
                 let offersData = [];
-                console.log(offers);
+
                 if (offers.length !== 0) {
                     offers.forEach(function (i) {
                         if(i.offerStatus === "opened" ) {
@@ -194,7 +194,6 @@
                         }
                     });
                     this.items = offersData;
-                    console.log(this.items);
                     ///starting remove progress and show data
                     this.dataLoading = false;
                     this.dataLoaded = true;
@@ -207,7 +206,7 @@
                 // }
             },
             getUserPoints(points) {
-                console.log(points)
+
                 if (points) {
                     this.userPoints = points.userPoints;
                 }

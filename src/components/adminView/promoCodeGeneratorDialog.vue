@@ -171,7 +171,6 @@
                 let firstPart = pre.replace(/\s/g, '');
 
                 let string_length;
-                console.log(firstPart);
                 if(firstPart.length <= 10){
                     string_length= 10*firstPart.length ;
 

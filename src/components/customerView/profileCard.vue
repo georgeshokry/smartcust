@@ -104,7 +104,6 @@
 
                 if(userData){
 
-                    console.log(this.iconType);
                     this.avatarIcon = this.iconType;
                     this.userName = userData.userFirstName;
                     this.userEmail = userData.userEmail;

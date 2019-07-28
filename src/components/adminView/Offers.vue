@@ -163,7 +163,6 @@
         getAllOffers(offersArray){
             if(offersArray !== null){
                 this.allOffers = offersArray;
-                console.log(this.allOffers)
             }else {
                 this.viewNoData = true;
             }
