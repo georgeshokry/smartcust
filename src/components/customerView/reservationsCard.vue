@@ -101,9 +101,10 @@
                 <v-card style="    background-color: #eeeeee; border-style: solid;">
 
                         <v-card-text style="    padding-bottom: 0;">
-                            <v-icon >place</v-icon>{{item.reservAddress}}<br>
-                            <v-icon >event</v-icon> {{item.reservDate.fromNow}} | {{item.reservDate.On}}<br>
-                            <v-icon >query_builder</v-icon> {{item.reservTime}}<br>
+                            <v-icon size="20" color="black">place</v-icon>{{item.reservAddress}}<br>
+                            <v-icon size="20" color="black">event</v-icon> {{item.reservDate.fromNow}} | {{item.reservDate.On}}<br>
+                            <v-icon size="20" color="black">query_builder</v-icon> {{item.reservTime}}<br>
+                            <v-icon size="20" color="black">attach_money</v-icon> {{item.reservPayment}} EGP {{item.reservOfferId !== null ? "after discount" : ""}}<br>
                             <strong>Status</strong>
                             <v-divider style="    max-width: 40px;"></v-divider>
                         </v-card-text>
@@ -262,6 +263,8 @@
                             reservTime: moment(reservastions[i].reservTime, "hh:mm").format("LT"),
                             reservStatusId: reservastions[i].reservStatusId,
                             reservCreatedTimeStamp: moment(reservastions[i].reservCreatedTimeStamp.toLocaleString()).toNow(true),
+                            reservPayment: reservastions[i].reservPayment,
+                            reservOfferId: reservastions[i].reservOfferId
 
                         });
                     }

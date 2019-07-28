@@ -67,9 +67,8 @@
 
 </template>
 <script>
-
-    import avatarMixin from "../mixins/userInfoMixin"
     import loadingDataProgress from './loadingDataProgress.vue';
+    import avatarMixin from "../mixins/userInfoMixin"
     import moment from 'moment';
     export default {
         name: 'profilecard',

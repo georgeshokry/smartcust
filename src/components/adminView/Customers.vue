@@ -37,7 +37,7 @@
                 <v-data-table
                         :headers="headers"
                         :items="allCustomers"
-                        :loading="dataTabelLoading"
+                        :loading="dataTabelLoadingNow"
                         :search="searchCustByTitle"
                         class="elevation-1  white--text"
                         color="black"
@@ -90,7 +90,7 @@
         name: 'customers',
         components: {Navbar, pagePath},
         data: () => ({
-            dataTabelLoading: true,
+            dataTabelLoadingNow: true,
             searchCustByTitle:'',
             viewNoData: false,
             idOfOffer: "",
@@ -124,12 +124,12 @@
                 }else {
                     this.viewNoData = true;
                 }
-                this.dataTabelLoading = false;
+                this.dataTabelLoadingNow = false;
 
             }
 
         },
-        created() {
+        mounted() {
             this.$store.dispatch('readAllCustomers');
         }
     }

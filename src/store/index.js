@@ -38,6 +38,8 @@ export const store = new Vuex.Store({
         customerInfoById:null,
         numOfReservations:null,
         offerById: null,
+        allPromoCodes: null,
+        adminProfile: null,
 
 ////to stop any listener during the app after the user logged out
         stopProfileListener: null,
@@ -125,6 +127,9 @@ export const store = new Vuex.Store({
         setOfferById(state, payload){
             state.offerById = payload;
         },
+        setAdminProfile(state, payload){
+            state.adminProfile = payload;
+        },
 
 
         setProfileListener(state, paylaod){
@@ -138,6 +143,9 @@ export const store = new Vuex.Store({
         },
         setOccasionsListener(state, payload){
             state.stopOccasionsListener = payload;
+        },
+        setAllPromoCodes(state, payload){
+          state.allPromoCodes = payload;
         },
 
 
@@ -283,6 +291,24 @@ export const store = new Vuex.Store({
                 commit('setError', "Wrong E-mail, Double check and try again!");
             });
         },
+        updatePassword({commit}, payload){
+            commit('setFirebaseSuccess', null);
+            commit('setError', null);
+            let userEmail = firebase.auth().currentUser.providerData;
+            let credential = firebase.auth.EmailAuthProvider.credential(
+                userEmail[0].email,
+                payload.oldPassword
+            );
+            firebase.auth().signInWithEmailAndPassword(userEmail[0].email, payload.oldPassword).then((user) => {
+                firebase.auth().currentUser.updatePassword(payload.newPassword).then(function() {
+                    commit('setFirebaseSuccess', "Password Updated Successfully!");
+                }).catch(function(error) {
+                    commit('setError', "Problem in Changing password, try again!");
+                });
+            }).catch(function(error) {
+                commit('setError', "Wrong old password,Double check and try again!");
+            });
+        },
         signupUser({commit}, payload){
             commit('clearSignupError');
             let errorNow = null;
@@ -396,7 +422,7 @@ export const store = new Vuex.Store({
                             }
 
                         }else {
-                            commit('setPromoCodeMsg', "You have used your first<b>&nbspSmart Code&nbsp</b>before!");
+                            commit('setPromoCodeMsg', "You have used this<b>&nbspPromo Code&nbsp</b>before!");
                         }
 
 
@@ -460,7 +486,7 @@ export const store = new Vuex.Store({
         logoutUser({commit}){
 
                 commit('stopPeofileListener');
-                commit('stopOffersListener');
+                // commit('stopOffersListener');
                 commit('stopUsersOnlineListener');
                 commit('stopOccasionsListener');
             let signedInUserId = firebase.auth().currentUser.uid;
@@ -564,7 +590,7 @@ export const store = new Vuex.Store({
                     offerTitle: payload.offerTitle,
                     offerContent: payload.offerContent,
                     offerPoints: payload.offerPoints,
-                    userIdRedeem: null,
+                    userRedeemId: [],
                     offerImgUrl: null,  ////need to make in future
                     offerStatus: "opened",  ////need to make in future
                     offerExpDate: payload.offerExpDate,
@@ -574,10 +600,11 @@ export const store = new Vuex.Store({
                 }];
             }else if(payload.offerExpDate === null && payload.offerExpNum !== null){
                 dataWithExpType = [{
+                    occasionType: payload.occasionType,
                     offerTitle: payload.offerTitle,
                     offerContent: payload.offerContent,
                     offerPoints: payload.offerPoints,
-                    userIdRedeem: null,
+                    userRedeemId: [],
                     offerImgUrl: null,
                     offerStatus: "opened",
                     offerExpNum: payload.offerExpNum,
@@ -633,7 +660,7 @@ export const store = new Vuex.Store({
                         offerExpNum: doc.data().offerExpNum,
                         offerPoints: doc.data().offerPoints,
                         offerStatus: doc.data().offerStatus,
-                        userIdRedeem: doc.data().userIdRedeem,
+                        userRedeemId: doc.data().userRedeemId,
                         offerCreatedTimestamp: moment(doc.data().offerCreatedTimestamp).fromNow(false),
                         offerTitle: doc.data().offerTitle,
                         occasionType: doc.data().occasionType
@@ -844,8 +871,8 @@ export const store = new Vuex.Store({
             if(payload.reservOfferId !== null){
                 /////////check if user points more than offer points FIRST
                 let offerSelected = this.state.allOffersData.find(data => data.idOfOffer === payload.reservOfferId);
-                if(offerSelected.offerPoints > this.state.profileInfoDb.userPoints){
-                    commit('setError', "You can't use this offer, Earn more points!");
+                if(offerSelected.offerPoints > this.state.profileInfoDb.userPoints && date > offerSelected.offerExpDate){
+                    commit('setError', "Sorry, Offer expired!");
                 } else if(offerSelected.offerPoints <= this.state.profileInfoDb.userPoints){
                     let orderData = {
                         customerId: user,
@@ -856,7 +883,8 @@ export const store = new Vuex.Store({
                         reservTime: payload.reservTime,
                         reservStatusId: "status_1",
                         reservCreatedTimeStamp: date,
-                        reservPayment: payload.reservPayment
+                        reservPayment: payload.reservPayment,
+                        reservComment: payload.reservComment
                     };
                     db.collection("reservations").add(orderData).then(function () {
                         commit('setFirebaseSuccess', "Reservation Sent Successfully!");
@@ -917,7 +945,8 @@ export const store = new Vuex.Store({
                                     reservStatusId: doc.data().reservStatusId,
                                     reservCreatedTimeStamp: doc.data().reservCreatedTimeStamp,
                                     idOfReservation: doc.id,
-                                    reservOfferId: doc.data().reservOfferId
+                                    reservOfferId: doc.data().reservOfferId,
+                                    reservPayment: doc.data().reservPayment,
                                 });
 
                             // });
@@ -994,22 +1023,58 @@ export const store = new Vuex.Store({
         },
         //////////////////////////////////////////////////still working>>>> after payment confirmed add points to customer
         editReservationStatusByAdmin({commit}, payload){
+            console.log(payload)
             let user = firebase.auth().currentUser.uid;
             commit('setFirebaseSuccess', null);
             commit('setError', null);
             let db = firebase.firestore();
             ///////////here the payment confirmed so we want to transfer the points to customer
             if(payload.status === 'status_3'){
-
+                db.collection('reservations').doc(''+payload.idOfReservation).get().then(function (checkOffer) {
+                    let offerId = checkOffer.data().reservOfferId;
+                    console.log(checkOffer.data())
+                        if (offerId) {
+                            console.log("FOund offer id");
+                            db.collection('offers').doc('' + offerId).get().then(function (offerData) {
+                                let offerPoints = offerData.data().offerPoints;
+                                db.collection('reservations').doc('' + payload.idOfReservation).update({"reservStatusId": 'status_3'})
+                                    .then(function () {
+                                        db.collection('users').doc('' + payload.customerId).update("userPoints", firebase.firestore.FieldValue.increment(-offerPoints))
+                                            .then(function () {
+                                                db.collection('offers').doc(''+offerId).update({"userRedeemId": [payload.customerId]}).then(function () {
+                                                    commit('setFirebaseSuccess', "Reservation Status Changed Successfully & Points Applied!");
+                                                }).catch(function (error) {
+                                                    commit('setError', "Problem in changing reservation status, Try Again!");
+                                            });
+                                        });
+                                    });
+                            });
+                        }else {
+                            console.log("no offer id");
+                            db.collection('reservations').doc(''+payload.idOfReservation).get().then(function (reservData) {
+                                let occasionPoints = reservData.data().idOfOccasion.occasionPoints;
+                                db.collection('reservations').doc('' + payload.idOfReservation).update({"reservStatusId": 'status_3'})
+                                    .then(function () {
+                                        db.collection('users').doc('' + payload.customerId).update("userPoints", firebase.firestore.FieldValue.increment(occasionPoints))
+                                            .then(function () {
+                                                commit('setFirebaseSuccess', "Reservation Status Changed Successfully & Points Applied!");
+                                            }).catch(function (error) {
+                                            commit('setError', "Problem in changing reservation status, Try Again!");
+                                        });
+                                    });
+                            });
+                        }
+            });
             } else {
-                db.collection('reservations').doc(''+payload.idOfReservation).update({"reservStatusId": payload.status})
-                    .then(function () {
+                            db.collection('reservations').doc('' + payload.idOfReservation).update({"reservStatusId": payload.status})
+                                .then(function () {
 
-                        commit('setFirebaseSuccess', "Reservation Status Changed Successfully!");
-                    }).catch(function (error) {
-                    commit('setError', "Problem in changing reservation status, Try Again!");
-                })
-            }
+                                    commit('setFirebaseSuccess', "Reservation Status Changed Successfully!");
+                                }).catch(function (error) {
+                                commit('setError', "Problem in changing reservation status, Try Again!");
+                            });
+                        }
+
 
         },
         ////////////////////////create new promo code
@@ -1028,6 +1093,55 @@ export const store = new Vuex.Store({
                     commit('setFirebaseSuccess', "Promo Code Saved Successfully!");
                 }).catch(function (error) {
                 commit('setError', "Problem in saving promo code, Try Again!");
+            });
+        },
+        //////////////////////listen on all promo codes
+        listenOnPromoCodes({commit}) {
+            commit('setAllPromoCodes', null);
+            const db = firebase.firestore();
+
+            let stopOffersListener = db.collection('promoCodes')
+                .orderBy('Exp', 'desc')
+                .onSnapshot(function (querySnapshot) {
+                    let codes = [];
+                    querySnapshot.forEach(function (doc) {
+                        codes.push({
+                            promoCode: doc.id,
+                            points: doc.data().pointsToAdd,
+                            expDated: moment(doc.data().Exp).fromNow(),
+                            numOfUsersUsed: doc.data().usersRedeem.length,
+                            createdTimeStamp: moment(doc.data().createdTimeStamp).fromNow(),
+                        });
+                    });
+                    commit('setAllPromoCodes', codes);
+                });
+        },
+        readAdminProfile({commit}){
+            commit('setAdminProfile', null);
+            const db = firebase.firestore();
+            let stopOffersListener = db.collection('admin').doc('adminProfile').get().then(function (profile) {
+                commit('setAdminProfile', profile.data());
+            });
+        },
+        editAdminProfile({commit}, payload){
+            commit('setFirebaseSuccess', null);
+            commit('setError', null);
+            const db = firebase.firestore();
+            db.collection('admin').doc('adminProfile').update({
+                "firstName": payload.firstName,
+                "lastName": payload.lastName,
+                "phone_1": payload.phone_1,
+                "phone_2": payload.phone_2,
+                "address": payload.address,
+                "facebook": payload.facebook,
+                "instagram": payload.instagram,
+                "twitter": payload.twitter,
+                "companyName": payload.companyName
+            }).then(function () {
+
+                commit('setFirebaseSuccess', "Profile Saved Successfully!");
+            }).catch(function (error) {
+                commit('setError', "Problem in saving profile, Try Again!");
             });
         }
 
@@ -1101,6 +1215,12 @@ export const store = new Vuex.Store({
         },
         getOfferById(state){
             return state.offerById;
+        },
+        getAllPromoCodes(state){
+            return state.allPromoCodes;
+        },
+        getAdminProfile(state){
+            return state.adminProfile;
         }
 
 

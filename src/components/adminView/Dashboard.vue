@@ -8,9 +8,9 @@
 
 
         <page-path></page-path>
-        <v-layout row wrap justify-space-between child-flex >
-            <v-flex d-flex xs12 sm4 md3 justify-center style="justify-content: space-around;">
-                <v-card  elevation="3" max-width="300" min-width="284" class="round-card " style="border-right: .25rem solid #00ff16 !important;">
+        <v-layout row wrap style="    justify-content: space-around;"  >
+            <v-flex d-flex xs12 sm4 md3 style="justify-content: space-around;">
+                <v-card  elevation="3" max-width="300" min-width="284" class="round-card " style="border-bottom: .25rem solid #00800c !important;">
 
                     <v-card-text>
                         <div class="led-box">

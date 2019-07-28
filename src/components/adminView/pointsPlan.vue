@@ -9,11 +9,120 @@
 
         <page-path></page-path>
 
+            <v-layout row wrap style="    justify-content: space-around;" >
+
+<!--                list of all promo codes-->
+                <v-data-iterator
+                        :items="codes"
+                        :search="searchCodeByType"
+                        :loading="dataTabelLoadingCodes"
+                        :pagination.sync="paginationCodes"
+                        :rows-per-page-items="rows"
+                        no-data-text="Loading ...."
+                        content-tag="v-layout"
+                        row
+                        wrap
+                >
+                    <template v-slot:header>
+                        <v-toolbar
+                                class="mb-2"
+                                dark
+                                flat
+                        >
+                            <v-toolbar-title><v-icon larg>star</v-icon> <v-spacer></v-spacer><div class="header-text">Promo Codes</div></v-toolbar-title>
+                            <v-divider
+                                    class="mx-2"
+                                    inset
+                                    vertical
+                            ></v-divider>
+
+                            <v-btn icon="" color="white" class="black--text" @click="showGenerator = true"><v-icon>add_circle</v-icon></v-btn>
+
+                            <v-spacer></v-spacer>
+
+                            <v-text-field
+                                    v-model="searchCodeByType"
+                                    append-icon="search"
+                                    label="Search Codes by any type"
+                                    single-line
+                                    hide-details
+                                    color="black"
+                                    style="    max-width: 240px;"
+                                    maxlength="50"
+                            ></v-text-field>
+                        </v-toolbar>
+                    </template>
+                    <template v-slot:progress="codes">
+                        <v-progress-circular
+                                :size="70"
+                                :width="7"
+                                color="black"
+                                indeterminate
+                        ></v-progress-circular>
+                    </template>
+
+                    <template v-slot:item="props" style="background-color: black">
+                        <v-flex
+                                xs12
+                                sm6
+
+                        >
+                            <v-card>
+                                <v-card-title style="justify-content: space-between;height: 73px" >
+                                    <h4 style="        font-family: monospace;">{{ props.item.promoCode }}</h4><br>
+
+                                    <v-layout v-if="!props.item.expDated.includes('ago')" style="justify-content: flex-end; margin-left: auto;" v-on="on">
+                                                <v-btn icon  size="5px" larg color="white" style="margin: 0 0 5px 0;" @click="shareFacebook(props.item.promoCode)" target="_blank">
+
+                                                    <img width="25px" src="../../assets/facebook.svg">
+                                                </v-btn>
+                                                <v-btn icon size="5px" larg color="white" style="margin: 0 0 5px 0;" @click="shareTweeter(props.item.promoCode)" target="_blank">
+
+                                                    <img width="25px" src="../../assets/twitter.svg">
+                                                </v-btn>
+                                                <v-btn icon   size="5px" larg color="white" style="margin: 0 0 5px 0;" @click="shareWhatsapp(props.item.promoCode)" target="_blank">
+
+                                                    <img width="25px" src="../../assets/whatsapp.svg">
+                                                </v-btn>
+                                    </v-layout>
+
+                                </v-card-title>
+                                <v-divider></v-divider>
+                                <v-list dense>
+                                    <v-list-tile>
+                                        <v-list-tile-content>Points:</v-list-tile-content>
+                                        <v-list-tile-content class="align-end pa-3">{{ props.item.points }}</v-list-tile-content>
+                                    </v-list-tile>
+                                    <v-list-tile>
+                                        <v-list-tile-content>Expiration:</v-list-tile-content>
+                                        <v-list-tile-content class="align-end pa-3">{{ props.item.expDated }}</v-list-tile-content>
+                                    </v-list-tile>
+                                    <v-list-tile>
+                                        <v-list-tile-content>Used By:</v-list-tile-content>
+                                        <v-list-tile-content class="align-end pa-3">{{ props.item.numOfUsersUsed }} Customer(s)</v-list-tile-content>
+                                    </v-list-tile>
+                                    <v-list-tile>
+                                        <v-list-tile-content>Created:</v-list-tile-content>
+                                        <v-list-tile-content class="align-end pa-3">{{ props.item.createdTimeStamp }}</v-list-tile-content>
+                                    </v-list-tile>
+
+                                </v-list>
+                            </v-card>
+                        </v-flex>
+                    </template>
+
+                    <template v-slot:no-results>
+
+                        <v-alert :value="true" color="error" icon="warning" style="text-align: left">
+                            No results for "{{ searchCodeByType }}" .
+                        </v-alert>
+
+                    </template>
 
 
-
-            <v-layout row wrap>
-                <v-card  elevation="3" width="300" class="round-card">
+                </v-data-iterator>
+                <v-divider vertical></v-divider>
+                <v-card  elevation="3" width="300" height="fit-content" class="round-card">
                     <v-card-text class=" text-lg-left">
                         <h2>Max Points for Customers*</h2>
                         <h3>New will get:  <b> {{readMaxNew}}</b></h3>
@@ -22,10 +131,12 @@
                         <h5>*This done when every new customer use another customer's Smart Code after creating a new account for one time only.</h5>
                     </v-card-text>
                     <v-divider  class="mx-3" style="margin-bottom: 5px"></v-divider>
-                    <v-btn   icon @click="openEditMaxDialog"> <v-icon>edit</v-icon></v-btn>
+                    <v-btn  dark @click="openEditMaxDialog"> edit</v-btn>
                 </v-card>
+
             </v-layout>
             <v-divider class="mx-1 ma-4"></v-divider>
+<!--        list of all occastion types-->
             <v-data-iterator
                     :items="items"
                     :search="searchOccByType"
@@ -270,26 +381,32 @@
             </v-card>
 
         </v-dialog>
+        <promoCodeGeneratorDialog v-model="showGenerator"></promoCodeGeneratorDialog>
     </v-container>
 </template>
 
 <script>
     import Navbar from "./Navbar";
     import pagePath from "./pagePath"
-
+    import promoCodeGeneratorDialog from "./promoCodeGeneratorDialog";
     export default {
         name: "pointsPlan",
         $_veeValidate: {
             validator: 'new',
 
         },
-        components: {Navbar, pagePath,},
+        components: {Navbar, pagePath,promoCodeGeneratorDialog},
         data: ()=>{
             return{
+                showGenerator: false,
                 pagination:{
                 rowsPerPage: 3
             },
-                dataTabelLoading: true,
+                paginationCodes:{
+                    rowsPerPage: 2
+                },
+                rows: [2,3,4],
+            dataTabelLoading: true,
                 searchOccByType: '',
                 viewNoData: false,
 
@@ -309,7 +426,11 @@
                 newPoints: Number,
                 ownerPoints: Number,
 
-                items: []
+                items: [],
+
+                codes: [],
+                searchCodeByType: '',
+                dataTabelLoadingCodes: true,
             }
         },
         computed:{
@@ -325,6 +446,9 @@
             },
             getMaxPointsLevel(){
                 return this.$store.getters.getMaxPointsLevel;
+            },
+            getAllPromoCodes(){
+                return this.$store.getters.getAllPromoCodes;
             }
         },
         watch: {
@@ -359,6 +483,12 @@
                     this.btnLoading = false;
                 }
             },
+            getAllPromoCodes(codes){
+                if(codes !== null){
+                    this.codes = codes;
+                }
+                this.dataTabelLoadingCodes = false;
+            }
 
         },
         methods:{
@@ -436,11 +566,42 @@
 
                     }
                 });
+            },
+            shareFacebook(code){
+                let ShareLink =
+                    "https://www.facebook.com/sharer/sharer.php?u="
+                    + window.location.origin + "/profile"
+                    + "?smartCode=" + code;
+                window.open(ShareLink);
+            },
+            shareWhatsapp(code){
+                let isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+                if(isMobile){
+                    let shareOnMobile =
+                        "whatsapp://send?text="
+                        + window.location.origin + "/profile"
+                        + "?smartCode=" + code;
+                    window.open(shareOnMobile);
+                }else{
+                    let ShareLink =
+                        "https://web.whatsapp.com/send?text="
+                        + window.location.origin + "/profile"
+                        + "?smartCode=" + code;
+                    window.open(ShareLink);
+                }
+            },
+            shareTweeter(code){
+                let ShareLink =
+                    "https://twitter.com/intent/tweet?url="
+                    + window.location.origin + "/profile"
+                    + "?smartCode=" + code;
+                window.open(ShareLink);
             }
         },
         created() {
             this.$store.dispatch('listenOnAllOccasions');
             this.$store.dispatch('readMaxPointsLevel');
+            this.$store.dispatch('listenOnPromoCodes');
         }
     }
 </script>

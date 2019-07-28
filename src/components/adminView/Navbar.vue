@@ -54,7 +54,7 @@
             app
             dark
             v-model="drawer"
-            width="210"
+            width="250"
     >
 
 
@@ -66,13 +66,15 @@
                     </v-list-tile-action>
                 </v-list-tile>
 
-                <v-list-tile avatar tag="div" >
+                <v-list-tile avatar tag="div" style="cursor: pointer" @click="openEdit()">
                     <v-list-tile-avatar>
                         <img src="../../../public/favicon-logo.png">
                     </v-list-tile-avatar>
 
                     <v-list-tile-content style="overflow: visible">
-                        <v-list-tile-title style="font-weight: 600;">Wellcome, Mena!</v-list-tile-title>
+                        <v-list-tile-title style="font-weight: 600; text-transform: capitalize">
+                            Welcome, {{adminData.firstName}}!
+                        </v-list-tile-title>
                     </v-list-tile-content>
 
 
@@ -124,7 +126,7 @@
 
 <!--                    <v-spacer></v-spacer>-->
                     <div class="footer">
-                        Photographer | Smart Customer<br>v1.0-beta - {{ new Date().getFullYear() }} &copy;<br>
+                        {{adminData.companyName}} <br>  Smart Customer &copy; v1.0-beta - {{ new Date().getFullYear() }} <br>
                         for technical support, <a href="https://www.facebook.com/george.shokry1" style="text-decoration: none" target="_blank">contact me!</a>
                     </div>
 
@@ -183,6 +185,7 @@
 
         <annoying-no-internet v-if="$route.path !== '/admin/dashboard'"></annoying-no-internet>
         <logout-progress :exitLoading="showLogoutProgress"></logout-progress>
+    <admin-profile v-model="openEditAdmin"/>
 
 </v-app>
 
@@ -194,16 +197,19 @@
     import SimpleCrypto from "simple-crypto-js";
     import checkConnectionMixin from "../mixins/checkConnectionMixin";
     import annoyingNoInternet from "../../views/annoyingNoInternet"
+    import adminInfoMixin from '../mixins/adminInfoMixin'
     export default {
         name: 'navbar',
         components: {
             createSpeedDial,
             annoyingNoInternet,
-            logoutProgress:()=> import("../../views/logoutProgress")
+            logoutProgress:()=> import("../../views/logoutProgress"),
+            adminProfile:()=> import('./adminProfile')
         },
-        mixins: [checkConnectionMixin],
+        mixins: [adminInfoMixin, checkConnectionMixin],
         data () {
             return {
+                openEditAdmin: false,
                 firebaseMutationsAlert: false,
                 firebaseMutationsMsg: '',
                 firebaseMutationsColor: '',
@@ -271,7 +277,10 @@
                // this.$router.replace('/admin-login');
                this.showLogoutProgress = true;
                this.$store.dispatch('logoutUser');
-           }
+           },
+            openEdit(){
+                this.openEditAdmin = true
+            }
         },
         created() {
             this.$store.dispatch('checkConnetion');

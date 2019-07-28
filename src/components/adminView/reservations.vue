@@ -27,6 +27,7 @@
                         single-line
                         hide-details
                         color="black"
+                        style="    max-width: 340px;"
                 ></v-text-field>
 
             </v-toolbar>
@@ -86,7 +87,7 @@
                                             color="black"
                                             autofocus
                                     ></v-select>
-                                    <v-btn @click="changeReservStatus(statusSelected, props.item.idOfReservation )">Change</v-btn>
+                                    <v-btn @click="changeReservStatus(props.item.customerId, statusSelected, props.item.idOfReservation )">Change</v-btn>
                                 </template>
                             </v-edit-dialog>
                             <v-dialog
@@ -117,7 +118,7 @@
                                         <v-btn
                                                 color="black"
                                                 dark
-                                                @click="confirmPayment(statusSelected, props.item.idOfReservation )"
+                                                @click="confirmPayment(statusSelected, props.item.idOfReservation,props.item.customerId )"
                                         >
                                             confirm
                                         </v-btn>
@@ -131,6 +132,7 @@
                         <td class="text-xs-left">{{ props.item.reservDate}}</td>
                         <td class="text-xs-left">{{ props.item.reservTime}}</td>
                         <td class="text-xs-left">{{ props.item.reservAddress }}</td>
+                    <td class="text-xs-left">{{ props.item.reservComment }}</td>
                     <tr @click="props.expanded = !props.expanded; getSelectedCustomerInfo(props.item.customerId, props.item.occasionMap, props.item.reservOfferId) " style="cursor: pointer">
                     <td class="text-xs-left">{{ props.item.reservOfferId === null ?  "No"  : "Yes" }} <v-icon small>info</v-icon></td>
                     </tr>
@@ -224,7 +226,8 @@
                     {text: 'Date', value: 'reservDate', class: 'date'},
                     {text: 'Time', value: 'reservTime', class: 'reserv-time'},
                     {text: 'Address', value: 'reservAddress', class: 'reserv-address'},
-                    {text: 'Offer Used', value: 'reservAddress', },
+                    {text: 'Comment', value: 'reservComment', },
+                    {text: 'Offer Used?', value: 'reservAddress', },
                 ],
                 allReserv: [],
                 allStatusTypes: [],
@@ -237,6 +240,8 @@
                 occasionInfo: '',
                 isMobile: false,
                 confirmPaymentDialog: false,
+                customerSelected: '',
+                reservSelected: '',
             }
         },
         computed: {
@@ -277,7 +282,8 @@
                             idOfReservation: resvArray[i].idOfReservation,
                             customerId: resvArray[i].customerId,
                             occasionMap: resvArray[i].occasionMap,
-                            reservOfferId: resvArray[i].reservOfferId
+                            reservOfferId: resvArray[i].reservOfferId,
+                            reservComment: resvArray[i].reservComment
                         });
                     }
                     console.log(this.allReserv)
@@ -319,6 +325,8 @@
             getFirebaseSuccess(alert){
                 if(alert !== null){
                     this.confirmPaymentDialog = false;
+                    this.customerSelected = '';
+                    this.reservSelected = '';
 
                 }
             },
@@ -344,7 +352,9 @@
                 this.occasionInfo = occasionId;
                 this.isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
             },
-            changeReservStatus(status, idOfReservation){
+            changeReservStatus(customerId, status, idOfReservation){
+                this.customerSelected =customerId;
+                this.reservSelected = idOfReservation;
                 if(status !== 'payment confirmed'){
                 let result = this.arrayOfStatusTypes.find(state => state.name === status);
                 this.$store.dispatch('editReservationStatusByAdmin', {idOfReservation: idOfReservation, status: result.id});
@@ -352,9 +362,9 @@
                     this.confirmPaymentDialog = true;
                 }
             },
-            confirmPayment(status, idOfReservation){
+            confirmPayment(status, idOfReservation, customerId){
                 let result = this.arrayOfStatusTypes.find(state => state.name === status);
-                this.$store.dispatch('editReservationStatusByAdmin', {idOfReservation: idOfReservation, status: result.id});
+                this.$store.dispatch('editReservationStatusByAdmin', {customerId: this.customerSelected,idOfReservation: this.reservSelected, status: result.id});
             }
         },
         created() {

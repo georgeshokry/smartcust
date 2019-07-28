@@ -15,11 +15,9 @@
 
 
             >
-                <v-badge left color="white" style="margin-top: 70px;">
+                <v-badge left color="white" style="margin-top: 65px;">
 
-                    <template  v-slot:badge >
-                        <span style="color: black">α</span>
-                    </template>
+
                     <v-toolbar-title ><div></div>
 
                         <img style=" max-width: 180px;max-height: 100px;"
@@ -37,12 +35,7 @@
 
                         <v-toolbar   prominent  absolute fixed style="position: sticky; border-radius: 0px 0px 20px 20px;">
 
-                            <v-layout row justify-center align-center  v-if="dataLoading" style="max-height: 263px;max-width: 100px;" transition="scale-transition">
-                                <v-progress-circular
-                                        indeterminate
-                                        color="black"
-                                ></v-progress-circular>
-                            </v-layout>
+                            <loading-data-progress v-if="dataLoading" style="    justify-content: flex-start;"/>
 
                             <div  style="z-index: 2" v-if="dataLoaded">
                                 <v-layout row wrap style="align-items: center; justify-content: center">
@@ -208,8 +201,7 @@
     </v-app>
 </template>
 <script>
-
-
+    import loadingDataProgress from './loadingDataProgress'
     import SimpleCrypto from "simple-crypto-js";
     import userInfoMixin from "../mixins/userInfoMixin";
     import checkConnectionMixin from "../mixins/checkConnectionMixin";
@@ -222,6 +214,7 @@
     export default {
         name: 'customerprofile',
         components: {
+            loadingDataProgress,
             logoutProgress,
             Pointsplancard:() => import("./pointsPlanCard"),
             Appfooter:() => import("./appFooter"),
