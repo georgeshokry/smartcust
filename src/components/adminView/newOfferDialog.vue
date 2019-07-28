@@ -328,6 +328,7 @@
                 // this.snackbarColor = "success";
                 if(success !==null) {
                     ///reseting all inputs
+                    this.btnLoading = false;
                     this.offerTitle = "";
                     this.offerContent = "";
                     this.offerExpDate = new Date().toISOString().substr(0, 10);
@@ -336,6 +337,8 @@
                     this.offerPic = '';
                     this.fileSelect = '';
                     this.imagePreview = "";
+                    this.$emit('input', false)
+
                 }
             },
             firebaseErrorShow(error){

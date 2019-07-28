@@ -53,7 +53,27 @@
 
                 </template>
                 <template v-slot:items="props">
-                    <td class="text-xs-left">{{ props.item.occasionType.occasionName }}</td>
+                    <td class="text-xs-left">{{ props.item.occasionType.occasionName }}
+                        <v-tooltip bottom color="black" nudge-bottom="-10">
+                            <template v-slot:activator="{ on }">
+                                <div v-on="on" style="width: fit-content;     margin: auto;">
+                                    <v-btn icon  size="5px" small color="white" style="margin: 5px" @click="shareFacebook(props.item.idOfOffer)" target="_blank">
+
+                                        <img width="20px" src="../../assets/facebook.svg">
+                                    </v-btn>
+                                    <v-btn icon size="5px" small color="white" style="margin: 5px" @click="shareTweeter(props.item.idOfOffer)" target="_blank">
+
+                                        <img width="20px" src="../../assets/twitter.svg">
+                                    </v-btn>
+                                    <v-btn icon   size="5px" small color="white" style="margin: 5px" @click="shareWhatsapp(props.item.idOfOffer)" target="_blank">
+
+                                        <img width="20px" src="../../assets/whatsapp.svg">
+                                    </v-btn>
+                                </div>
+                            </template>
+                            <span >Share Offer</span>
+                        </v-tooltip>
+                    </td>
                     <td class="text-xs-left">{{ props.item.offerTitle }}</td>
                     <td class="text-xs-left">{{ props.item.offerContent}}</td>
                     <td class="text-xs-left">{{ props.item.offerExpDate ? props.item.offerExpDate : "*(By No of customers)"}}</td>
@@ -84,7 +104,7 @@
                             <v-icon v-if="props.item.offerStatus === 'closed'">check_circle</v-icon>
                     </v-btn>
                     </td>
-                    <td class="text-xs-left">{{ props.item.userIdRedeem ? props.item.userIdRedeem : "No one yet"}}</td>
+                    <td class="text-xs-left">{{ props.item.userRedeemId.length !== 0 ? props.item.userRedeemId.length : "No one yet"}}</td>
 
 
                 </template>
@@ -115,16 +135,16 @@
             viewNoData: false,
             idOfOffer: "",
             headers: [
-                {text: 'Occasion Type', value: 'occasionType'},
+                {text: 'Occasion Type', value: 'occasionType', class: "offer-title"},
                 {text: 'Offer Title', value: 'offerTitle'},
                 {text: 'Content', value: 'offerContent', class: "offer-content"},
                 {text: 'Expiration *(By Date)', value: 'offerExpDate', class: "offer-exp-date"},
-                {text: 'Expiration *(By Number Of Customer)', value: 'offerExpNum'},
+                {text: 'Expiration *(By Number Of Customer)', value: 'offerExpNum', class: "offer-exp-num"},
                 {text: 'Points', value: 'offerPoints'},
                 {text: 'Photo', value: 'offerPic', class: "image-column"},
                 {text: 'Created', value: 'offerCreatedTimestamp'},
                 {text: 'Status', value: 'offerStatus',},
-                {text: 'No. of users redeem', value: 'userIdRedeem', class:"no-of-users"}
+                {text: 'No. of users redeem', value: 'userRedeemId', class:"no-of-users"}
             ],
         allOffers: [],
             showForm: false,
@@ -143,7 +163,7 @@
         getAllOffers(offersArray){
             if(offersArray !== null){
                 this.allOffers = offersArray;
-                console.log(this.allOffers);
+                console.log(this.allOffers)
             }else {
                 this.viewNoData = true;
             }
@@ -157,12 +177,42 @@
     },
 
     methods: {
-            allOffersNow() {
-                this.$store.dispatch("getAllOffersDatabase");
-            },
-        closeOffer(item){
+        allOffersNow() {
+            this.$store.dispatch("getAllOffersDatabase");
+        },
+        closeOffer(item) {
             this.$store.dispatch("changeOfferStatus", {offerId: item});
         },
+        shareFacebook(id) {
+            let ShareLink =
+                "https://www.facebook.com/sharer/sharer.php?u="
+                + window.location.origin + "/profile"
+                + "?offer=" + id;
+            window.open(ShareLink);
+        },
+        shareWhatsapp(id) {
+            let isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+            if (isMobile) {
+                let shareOnMobile =
+                    "whatsapp://send?text="
+                    + window.location.origin + "/profile"
+                    + "?offer=" + id;
+                window.open(shareOnMobile);
+            } else {
+                let ShareLink =
+                    "https://web.whatsapp.com/send?text="
+                    + window.location.origin + "/profile"
+                    + "?offer=" + id;
+                window.open(ShareLink);
+            }
+        },
+        shareTweeter(id) {
+            let ShareLink =
+                "https://twitter.com/intent/tweet?url="
+                + window.location.origin + "/profile"
+                + "?offer=" + id;
+            window.open(ShareLink);
+        }
     }
 
     }
@@ -173,7 +223,7 @@
     min-width: 250px;
 }
     .offer-exp-date{
-        max-width: 150px;
+        max-width: 160px;
     }
     .no-of-users{
         max-width: 160px;
@@ -181,6 +231,12 @@
     }
     .image-column{
         min-width: 130px;
+    }
+    .offer-title{
+        min-width: 200px;
+    }
+    .offer-exp-num{
+        max-width: 220px;
     }
 @media screen and (max-width: 375px) {
     div.header-text {

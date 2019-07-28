@@ -74,9 +74,10 @@
                        v-on:keyup.enter="startLogin"
                        color="black"
                ></v-text-field>
-
+                  <h4><a style="color: black" @click.stop="$router.replace('/reset-password')">Forget Password?</a></h4>
 
                </v-card-text>
+
                </v-layout>
                <v-alert
                        :value="alert"
@@ -87,7 +88,8 @@
                >
                   {{ firebaseErrorShow }}
                </v-alert>
-            <v-card-actions style="min-height: 90px;padding-left: 16px;align-items: flex-end;">
+
+            <v-card-actions style="min-height: 90px;padding-left: 16px;align-items: flex-end; justify-content: center;">
 
                <v-btn
 

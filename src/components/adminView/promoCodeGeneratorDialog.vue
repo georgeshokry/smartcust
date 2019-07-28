@@ -13,7 +13,7 @@
 
                             <div >
                                 <v-card-text  ><h2 >Generated Code</h2></v-card-text>
-                            <h3 style="background-color: grey; color: white">{{finalCode}}</h3>
+                            <h3 style="background-color: grey; color: white;        font-family: monospace;">{{finalCode}}</h3>
                             </div>
                             <br>
                         <v-flex xs7 sm6>

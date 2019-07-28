@@ -31,6 +31,7 @@
                         type="month"
                         color="primary"
                         v-if="dataLoaded"
+
                 >
 
                     <template v-slot:day="{ date }">
@@ -143,7 +144,7 @@
                     this.upNextEvent= [];
                     for (let i in resvArray) {
 
-                        if (resvArray[i].reservStatusId === 'status_3') {
+                        if (resvArray[i].reservStatusId === 'status_3' ) {
                             this.events.push({
                                 reservName: resvArray[i].occasionMap.occasionName,
                                 reservAddress: resvArray[i].reservAddress,

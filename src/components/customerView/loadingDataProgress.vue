@@ -1,5 +1,5 @@
 <template>
-    <v-layout row justify-center align-center  style="min-height: 263px" transition="scale-transition">
+    <v-layout row justify-center align-center  style="min-height: 263px" >
         <v-progress-circular
                 indeterminate
                 color="black"

@@ -461,7 +461,8 @@
                         reservDate: this.occDate,
                         reservTime: this.occTime,
                         reservOfferId: null,
-                        reservPayment: idOfOccasion.occasionPrice
+                        reservPayment: idOfOccasion.occasionPrice,
+                        reservComment: this.occComment
                     });
                 } else {
                     let idOfOccasion = this.allOcc.find(data => data.occasionName === this.occasionNameSelected);
@@ -472,8 +473,8 @@
                         reservDate: this.occDate,
                         reservTime: this.occTime,
                         reservOfferId: this.reservOfferId,
-                        reservPayment: this.occasionPrice - this.offerPoints
-
+                        reservPayment: this.occasionPrice - this.offerPoints,
+                        reservComment: this.occComment
                     });
                 }
             },

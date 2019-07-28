@@ -24,7 +24,7 @@
                         <v-card-title style="justify-content: center;">
                             <v-tooltip bottom color="black">
                                 <template v-slot:activator="{ on }">
-                                    <v-btn icon style="left: 0px;position: absolute;top: 0;" to="/customer-login" v-on="on">
+                                    <v-btn icon style="left: 0px;position: absolute;top: 0; margin: 15px;" to="/customer-login" v-on="on">
                                         <v-icon>arrow_back</v-icon>
                                     </v-btn>
                                 </template>
