@@ -1,6 +1,6 @@
 <template>
 
-  <div id="app" style="min-height: 100vh"  >
+  <div id="app" style=""  >
       <v-alert
               :value="warning"
               color="black"
@@ -9,29 +9,43 @@
       >
           <h3>
               <v-icon small color="white">info</v-icon>
-              for better experince use
+              for better experience use
               <a href="https://www.google.com/intl/en/chrome/" style="text-decoration: none;" target="_blank">Google Chrome </a>
 <!--              <v-icon small color="white" @click="warning = false"> clear</v-icon>-->
           </h3>
 
       </v-alert>
-      <router-view/>
+      <div class="blink-image" v-if="loading" style="height:initial; margin: 15%">
+          <img  style="width: 180px;" src="./assets/logo.png">
+      </div>
+      <router-view />
 
   </div>
 </template>
 <script>
 
-
-
+    import loadingDataProgress from './components/customerView/loadingDataProgress'
     export default {
-      components: {},
+      components: {loadingDataProgress},
       name: "app",
       data() {
           return{
+              loading: true,
               warning: true
           }
       },
+        computed:{
+          getLoadingState(){
+              return this.$store.getters.getLoadingState;
+          }
+        },
+        watch:{
+            getLoadingState(state){
+                this.loading = state
+            }
+        },
         created() {
+
            let detect =  window.navigator.userAgent.search("Chrome");
             if(detect > -1){
                 this.warning = false
@@ -60,4 +74,10 @@
     margin-left: -150px;
     margin-top: -150px;
     }
+.blink-image {
+    -moz-animation: blink normal 2s infinite ease-in-out; /* Firefox */
+    -webkit-animation: blink normal 2s infinite ease-in-out; /* Webkit */
+    -ms-animation: blink normal 2s infinite ease-in-out; /* IE */
+    animation: blink normal 2s infinite ease-in-out; /* Opera and prob css3 final iteration */
+}
 </style>

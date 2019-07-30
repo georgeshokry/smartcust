@@ -3,7 +3,7 @@ import Router from "vue-router";
 
 
 import SimpleCrypto from "simple-crypto-js";
-
+import {store} from './store';
 
 
 Vue.use(Router);
@@ -153,6 +153,7 @@ let router = new Router({
 // router.replace({ path: '/profile', redirect: 'customerprofile' });
 
 router.beforeEach((to, from, next) => {
+    store.state.loadingState = true;
 
     let localSession = localStorage.getItem('appData');
     let _secretKey = "set-NuN-Chernobyl-WhoDidIt";
@@ -221,9 +222,9 @@ router.beforeEach((to, from, next) => {
 
 
 });
-
-
-
+router.afterEach((to, from, next) => {
+    store.state.loadingState = false;
+});
 
 // router.beforeEach((to, from, next) => {
 //
