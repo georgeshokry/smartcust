@@ -1,9 +1,9 @@
 ![very good](./src/assets/logo.png)
 ![alt text](https://www.dedicatedmanagers.com/wp-content/uploads/2018/06/Real-Time-Database-with-Vue.js-Vuex-Vuetify-Firebase-Authentication-Firestore.png)
 # smart-customer app
-Points SPA for photographers to manage and monitoring customers reservations<br>
-Has a dashboard page for admin & profile page for customers, build using [vuejs v2.6.10](https://vuejs.org/)<br>
-Photographer can create offers to attract more customers and customer make reservations and get points in return
+Points SPA for photographers to manage and monitoring customers reservations.<br>
+Has a dashboard page for admin & profile page for customers, build using [vuejs v2.6.10](https://vuejs.org/).<br>
+Photographer can create offers to attract more customers and customer make reservations and get points in return, the points used to get discounts.
 
 ## Consists of Two types of pages
 #### Dashboard:
