@@ -71,8 +71,11 @@
                             ></v-text-field>
                             <v-text-field
                                     v-model="adminData.phone_2"
-                                    label="Another Phone (optional)"
-
+                                    v-validate="'required:true'"
+                                    :error-messages="errors.collect('Alternative Phone')"
+                                    data-vv-name="Alternative Phone"
+                                    label="Alternative Phone & Payment Method"
+                                    hint="like orange cash"
                                     color="black"
                             ></v-text-field>
                             <v-text-field
@@ -243,7 +246,8 @@
                     this.$validator.validate('first Name'),
                     this.$validator.validate('last Name'),
                     this.$validator.validate('phone'),
-                    this.$validator.validate('company Name')
+                    this.$validator.validate('company Name'),
+                    this.$validator.validate('Alternative Phone')
                 ]);
                 this.$validator.validateAll(results).then(() => {
                     if (!this.errors.any()) {

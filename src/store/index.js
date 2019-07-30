@@ -240,9 +240,10 @@ export const store = new Vuex.Store({
                 commit('setUserStat', user.user.uid);
                 console.log("USER LOGGED IN");
                 let loginTimeStamp = new Date();
-                firebase.database().ref().child('usersessions').child(user.user.uid)
-                    .update({userActiveState: "online"});
-
+                if (user.user.uid !== boss) {
+                    firebase.database().ref().child('usersessions').child(user.user.uid)
+                        .update({userActiveState: "online"});
+                }
                 // let chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz";
                 // let string_length = 30;
                 // let randomstring = '';

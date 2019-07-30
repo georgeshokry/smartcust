@@ -153,7 +153,7 @@ let router = new Router({
 // router.replace({ path: '/profile', redirect: 'customerprofile' });
 
 router.beforeEach((to, from, next) => {
-    store.state.loadingState = true;
+    // store.state.loadingState = true;
 
     let localSession = localStorage.getItem('appData');
     let _secretKey = "set-NuN-Chernobyl-WhoDidIt";
@@ -194,7 +194,7 @@ router.beforeEach((to, from, next) => {
     }
     if(to.path === "/" || to.path === "/profile" ||to.path === "/customer-login" || to.path === "/reset-password"){
 
-            if (to.meta.auth && decipherUser === "No-Didit") {
+            if (to.meta.auth && decipherUser === "No-Didit" && decipherUser !== boss) {
                 if (to.meta.auth && decipherUser === boss) {
                     document.title = to.meta.title;
                     next({
@@ -222,9 +222,9 @@ router.beforeEach((to, from, next) => {
 
 
 });
-router.afterEach((to, from, next) => {
-    store.state.loadingState = false;
-});
+// router.afterEach((to, from, next) => {
+//     store.state.loadingState = false;
+// });
 
 // router.beforeEach((to, from, next) => {
 //

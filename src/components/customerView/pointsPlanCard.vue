@@ -3,6 +3,7 @@
             :tile="true"
             :elevation="10"
             max-width="250px"
+            height="320px"
             id="rounded-card"
 
     >
@@ -53,25 +54,25 @@
                 </v-scroll-y-transition>
             </div>
             <!--- section of how to pay -->
-            <v-layout row wrap>
-            <v-card-text>
-                <v-card-title
-                        primary-title
-                        style="
-                        padding: 0;
-                        justify-content: center;
-                        font-size: large;"
-                >
-                You can pay by:
-                </v-card-title>
+<!--            <v-layout row wrap>-->
+<!--            <v-card-text>-->
+<!--                <v-card-title-->
+<!--                        primary-title-->
+<!--                        style="-->
+<!--                        padding: 0;-->
+<!--                        justify-content: center;-->
+<!--                        font-size: large;"-->
+<!--                >-->
+<!--                You can pay by:-->
+<!--                </v-card-title>-->
 
-                <v-responsive avatar>
-                    <v-avatar>
-                        <img width="50px" src="../../assets/orange-cash.png" alt="orange cash">
-                    </v-avatar>
-                </v-responsive>
-            </v-card-text>
-            </v-layout>
+<!--                <v-responsive avatar>-->
+<!--                    <v-avatar>-->
+<!--                        <img width="50px" src="../../assets/orange-cash.png" alt="orange cash">-->
+<!--                    </v-avatar>-->
+<!--                </v-responsive>-->
+<!--            </v-card-text>-->
+<!--            </v-layout>-->
         </v-content>
 
     </v-card>

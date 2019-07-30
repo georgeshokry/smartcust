@@ -15,11 +15,11 @@
           </h3>
 
       </v-alert>
-      <div class="blink-image" v-if="loading" style="height:initial; margin: 15%">
-          <img  style="width: 180px;" src="./assets/logo.png">
-      </div>
-      <router-view />
 
+<!--      <div class="blink-image" v-if="loading" style="height:initial; margin: 15%">-->
+<!--          <img  style="width: 180px;" src="./assets/logo.png">-->
+<!--      </div>-->
+      <router-view />
   </div>
 </template>
 <script>

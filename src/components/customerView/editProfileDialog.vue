@@ -61,8 +61,16 @@
                         color="black"
                         required
                         mask="###-###-###-##"
-                        prefix="(+2)-"
+                        prefix="(+02)-"
                 ></v-text-field>
+
+                <v-btn
+                        small
+                        outline
+                        @click="changePasswordDialog = true; editDialog = false"
+                >
+                    change password
+                </v-btn>
             </v-card-text>
 
             <v-divider></v-divider>
@@ -89,7 +97,58 @@
 
             </v-card-actions>
         </v-card>
+        <v-dialog
+                v-model="changePasswordDialog"
+                max-width="400px"
+                persistent
+        >
+            <v-card>
+                <v-card-text>
+                    <v-layout column wrap>
+                        <v-card-text class="headline">
+                            Change Password
+                        </v-card-text>
+                        <v-text-field
+                                v-model="oldPassword"
+                                label="Old Password"
+                                color="black"
+                                :append-icon="showPassword ? 'visibility' : 'visibility_off'"
+                                :type="showPassword ? 'text' : 'password'"
+                                @click:append="[showPassword = !showPassword]"
+                        ></v-text-field>
+                        <v-text-field
+                                v-model="newPassword"
+                                label="Create New Password"
+                                color="black"
+                                :append-icon="showPassword ? 'visibility' : 'visibility_off'"
+                                :type="showPassword ? 'text' : 'password'"
+                                @click:append="[showPassword = !showPassword]"
+                        ></v-text-field>
+                    </v-layout>
+                </v-card-text>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn
 
+                            color="black"
+                            flat
+                            @click="changePasswordDialog = false"
+                    >
+                        cancel
+                    </v-btn>
+                    <v-btn
+                            :loading="saveLoading"
+                            :disabled="saveLoading"
+                            color="black"
+                            flat
+                            @click="changePassword"
+                    >
+                        Change
+                    </v-btn>
+                </v-card-actions>
+            </v-card>
+
+        </v-dialog>
     </v-dialog>
 </template>
 
@@ -112,7 +171,12 @@
                 maritalSelect: ["Single", "Engaged", "Married"],
                 allDbData: '',
 
-                saveLoading: false
+                saveLoading: false,
+
+                changePasswordDialog: false,
+                oldPassword: '',
+                newPassword: '',
+                showPassword: false,
             }
         },
         props: {
@@ -137,6 +201,7 @@
                 if(alert !== null){
                     this.$emit('closeEditProfileDialog');
                     this.saveLoading = false;
+                    this.changePasswordDialog = false;
                 }
             },
             getFirebaseErrors(error){
@@ -189,6 +254,15 @@
             closeEditProfileDialog(){
                 this.$emit('closeEditProfileDialog');
 
+            },
+            changePassword(){
+                if(this.oldPassword !== '' && this.newPassword !== ''){
+                    this.saveLoading = true;
+                    this.$store.dispatch('updatePassword', {
+                        oldPassword: this.oldPassword,
+                        newPassword: this.newPassword
+                    });
+                }
             }
         }
     }

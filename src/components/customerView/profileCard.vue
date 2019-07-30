@@ -42,13 +42,14 @@
                         <v-card-title
                                 primary-title
                                 id="card-title"
+                                style="margin-bottom: 10px"
                         >
                             <div>
                                 <span class="headline mb-0">{{ greetings }},<br><span style="text-transform: capitalize;">{{userName}}</span>!</span>
 
                             </div>
                         </v-card-title>
-                                <v-divider class="profile-divider pa-2"  style="margin-left: 15px; margin-right: 15px"></v-divider>
+<!--                                <v-divider class="profile-divider pa-2"  style="margin-left: 15px; margin-right: 15px"></v-divider>-->
                         <!--some of user data show here-->
                         <v-content style="text-align: center; padding-left: 16px; padding-bottom: 16px; padding-right: 16px">
 <!--                            <div style="font-weight: 600; text-align: center">Profile</div>-->
