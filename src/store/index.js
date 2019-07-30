@@ -13,6 +13,7 @@ const boss = "X0P3ELO7GISMdClcAXAj9jaPE4u1";
 export const store = new Vuex.Store({
 
     state:{
+        loadingState:true,
         userStat: null,
         firebaseErrors: null,
         userSession: null,
@@ -48,6 +49,9 @@ export const store = new Vuex.Store({
         stopOccasionsListener:null,
     },
     mutations:{
+        setLoadingState(state, payload){
+            state.loadingState = payload;
+        },
         setError(state, payload){
             state.firebaseErrors = payload;
         },
@@ -1147,6 +1151,9 @@ export const store = new Vuex.Store({
 
     },
     getters:{
+        getLoadingState(state){
+            return state.loadingState;
+        },
         userStatus(state){
             return state.userStat;
         },
@@ -1221,7 +1228,8 @@ export const store = new Vuex.Store({
         },
         getAdminProfile(state){
             return state.adminProfile;
-        }
+        },
+
 
 
     }

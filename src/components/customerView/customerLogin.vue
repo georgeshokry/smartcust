@@ -500,7 +500,6 @@
         },
         watch:{
             userLoginWatcher(watcher){
-                console.log(watcher);
                 if(watcher !== null){
                     if(this.signupDialog === false){
                         this.$router.replace('/');
@@ -650,7 +649,6 @@
                         this.custAlert = false;
                         this.custLoading = true;
                         this.$store.dispatch('loginUser', {email: this.custEmail, password: this.custPassword});
-                        console.log("starting login")
 
                     }
                 });

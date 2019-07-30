@@ -286,7 +286,6 @@
                             reservComment: resvArray[i].reservComment
                         });
                     }
-                    console.log(this.allReserv)
                     this.dataTabelLoading = false;
                 }
 
@@ -299,7 +298,6 @@
             getOfferSelected(offer){
                 if(offer !== null){
                     this.offerInfo = offer;
-                    console.log(this.offerInfo)
                 }
             },
             getAllReservStatus(status){

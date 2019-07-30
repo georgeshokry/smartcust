@@ -454,7 +454,6 @@
                 this.sendLoading = true;
                 if(this.occType !== null) {
                     let idOfOccasion = this.allOcc.find(data => data.occasionName === this.occType);
-                    console.log(this.reservOfferId);
                     this.$store.dispatch('setNewOrder', {
                         idOfOccasion: idOfOccasion,
                         reservAddress: this.occAddress,
@@ -466,7 +465,7 @@
                     });
                 } else {
                     let idOfOccasion = this.allOcc.find(data => data.occasionName === this.occasionNameSelected);
-                    console.log(this.reservOfferId);
+
                     this.$store.dispatch('setNewOrder', {
                         idOfOccasion: idOfOccasion,
                         reservAddress: this.occAddress,

@@ -109,7 +109,7 @@
         },
         methods:{
             offerSelected(){
-                console.log("offer selected");
+
             }
         }
     }

@@ -164,7 +164,6 @@
                                 });
 
                             }
-                            console.log(moment(resvArray[i].reservDate).get("date") , moment().get("date"))
 
                         }
                         index++;

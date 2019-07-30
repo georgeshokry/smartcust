@@ -285,7 +285,6 @@
             },
 
             watchUserLogger(state){
-                console.log("LOGGER NOW", state);
                 if(state === null){
                     this.$router.replace('/customer-login');
                 }
