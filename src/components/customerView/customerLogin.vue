@@ -270,7 +270,7 @@
                                     color="black"
                                     required
                                     mask="###-###-###-##"
-                                    prefix="(+2)-"
+                                    prefix="(+02)-"
                             ></v-text-field>
                             <h6 style="color: red;">*required</h6>
                             <v-alert
