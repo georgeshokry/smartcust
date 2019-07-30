@@ -4,15 +4,15 @@
 Points SPA for photographers to manage and monitoring customers reservations<br>
 Has a dashboard page for admin & profile page for customers, build using [vuejs v2.6.10](https://vuejs.org/)
 
-##Consists of Two types of pages
-####Dashboard:
+## Consists of Two types of pages
+#### Dashboard:
 Admin can:<br>
 - Create new offers
 - Manage reservations
 - Monitoring customers
 - Creating promo codes
 
-####Profile:
+#### Profile:
 Customer can:
 - Make reservations
 - Manage redeemed Points
@@ -21,7 +21,7 @@ Customer can:
 
 and much more
 
-###Tools Used
+### Tools Used
  - [Vuetify v1.5](https://v15.vuetifyjs.com/en/)
  - [firestore](https://firebase.google.com/)
  - [vee-validate](https://baianat.github.io/vee-validate/)
